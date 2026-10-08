@@ -32,6 +32,16 @@ neue Overlays im Kampf werden bis zum Kampfende zurückgestellt. Gesundheitswert
 direkt an StatusBar-Widgets; geheime Texte und Prozentwerte werden ausgelassen.
 Dies ist keine vollständige Ablösung der Blizzard-Nameplates.
 
+## Visuelle Vorschau
+
+![KI-generierte Illustration von Studio, Galerie und Unit-Regeln](docs/previews/forever-nameplates-0.3.0.png)
+
+**KI-generierte Illustration, kein Ingame-Screenshot und keine pixelgenaue Darstellung.**
+Sie veranschaulicht die implementierten Bereiche anhand des Quellcodes; Anordnung, Farben,
+Schrift, Bedienelemente und einzelne Preset-Silhouetten können abweichen. Die Klassenkürzel
+und Leveltexte im Beispiel wurden als zusätzliche Komponenten dargestellt und sind nicht
+Bestandteil des unveränderten Classic-Presets. Finale Originalgrafiken stehen weiterhin aus.
+
 ## Im Spiel installieren
 
 Den Ordner **`ForeverNameplates`** nach
