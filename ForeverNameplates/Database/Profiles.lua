@@ -12,7 +12,7 @@ function DB.Initialize(saved)
         return nil, "Newer SavedVariables version; data preserved."
     end
     NS.databaseBlocked=false
-    local data = {version=2, profiles={}, characters={}, active="Default", live=false,minimap={angle=225,hidden=false}}
+    local data = {version=2, profiles={}, characters={}, active="Default", live=true,liveMode="replacement-v1",minimap={angle=225,hidden=false}}
     if type(saved)=="table" and type(saved.minimap)=="table" then
         local angle=saved.minimap.angle
         if type(angle)=="number" and angle==angle and angle~=math.huge and angle~=-math.huge then data.minimap.angle=angle%360 end
@@ -42,7 +42,9 @@ function DB.Initialize(saved)
             end
         end
         if data.profiles[saved.active] then data.active = saved.active end
-        data.live = saved.live == true
+        -- The old default disabled the preview-only overlay. Enable actual application
+        -- once on upgrade; subsequent explicit opt-outs remain persistent.
+        if saved.liveMode=="replacement-v1" then data.live = saved.live == true end
     end
     data.profiles.Default = data.profiles.Default or NS.Copy(NS.GameNameplates[1].layout)
     DB.data = data

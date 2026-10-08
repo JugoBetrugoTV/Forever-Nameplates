@@ -13,13 +13,15 @@ required = {
     "Guild-Social-Chat/RaidMarkers.md": ["RaidMarkers.GetRaidTargetIndex"],
     "UI-Widgets-Frames/C_Texture.md": ["C_Texture.GetAtlasInfo"],
     "System-Config/C_Secrets.md": ["C_Secrets.ShouldUnitIdentityBeSecret"],
-    "UI-Systems-Input/C_NamePlate.md": ["C_NamePlate.GetNamePlateForUnit"],
+    "UI-Systems-Input/C_NamePlate.md": ["C_NamePlate.GetNamePlateForUnit", "C_NamePlate.GetNamePlates"],
+    "AddOns-Scripting/C_Timer.md": ["C_Timer.After"],
+    "UI-Widgets-Frames/SimpleFrameScriptObjectAPI.md": ["SimpleFrameScriptObjectAPI.IsForbidden"],
     "UI-Widgets-Frames/SimpleStatusBarAPI.md": ["SimpleStatusBarAPI.SetValue", "SimpleStatusBarAPI.SetMinMaxValues", "SimpleStatusBarAPI.SetTimerDuration", "SimpleStatusBarAPI.SetOrientation", "SimpleStatusBarAPI.SetReverseFill", "SimpleStatusBarAPI.SetStatusBarTexture"],
     "UI-Widgets-Frames/SimpleTextureBaseAPI.md": ["SimpleTextureBaseAPI.SetRotation", "SimpleTextureBaseAPI.SetTexture", "SimpleTextureBaseAPI.SetTexCoord", "SimpleTextureBaseAPI.SetBlendMode", "SimpleTextureBaseAPI.SetAtlas"],
-    "UI-Widgets-Frames/SimpleFrameAPI.md": ["SimpleFrameAPI.CreateMaskTexture", "SimpleFrameAPI.RegisterEvent", "SimpleFrameAPI.SetClipsChildren"],
+    "UI-Widgets-Frames/SimpleFrameAPI.md": ["SimpleFrameAPI.CreateMaskTexture", "SimpleFrameAPI.RegisterEvent", "SimpleFrameAPI.SetClipsChildren", "SimpleFrameAPI.GetAlpha", "SimpleFrameAPI.SetAlpha"],
     "UI-Widgets-Frames/SimpleButtonAPI.md": ["SimpleButtonAPI.IsEnabled", "SimpleButtonAPI.RegisterForClicks", "SimpleButtonAPI.SetHighlightTexture"],
     "UI-Widgets-Frames/SimpleEditBoxAPI.md": ["SimpleEditBoxAPI.SetFont"],
-    "UI-Widgets-Frames/SimpleScriptRegionAPI.md": ["SimpleScriptRegionAPI.GetCenter", "SimpleScriptRegionAPI.GetWidth"],
+    "UI-Widgets-Frames/SimpleScriptRegionAPI.md": ["SimpleScriptRegionAPI.GetCenter", "SimpleScriptRegionAPI.GetWidth", "SimpleScriptRegionAPI.IsProtected"],
     "UI-Widgets-Frames/SimpleFontStringAPI.md": ["SimpleFontStringAPI.SetText", "SimpleFontStringAPI.SetFont", "SimpleFontStringAPI.SetShadowColor", "SimpleFontStringAPI.SetShadowOffset"],
     "Units-Combat-PvP/Unit.md": ["Unit.UnitHealth", "Unit.UnitHealthMax", "Unit.UnitCastingDuration", "Unit.UnitChannelDuration", "Unit.UnitClassBase", "Unit.UnitClassification", "Unit.UnitReaction", "Unit.UnitIsPlayer", "Unit.UnitPlayerControlled"],
 }
@@ -34,8 +36,10 @@ print(f"{count} required/researched signatures present; runtime permissions and 
 
 export = args.kit / "data/forever_api.json"
 if export.is_file():
-    if "SetRaidTargetIconTexture" not in json.loads(export.read_text())["functions"]:
-        raise SystemExit("Client UI helper missing from Forever export")
-    print("SetRaidTargetIconTexture present in Forever kit's client export; runtime atlas behavior remains unverified")
+    functions=json.loads(export.read_text())["functions"]
+    for helper in ("SetRaidTargetIconTexture", "hooksecurefunc"):
+        if helper not in functions:
+            raise SystemExit(f"Client UI helper missing from Forever export: {helper}")
+    print("Raid helper and hooksecurefunc present in Forever kit's client export; runtime behavior remains unverified")
 else:
     print("Forever kit export unavailable: native raid helper presence not checked")

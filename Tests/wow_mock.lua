@@ -10,6 +10,7 @@ function F:SetPoint(...) self.point={...} end
 function F:ClearAllPoints() self.point=nil end
 function F:SetAllPoints(parent) self.allPoints=parent end
 function F:SetAlpha(a) self.alpha=a end
+function F:GetAlpha() return self.alpha or 1 end
 function F:SetScale(s) self.scale=s end
 function F:GetEffectiveScale() return (self.scale or 1)*(self.parent and self.parent:GetEffectiveScale() or 1) end
 function F:SetFrameLevel(v) self.frameLevel=v end
@@ -99,6 +100,21 @@ function UnitCastingDuration(unit) return Mock.units[unit] and Mock.units[unit].
 function UnitChannelDuration(unit) return nil end
 C_NamePlate={}
 function C_NamePlate.GetNamePlateForUnit(unit) return Mock.plates[unit] end
+function C_NamePlate.GetNamePlates()
+    local plates={}; for _,plate in pairs(Mock.plates) do plates[#plates+1]=plate end
+    return plates
+end
+-- Simulate the post-call contract, not the client's taint/security implementation.
+function hooksecurefunc(object,method,callback)
+    local original=object[method]
+    object[method]=function(...) local result=original(...); callback(...); return result end
+end
+Mock.timers={}
+C_Timer={After=function(delay,callback) table.insert(Mock.timers,callback) end}
+function Mock.RunTimers()
+    local timers=Mock.timers; Mock.timers={}
+    for _,callback in ipairs(timers) do callback() end
+end
 C_AddOns={IsAddOnLoaded=function() return false end}
 Mock.units.player={name="Tester",level=60,health=100,maximum=100}
 function Mock.Fire(frame,event,...)
@@ -108,6 +124,10 @@ end
 function Mock.AddUnit(unit)
     Mock.units[unit]={name="Sentinel",level=60,health=70,maximum=100}
     Mock.plates[unit]=CreateFrame("Frame",nil,UIParent)
+    local base=Mock.plates[unit]; base.unitToken=unit
+    base.UnitFrame=CreateFrame("Frame",nil,base); base.UnitFrame.unit=unit
+    base.UnitFrame:SetAlpha(1); base.UnitFrame:SetFrameLevel(4)
+    base.UnitFrame.healthBar=CreateFrame("StatusBar",nil,base.UnitFrame)
     return Mock.plates[unit]
 end
 function Mock.Secret()

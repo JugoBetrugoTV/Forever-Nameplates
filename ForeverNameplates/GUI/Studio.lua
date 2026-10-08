@@ -473,12 +473,13 @@ function Studio.RefreshDiagnostics()
     local active=0; for _ in pairs(NS.Engine.units) do active=active+1 end
     Studio.diagnosticText:SetText("Interface: "..tostring(c.interface).." (expected 16001)\n"..
         "C_NamePlate: "..tostring(c.nameplates).."  /  Secret predicates: "..tostring(c.secrets).."\n"..
-        "Created overlays: "..s.created.."  /  Active: "..active.."\n"..
+        NS.Engine.Status().."\nCreated custom plates: "..s.created.."  /  Bound: "..active.."\n"..
         "Event updates: "..s.updates.."  /  Rejected bases: "..s.skipped.."\n"..
         "Widget forwarding failures: "..c.failures.."\n\n"..
-        "Live rendering uses an additional overlay above the default plate.\n"..
-        "Protected and forbidden bases are skipped. Newly visible plates in combat\n"..
-        "are deferred until combat ends. No default frames or hit areas are changed.\n\n"..
+        "The layout replaces Blizzard visuals at the healthbar position.\n"..
+        "Off/removal/rendering failures restore the previous Blizzard alpha.\n"..
+        "Protected/forbidden frames keep Blizzard. First creation waits for combat end.\n"..
+        "Existing pooled views can be reused in combat. Hit areas are unchanged.\n\n"..
         "Not yet validated in a Forever client. Missing/secret text is omitted.\n"..
         "Health thresholds, curved health fill and exact threat math are unavailable.\n\n"..
         table.concat(NS.logs,"\n"))
@@ -487,8 +488,7 @@ end
 function Studio.CreateDiagnostics(page)
     W.Label(page,NS.L.diagnostics,22,0,0)
     Studio.live=W.Toggle(page,NS.L.live,0,-50,400,false,function(value)
-        if value and (not NS.Compat.nameplates or not NS.Compat.expected) then NS.Print("Expected Forever interface 16001 and C_NamePlate"); return end
-        NS.DB.data.live=value; NS.Engine.Refresh(); Studio.RefreshDiagnostics()
+        attempt(NS.Engine.SetEnabled(value)); Studio.RefreshDiagnostics()
     end)
     Studio.diagnosticText=W.Label(page,"",12,0,-98); Studio.diagnosticText:SetWidth(840)
     W.Button(page,"Refresh diagnostics",0,-508,192,Studio.RefreshDiagnostics)
@@ -510,6 +510,9 @@ local function createStudio()
     end
     W.Label(root,"FOREVER",24,22,-20,{.84,.7,.43,1}); W.Label(root,"NAMEPLATES  /  STUDIO",10,190,-30)
     W.Label(root,NS.L.pending,10,22,-648,{.7,.6,.4,1})
+    Studio.applyButton=W.Button(root,GetLocale()=="deDE" and "Im Spiel anwenden" or "Apply in game",20,-548,146,function()
+        attempt(NS.Engine.SetEnabled(true)); NS.Print(NS.Engine.Status()); Studio.Status()
+    end)
     W.Line(root,20,-60,1040)
     W.Button(root,"×",1028,-18,30,function() root:Hide() end)
     W.Button(root,"GUI skin",868,-18,146,function()

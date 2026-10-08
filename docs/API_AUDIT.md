@@ -1,5 +1,46 @@
 # Forever API-Audit — 2026-10-08
 
+## Live-Anwendung ab 0.6.0
+
+Nutzerbefund: Änderungen im Designer ließen im Spiel weiterhin nur Blizzard-Standardplates
+sichtbar. Codeprüfung bestätigte zwei konkrete Ursachen: Live war standardmäßig `false`,
+und der eigene Root hing 45 Punkte oberhalb der Basis, ohne Blizzard-Visuals zu unterdrücken.
+Der neue Adapter ist implementiert und im Widget-Mock geprüft; ein Client-Nachtest steht aus.
+
+Die [Forever-C_NamePlate-Referenz](https://atraeau.github.io/WoW-Addons/api/UI-Systems-Input/C_NamePlate/)
+zeigt im Beispiel `nameplate.UnitFrame.healthBar`. Als geprüfte Strukturreferenz dient zusätzlich
+Gethe/wow-ui-source, Commit `09b9db7948abc9b9648dedaab51eb0cf3ee67b31`,
+`Interface/AddOns/Blizzard_NamePlates/Blizzard_NamePlateBase.lua`: UnitFrame wird unabhängig
+von der öffentlichen Basis gepoolt und beim Release auf nil gesetzt. Das ist allgemeines
+Mainline-FrameXML, kein Nachweis der exakten Forever-Laufzeitstruktur. Der Adapter unterstützt
+auch `UnitFrame.HealthBarsContainer.healthBar`; fehlt eine zulässige Struktur, bleibt Blizzard.
+
+Eigener Root als Geschwister von UnitFrame, CENTER-Anker an der Healthbar; keine Änderung
+von Basis-Alpha, Hit-Test, globaler Größe, Stacking oder Mouse-Handling. Nur nach erfolgreicher
+Layout-/Health-Weitergabe setzt der Adapter die öffentliche Alpha des zulässigen UnitFrame auf 0.
+`GetAlpha`, `SetAlpha`, `IsForbidden`, `IsProtected`, `GetNamePlates` und `C_Timer.After` sind
+gegen den Forever-Export geprüft. `hooksecurefunc` ist im Kit-Export vorhanden; eine vollständige
+eigenständige generierte Signatur fehlt. Ein Secure-Posthook auf `UnitFrame.SetAlpha` hält die
+Unterdrückung und bewahrt den jeweils letzten öffentlichen angeforderten Blizzard-Wert für Off,
+Entfernen, Pool-Recycling oder Rendering-Fallback. Keine Methodenersetzung im Addon.
+Geheime Alpha wird weder verglichen noch gespeichert; bei einer solchen Blizzard-Änderung
+endet die eigene Unterdrückung, ohne deren Wert erneut zu setzen. Der Posthook ist pro Visual
+einmalig und nach Ablösung inaktiv. Verweigerte oder neu eingeschränkte Wiederherstellung wird
+außerhalb des Kampfes erneut versucht und separat gezählt, statt Schutz zu umgehen.
+
+GetNamePlates-Discovery mit öffentlichen Unit-Tokens, ergänzender begrenzter 1–200-Token-Pass.
+Wenn Blizzard beim ADDED-Event noch keinen UnitFrame hat, maximal drei 50-ms-Timer-Retries;
+Entfernen/Abschalten verwirft veraltete Tickets. Erste Erstellung wartet im Kampf, vorbereitete
+zulässige Views dürfen ohne Layout-Neubau wiederverwendet werden. Kein permanenter OnUpdate-Loop.
+Fehlende optionale Artwork bleibt verborgen; ein fehlender/abgelehnter aktivierter Health-Fill
+oder Health-/Rendering-Fehler stellt Blizzard wieder her. Absichtliches `visible=false` einer
+Regel versteckt die ersetzte Plate insgesamt. Das ist eine Änderung gegenüber dem Preview-Modus.
+
+SavedVariables bleiben Schema 2; `liveMode="replacement-v1"` aktiviert das erste Upgrade einmalig,
+erhält Profile und speichert nachfolgend ein ausdrückliches Off. FN1/FN2 bleiben unverändert.
+Die tatsächliche Zulässigkeit von Alpha-Änderungen/Posthooks, Combat-Reuse, Frame-Ereignisreihenfolge
+und pixelgenauer Anbindung bleibt für Build 70170 im Client zu prüfen; Existenz einer API genügt nicht.
+
 ## Referenzbilder und importierte Fill-Texturen ab 0.5.0
 
 Vier offizielle FFXIV-JPEGs wurden erfolgreich heruntergeladen und visuell geprüft.
@@ -85,15 +126,15 @@ werden aufgefangen und als Diagnose gezählt, nicht durch alternative verbotene 
 
 ## Derzeitige Grenzen
 
-Das Overlay ist bewusst eine zusätzliche Darstellung über der Standardplate. Ein vollständiger
-Blizzard-Renderer-Ersatz ist vor einem konkreten Client-Audit nicht implementiert. Auch ungeschützte
-Kinder eines geschützten Elternframes werden abgelehnt. Das kann einzelne oder sämtliche Liveplates
-auf einem konkreten Build ausschließen; die Diagnose zählt abgelehnte Basen.
+Der Adapter ersetzt nur zulässige Blizzard-Visuals. Geschützte/verbotene Basis, UnitFrame
+oder Healthbar sowie secret/fehlende Ausgangsalpha behalten Blizzard. Das kann einzelne oder
+sämtliche Plates auf einem konkreten Build ausschließen; `/fnp status` nennt aktuelle Blockadegründe.
+Auch ungeschützte Kinder eines geschützten Elternframes werden abgelehnt.
 
-Bereits erstellte zulässige Frames aktualisieren sich eventbasiert im Kampf. Neue Sichtbarkeit
-im Kampf wird bis `PLAYER_REGEN_ENABLED` zurückgestellt. Die erstmalige Discovery ist auf 200
-Unit-Tokens begrenzt und läuft nicht in einem `OnUpdate`-Loop. Der Editor benutzt `OnUpdate`
-ausschließlich während eines aktiven Vorschau-Drags.
+Bereits erstellte zulässige Frames aktualisieren sich eventbasiert im Kampf und können recycelt
+werden. Erste Widget-Erstellung und Layoutänderung werden bis `PLAYER_REGEN_ENABLED` zurückgestellt.
+GetNamePlates liefert öffentliche Basen; ein zusätzlicher Discovery-Pass ist auf 200 Unit-Tokens
+begrenzt. Der Editor benutzt `OnUpdate` ausschließlich während eines aktiven Vorschau-Drags.
 
 Secret-Prädikate werden vor jeder Auswertung geprüft. Secret-Health wird nur im Widget-Forwarding
 verwendet; an Fehlerbehandlung werden keine Secret-Werte oder vertraulichen Dumps übergeben.
@@ -117,7 +158,8 @@ Ein unbekannter Zielstatus aktiviert keine NonTarget-Regel. Farben fallen auf da
 wenn die für den gewünschten Modus nötigen öffentlichen Angaben fehlen.
 
 Die zwölf Regeln liegen im versionierten Profil, mit Priorität Kategorie → Elite → Rare → Boss
-→ Ziel/andere Units. Regeln ersetzen nur eigene Overlay-Eigenschaften. Die Datenmigration fügt
+→ Ziel/andere Units. Regeln steuern eigene Plate-Eigenschaften; ab 0.6.0 unterdrückt eine erfolgreiche Live-Anwendung
+auch die Blizzard-Visuals. Bei einer verborgenen Regel bleibt damit keine Standardplate zurück. Die Datenmigration fügt
 standardmäßig deaktivierte Regeln hinzu; FN1-Import bleibt erhalten, FN2 speichert die neuen Felder.
 Die Rule-Vorschau und Editor-Zoom multiplizieren dieselbe Skalierung wie der Renderer.
 
@@ -134,7 +176,8 @@ einer festgelegten grafischen Komponente. Die vorhandenen 13 Grafikaufträge ble
 
 ## Ingame noch zu klären
 
-1. Sind öffentliche Nameplate-Basen in Build 70170 tatsächlich ungeschützt, inklusive Vererbung?
+1. Sind Basis, UnitFrame und Healthbar in Build 70170 zugänglich/ungeschützt, inklusive Vererbung?
+   Funktionieren Alpha-Unterdrückung, Secure-Posthook und Wiederherstellung bei allen Pools/Unit-Kategorien?
 2. Akzeptieren StatusBar-Widgets Secret-Health auch in Dungeons/PvP mit tainted Addon-Kontext?
 3. Liefern Casting-/Channel-Duration-APIs zulässige Objekte für Nameplate-Units in allen Situationen?
 4. Welche Masken und Effekte erfüllen Combat- und Secret-Regeln unter Last?
@@ -144,7 +187,8 @@ einer festgelegten grafischen Komponente. Die vorhandenen 13 Grafikaufträge ble
 8. Sind Regeländerungen von Alpha, Scale und Sichtbarkeit an vorhandenen Overlays im Kampf zulässig?
 9. Entstehen Blocked-Action-/Taint-Fehler oder Interaktionen mit anderen Nameplate-Addons?
 
-Abweichungen zu diesen Quellen sind bislang **nicht gemessen**, da kein Client vorhanden ist.
+Der Nutzer meldete SetFont-/Inspector-Fehler und unveränderte Blizzard-Plates. Diese Befunde
+sind oben mit Codeursachen dokumentiert. Weitere Abweichungen wurden mangels Client nicht gemessen.
 
 ## Nameplate-only-Quellenlayouts ab 0.4.0
 

@@ -13,7 +13,7 @@ local messages = {
     apply = {"Apply layout", "Layout anwenden"},
     undo = {"Undo", "Rückgängig"}, redo = {"Redo", "Wiederholen"},
     preview = {"DESIGN SANDBOX", "DESIGN-VORSCHAU"},
-    live = {"Enable experimental live overlay", "Experimentelles Live-Overlay aktivieren"},
+    live = {"Apply layout to nameplates", "Layout auf Nameplates anwenden"},
     pending = {"Forever API and in-game validation pending", "Forever-API und Ingame-Test ausstehend"},
     minimapOpen = {"Left click: open / close the designer", "Linksklick: Designer öffnen / schließen"},
     minimapDiagnostics = {"Right click: diagnostics", "Rechtsklick: Diagnose"},

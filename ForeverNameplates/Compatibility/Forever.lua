@@ -24,10 +24,19 @@ function Compat.Audit()
     return Compat.nameplates
 end
 function Compat.SafeFrame(frame)
-    if Compat.Secret(frame) or not frame then return false end
-    if frame.IsForbidden and frame:IsForbidden() then return false end
-    if frame.IsProtected and frame:IsProtected() then return false end
+    if Compat.Secret(frame) or (type(frame)~="table" and type(frame)~="userdata") then return false,"missing frame" end
+    local ok,forbidden=pcall(function() return frame:IsForbidden() end)
+    if not ok or Compat.Secret(forbidden) then return false,"frame access restricted" end
+    if forbidden~=false then return false,"forbidden frame" end
+    local protected
+    ok,protected=pcall(function() return frame:IsProtected() end)
+    if not ok or Compat.Secret(protected) then return false,"frame access restricted" end
+    if protected~=false then return false,"protected frame" end
     return true
+end
+function Compat.Field(object,key)
+    if Compat.Secret(object) or (type(object)~="table" and type(object)~="userdata") then return nil end
+    return Compat.Public(function() return object[key] end)
 end
 function Compat.GetPlate(unit)
     if not Compat.nameplates or Compat.Secret(unit) or type(unit)~="string" then return nil end

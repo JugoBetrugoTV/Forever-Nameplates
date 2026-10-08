@@ -1,10 +1,21 @@
-# Forever Nameplates — Entwicklungsstand 0.5.0
+# Forever Nameplates — Entwicklungsstand 0.6.0
 
 Stand: 2026-10-08. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
 **Forever Nameplates** ersetzt; technisch lautet der Addon-Ordner `ForeverNameplates`.
 
 ## Implementiert
+
+- Live-Anwendung ersetzt das vorherige zusätzliche Overlay: eigener Root als UnitFrame-Geschwister
+  direkt an der Healthbar, öffentliche Blizzard-Alpha erst nach erfolgreichem Rendern auf 0 setzen.
+  Secure-Posthook erhält die Unterdrückung bei öffentlichen Alpha-Updates; Abschalten, Entfernen,
+  Frame-Recycling und Health-/Rendering-Fehler stellen den letzten öffentlichen Blizzard-Wert wieder her.
+- Unabhängiger UnitFrame-Pool, moderne HealthBarsContainer-Variante, öffentliche GetNamePlates-Discovery
+  und maximal drei kurze Wiederholungen bei verzögertem UnitFrame-Aufbau. Keine OnUpdate-Discovery.
+- Einmalige Aktivierung beim Upgrade vom Preview-Modus mit erhaltenen Layouts; späteres Opt-out persistent.
+  Studio-Anwenden-Button und `/fnp apply`, `/fnp off`, `/fnp status` mit konkreten Blockadegründen.
+- Erstmalige Erstellung/Layoutänderung wartet im Kampf; vorbereitete zulässige Views werden wiederverwendet.
+  Neu eingeschränkte Wiederherstellung/Hide-Operationen werden ohne Umgehung zurückgestellt.
 
 - Vier offizielle FFXIV-Overhead-Referenzen heruntergeladen, angesehen und gehasht;
   rote Claimed-Enemy-Plate vermessen. 896×192-JPEGs, unbekannte UI-Skalierung/Version,
@@ -25,7 +36,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Modularer Namespace, Ereignisbus, begrenztes Diagnoseprotokoll und TOC-Ladefolge.
 - Forever-Kompatibilitätsschicht auf Basis der gelieferten client-spezifischen Quellen.
 - Registry mit Health/Cast/Text/Panel/Target/Ornament/Artwork/Raid/Class, deklaratives validiertes Modell.
-- Gepoolte ereignisbasierte Overlay-Engine; keine Veränderung geschützter Blizzard-Frames.
+- Gepoolte ereignisbasierte Replacement-Engine; keine Veränderung geschützter Blizzard-Frames.
 - Zwei quellengestützte Original-Nameplate-Strukturen für Classic 1.15.8/Dragonflight 10.2.7;
   kontrollierte Clienttextur-/Atlas-Nutzung, normale Schrift mit Shadow statt pauschaler Outline,
   vierseitige Kontur und Target-only-Image. Source-Layouts separat Undo-/Share-fähig wählbar.
@@ -59,7 +70,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **143 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **159 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -82,8 +93,12 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Zusätzlich FFXIV-Vertragsöffnung/Alpha, deckender 32-Bit-Fill, obsolete Frame-Datenbewahrung,
   Filtern von Frame-/Fill-Auswahl, Plain-Reset/Undo, drei notwendige Assets, Source-Share-Roundtrip,
   fehlende/abgelehnte/Secret-Texture-Ergebnisse, Secret-Health-Forwarding und Outline-/Prefix-Pool-Reset.
-- Version 0.5.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
-- 37 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- Zusätzlich 16 Live-Adapter-Regressionsfälle: Anker/Geschwister, tatsächliche Studio-Änderungen,
+  Upgrade-/Opt-out-Persistenz, Wiederherstellung nach Alpha-Updates, unabhängiger UnitFrame-Pool,
+  verweigerte Health-/Alpha-Aufrufe, geheime Alpha, begrenzte/cancelbare Retries, API-Discovery,
+  Combat-Pool-Reuse, Sichtbarkeitsregeln, zurückgestellte Cleanup-Operationen, fehlende Nameplate-API und bewahrte Originalalpha nach verweigerter Wiederherstellung.
+- Version 0.6.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 43 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.
@@ -116,12 +131,12 @@ Originalgeometrie. Pixelidentität wird nicht von technischen PNG- oder Mock-Tes
 
 ## API-Grenzen
 
-- Live-Overlay ist opt-in, zusätzlich zur Standardplate und derzeit nur bei ungeschützten Basen.
-- Neue Overlays im Kampf werden zurückgestellt; vorhandene zulässige Widgets aktualisieren sich.
+- Live-Anwendung ersetzt zulässige Blizzard-Visuals; geschützte/verbotene Frames bleiben Standard.
+- Neue Widget-Erstellung im Kampf wird zurückgestellt; zulässige gepoolte Views aktualisieren/recyceln sich.
 - Geheime Healthwerte werden direkt an Widgets übergeben; keine Threshold-/Threat-Arithmetik.
 - Geheime Namen, Texte und Prozentinformationen werden ausgelassen. Identitätsrestriktionen
   werden vor Unit-Abfragen geprüft; keine Wiederverwendung zuvor öffentlicher Klassendaten.
-- Verstecken durch Regeln betrifft nur eigene Overlays; Standardplates bleiben sichtbar.
+- Sichtbarkeitsregeln unterdrücken auch die erfolgreich ersetzten Blizzard-Visuals; Off stellt sie wieder her.
 - Quellen berichten einen SavedVariables-Ladefehler der Beta; regelmäßige externe Share-Backups nötig,
   bis die Korrektur am tatsächlichen Build bestätigt ist. Keine ausführbare SavedVariables-Bridge.
 - Curved/Arc-Fill und Masks sind recherchiert, aber nicht als funktionsfähige Features präsentiert.

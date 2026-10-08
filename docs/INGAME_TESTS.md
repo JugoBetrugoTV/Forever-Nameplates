@@ -56,7 +56,7 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Friendly/Neutral/Hostile-Palette bleibt nach Undo, Profilwechsel und Share-Import erhalten.
 - [ ] Alle 12 Kategorien und Priorität Kategorie → Klassifikation → Ziel prüfen, inklusive Rare-Elite.
 - [ ] Sichtbarkeit/Alpha/Scale stimmen in Rule-Vorschau, Studio mit Zoom und Vierfach-Sandbox.
-- [ ] Versteckte Overlays lassen die Standardplate sichtbar; Auswahl eines anderen Zustands zeigt sie wieder.
+- [ ] Versteckte angewandte Plates zeigen auch keine Blizzard-Visuals; Zustandswechsel/Off stellt Sichtbarkeit wieder her.
 - [ ] Geheime Identität und Zielstatus lösen keine NPC-/NonTarget-Fehlklassifikation aus.
 - [ ] Reaktions-/Klassifikations-/Zielwechsel im Kampf aktualisieren zulässige bestehende Overlays.
 - [ ] Alle acht Raidmarker: tatsächlicher Atlaspfad, Farbe, Ausschnitt, Rotation und Markerentfernung.
@@ -65,8 +65,17 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 
 ## Live-Rendering und Einschränkungen
 
-- [ ] Diagnose aktiviert nur auf der erwarteten Forever-Schnittstelle das Overlay.
-- [ ] Standardnameplates/Klickflächen bleiben bedienbar; zusätzlicher Overlay-Abstand sinnvoll.
+- [ ] Update auf 0.6.0 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
+- [ ] `/fnp apply` und Studio-Anwenden-Button ändern die sichtbare Plate direkt; Healthbar-Breite/X ändern und vergleichen.
+- [ ] `/fnp off` und erneutes `/reload` bleiben abgeschaltet; Apply aktiviert wieder.
+- [ ] Diagnose aktiviert nur auf der erwarteten Forever-Schnittstelle die Anwendung.
+- [ ] Eigene Plate sitzt an der Blizzard-Healthbar; nur eine Darstellung sichtbar, Klickfläche/Stacking weiter bedienbar.
+- [ ] `/fnp status`: Version 0.6.0, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
+- [ ] Blizzard-Alpha-Updates bei Zielwechsel/Entfernung/Fading erzeugen keine doppelte Plate.
+- [ ] UnitFrame wird vor/nach eigenem ADDED-Handler erstellt: begrenzter Retry hängt korrekt an.
+- [ ] UnitFrame unabhängig von Basis recycelt: keine unsichtbare Folge-Unit oder alte eigene Plate.
+- [ ] Bei fehlendem Health-Fill/verweigerter Weitergabe/renderingbedingtem Fehler ist Blizzard wieder sichtbar.
+- [ ] Neu eingeschränkte Alpha/Frames erzeugen Diagnose und erlaubte Wiederherstellung, keine Schutzumgehung.
 - [ ] Öffentliche, nicht geschützte Basen akzeptieren eigene Kinderframes.
 - [ ] Geschützte/verbotene Basen werden übersprungen, ohne Blocked-Action-/Taint-Fehler.
 - [ ] Nameplate hinzufügen/entfernen/recyceln hinterlässt keine falschen Units oder Texte.
@@ -74,8 +83,8 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Gesundheitsprozente erscheinen nur bei öffentlichen Zahlen; geheime Texte fehlen.
 - [ ] Zielmarkierungen wechseln korrekt, auch während Kampf und Zielverlust.
 - [ ] Casting- und Channel-Duration-Widgets starten/stoppen/unterbrechen korrekt.
-- [ ] Neue Nameplates im Kampf erhalten erst nach Kampfende ein eigenes Overlay.
-- [ ] Toggle aus blendet nur eigene Overlays aus; Standardframes bleiben unverändert.
+- [ ] Erste Widget-Erstellung im Kampf wartet bis Kampfende; vorbereitete zulässige Views recyceln ohne neue Widgets.
+- [ ] Toggle aus blendet eigene Plates aus und stellt die letzte öffentliche Blizzard-Alpha wieder her.
 - [ ] Solo, Dungeon, Raid, Arena, freundliche Spieler und Namensbeschränkungen prüfen.
 
 ## Profile und Beta-Persistenz

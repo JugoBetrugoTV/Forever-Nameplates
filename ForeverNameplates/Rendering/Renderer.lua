@@ -142,11 +142,13 @@ function Renderer.Update(view,state,unit)
     view.effect=effect
     view.root:SetScale((view.previewScale or 1)*effect.scale); view.root:SetAlpha(effect.alpha)
     view.root:SetShown(effect.visible)
-    if not effect.visible then return end
+    if not effect.visible then return true end
+    local ready=true
     for _,part in ipairs(view.parts) do
         local e=part.element
         local show=e.enabled
         if part.image then show=show and part.imageReady end
+        if e.enabled and part.kind=="health" and not part.barReady then ready=false end
         if e.source=="target" then show=show and state.target==true end
         if part.kind=="target" then show=show and state.target end
         if part.raid then
@@ -164,7 +166,8 @@ function Renderer.Update(view,state,unit)
             show=show and part.barReady
             if part.kind=="health" then
                 part.bar:SetStatusBarColor(unpack(NS.Rules.HealthColor(view.layout.rules,effect,state,e.color)))
-                if unit then show=show and NS.Compat.Health(part.bar,unit)
+                if unit then
+                    if show and not NS.Compat.Health(part.bar,unit) then show=false; ready=false end
                 else part.bar:SetMinMaxValues(0,100); part.bar:SetValue(state.health or 75) end
             elseif unit then show=show and NS.Compat.Cast(part.bar,unit)
             else
@@ -194,51 +197,5 @@ function Renderer.Update(view,state,unit)
         end
         part.frame:SetShown(show==true)
     end
+    return ready
 end
-
-local Engine={units={},views={},pending={},stats={created=0,updates=0,skipped=0}}
-NS.Engine=Engine
-function Engine.Remove(unit)
-    if NS.Compat.Secret(unit) then return end
-    local view=Engine.units[unit]
-    if view and NS.Compat.SafeFrame(view.root) then view.root:Hide() end
-    Engine.units[unit]=nil; Engine.pending[unit]=nil
-end
-function Engine.Add(unit)
-    if NS.Compat.Secret(unit) or type(unit)~="string" then return end
-    if not NS.DB.data or not NS.DB.data.live then return end
-    if not NS.Compat.expected or not NS.Compat.nameplates then return end
-    if NS.InCombat() then Engine.pending[unit]=true; return end
-    local base=NS.Compat.GetPlate(unit)
-    if not base then Engine.stats.skipped=Engine.stats.skipped+1; return end
-    local view=Engine.views[base]
-    if not view then
-        view=Renderer.Create(base)
-        view.root:SetPoint("BOTTOM",base,"TOP",0,45)
-        Engine.views[base]=view; Engine.stats.created=Engine.stats.created+1
-    end
-    if not NS.Compat.SafeFrame(view.root) then return end
-    -- Blizzard may recycle the same frame for a different unit.
-    if view.unit and view.unit~=unit then Engine.units[view.unit]=nil end
-    view.unit=unit; Engine.units[unit]=view; Engine.pending[unit]=nil
-    Renderer.Apply(view,NS.DB.Current()); view.root:Show(); Engine.Update(unit)
-end
-function Engine.Update(unit)
-    if NS.Compat.Secret(unit) then return end
-    local view=Engine.units[unit]
-    if not view or not NS.Compat.SafeFrame(view.root) then return end
-    Renderer.Update(view,NS.Compat.State(unit),unit); Engine.stats.updates=Engine.stats.updates+1
-end
-function Engine.Refresh()
-    if NS.InCombat() then Engine.dirty=true; return end
-    Engine.dirty=false
-    for unit,view in pairs(Engine.units) do
-        if NS.DB.data.live and NS.Compat.SafeFrame(view.root) then Renderer.Apply(view,NS.DB.Current()); Engine.Update(unit)
-        else Engine.Remove(unit) end
-    end
-    if NS.DB.data.live then
-        -- A bounded discovery pass, never a per-frame or OnUpdate scan.
-        for i=1,200 do local unit="nameplate"..i; if NS.Compat.GetPlate(unit) then Engine.Add(unit) end end
-    end
-end
-NS.On("LAYOUT_CHANGED",Engine.Refresh)

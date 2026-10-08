@@ -17,9 +17,9 @@ local function initialize()
     for _,event in ipairs(unitEvents) do NS.Compat.Register(events,event) end
     for _,other in ipairs({"Plater","Kui_Nameplates","TidyPlates_ThreatPlates","NeatPlates"}) do
         local loaded=C_AddOns and C_AddOns.IsAddOnLoaded and NS.Compat.Public(C_AddOns.IsAddOnLoaded,other)
-        if loaded then NS.Log("Another nameplate addon is loaded: "..other.."; live overlay may overlap.") end
+        if loaded then NS.Log("Another nameplate addon is loaded: "..other.."; visual replacement may conflict.") end
     end
-    NS.Print("/fnp opens the studio. Live overlay is opt-in; Forever in-game validation is pending.")
+    NS.Print("/fnp opens the studio; /fnp apply applies your layout; /fnp off restores Blizzard; /fnp status reports live rendering.")
 end
 events:SetScript("OnEvent",function(_,event,unit)
     if event=="ADDON_LOADED" then
@@ -40,7 +40,12 @@ end)
 SLASH_FOREVERNAMEPLATES1="/fnp"
 SLASH_FOREVERNAMEPLATES2="/forevernameplates"
 SlashCmdList.FOREVERNAMEPLATES=function(command)
-    if command=="minimap" then NS.Minimap.Toggle()
+    command=string.lower((command or ""):match("^%s*(.-)%s*$"))
+    if command=="apply" or command=="on" or command=="off" then
+        local ok,err=NS.Engine.SetEnabled(command~="off")
+        NS.Print(ok and NS.Engine.Status() or err)
+    elseif command=="status" then NS.Print(NS.Engine.Status())
+    elseif command=="minimap" then NS.Minimap.Toggle()
     elseif command=="diagnostics" then NS.Studio.Open(); if NS.Studio.ready and not NS.InCombat() then NS.Studio.ShowPage("diagnostics") end
     else NS.Studio.Open() end
 end

@@ -1,12 +1,20 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.5.0**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.6.0**, kein fertig poliertes Release.
 
 Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
 den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
 um seine Position zu speichern. `/fnp minimap` blendet ihn aus oder wieder ein. Im Kampf sind
 Öffnen und Verschieben gesperrt. Die verwendeten Icon-/Randtexturen kommen aus dem Client.
+
+Ab **0.6.0** wendet der Designer sein Layout auf die sichtbaren Nameplates an:
+Die eigene Plate sitzt an der Blizzard-Healthbar. Nach erfolgreichem Rendern wird die
+Blizzard-Darstellung ausgeblendet; beim Abschalten oder einem Health-/Rendering-Fehler
+wird ihre vorherige öffentliche Deckkraft wiederhergestellt. Klickfläche und Stacking bleiben beim Client.
+Das frühere zusätzliche, standardmäßig deaktivierte Overlay wird damit ersetzt.
+Neue Installationen und das erste Upgrade auf diesen Modus aktivieren die Anwendung;
+ein anschließendes ausdrückliches Abschalten bleibt gespeichert. Vorhandene Profile bleiben erhalten.
 
 ## Designziel: ausschließlich Nameplates aus sieben Spielen
 
@@ -56,15 +64,15 @@ statische Artwork/Ornamente; sie gleicht alte freie Profile nicht automatisch vo
 - Verschiebbare Raidmarker über die vorhandene Client-Textur und farbige Klassenkürzel;
   Level und Klassifikation als Textquellen.
 - Migration alter Profile auf Schema 2; neue FN2-Exports und weiter nutzbare FN1-Imports.
-- Ereignisbasiertes experimentelles Live-Overlay mit Frame-Pooling und Secret-Value-Prüfung.
+- Ereignisbasierte Live-Anwendung mit Frame-Pooling, Blizzard-Wiederherstellung und Secret-Value-Prüfung.
 - Asset-Import mit Dateiname-, Auflösungs-, Alpha- und Balkenöffnungsprüfung, TGA-Konvertierung
   und Manifest. Originalgrafiken werden vom Nutzer separat geliefert.
 
-**Noch nicht im Spiel geprüft.** Das Live-Overlay steht über der Standard-Nameplate,
-die weiterhin sichtbar bleibt. Geschützte/verbotene Frames werden übersprungen;
-neue Overlays im Kampf werden bis zum Kampfende zurückgestellt. Gesundheitswerte gehen
-direkt an StatusBar-Widgets; geheime Texte und Prozentwerte werden ausgelassen.
-Dies ist keine vollständige Ablösung der Blizzard-Nameplates.
+**Noch nicht im Spiel geprüft.** Geschützte/verbotene Basen, UnitFrames und Healthbars
+behalten die Blizzard-Anzeige. Erstmalige Widget-Erstellung im Kampf wartet bis Kampfende;
+bereits vorbereitete zulässige Views können im Kampf wiederverwendet werden. Gesundheitswerte
+gehen direkt an StatusBar-Widgets; geheime Texte und Prozentwerte werden ausgelassen.
+Abgelehnte Änderungen lassen sich mit `/fnp status` oder unter Diagnose prüfen.
 
 ## Frühere Illustration
 
@@ -80,8 +88,19 @@ Die TOC muss direkt in diesem Ordner liegen, nicht in einem weiteren Unterordner
 Oder das ZIP aus `dist/` in `Interface/AddOns` entpacken.
 
 `/fnp` oder `/forevernameplates` öffnet das Studio.
-Die experimentelle Live-Darstellung wird unter **Diagnose** eingeschaltet.
-Die Oberfläche schließt im Kampf. Nameplates müssen in den Spieleinstellungen aktiviert sein.
+Nach dem Aktualisieren `/reload`, dann außerhalb des Kampfes `/fnp apply` eingeben.
+Alternativ **Im Spiel anwenden / Apply in game** links im Studio drücken. Änderungen am
+aktiven Profil aktualisieren vorhandene eigene Plates automatisch. `/fnp off` stellt die
+Blizzard-Darstellung wieder her; unter **Diagnose** gibt es ebenfalls einen Schalter.
+Die Oberfläche schließt im Kampf. Nameplates müssen in den Spieleinstellungen aktiviert sein
+(z. B. gegnerische Plates mit **V**). Das Addon ändert diese Spieleinstellung nicht.
+
+`/fnp status` meldet Addon-Version, Interface, Live-Schalter, **Applied** (ersetzte Plates),
+**Pending** (Kampf-Aufschub), **Fallback** und einen aktuellen Ablehnungsgrund.
+**Restore pending / Hide pending** zählen momentan nicht zulässige Wiederherstellungen;
+sie werden außerhalb des Kampfes erneut geprüft. Ohne sichtbare Units ist Applied=0 normal.
+Falls weiterhin nur Blizzard erscheint: Status bei sichtbarer Unit melden, andere Nameplate-Addons
+zum Vergleich deaktivieren und prüfen, ob Version **0.6.0** tatsächlich geladen wurde.
 
 Im Studio öffnet **+ Add component** den Elementkatalog. Versteckte/gesperrte Elemente
 lassen sich im Element-Dropdown auswählen. Der goldene Eckgriff verändert die Größe bei
@@ -96,7 +115,8 @@ Die Priorität lautet: Unit-Kategorie → Elite → Rare → Boss → Ziel/ander
 spätere passende Regeln ersetzen Sichtbarkeit, Deckkraft und Skalierung. **Inherit** behält
 die zuvor gewählte Farbe. Regeln sind zunächst deaktiviert, damit alte Layouts gleich aussehen.
 Bei geheimer oder fehlender Identität wird **Unknown** verwendet; unbekannter Zielstatus zählt
-nicht als „Other units“. Die Vorschau simuliert diese Fälle. Sie verändert nur das eigene Overlay.
+nicht als „Other units“. Die Vorschau simuliert diese Fälle. Bei erfolgreich angewandter Live-Plate versteckt eine
+Sichtbarkeitsregel auch die Blizzard-Darstellung; `/fnp off` stellt sie wieder her.
 Im Komponenten-Katalog stehen **Raid marker** und **Class badge** zur Verfügung;
 Klassenmarker sind farbige Kürzel, eigene Klassenicons sind noch nicht enthalten.
 Neue Share-Codes beginnen mit `FN2:` und benötigen mindestens Version 0.3.0 für den Import.
