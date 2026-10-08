@@ -18,8 +18,10 @@ otherwise create a local venv and install requirements-dev.lock. Verify bundled 
 with `python Tools/vendor_libraries.py`, then package with `python Tools/package.py`.
 The GitHub workflow repeats tests and packaging; do not report a remote CI pass without evidence.
 
-The owner now requests faithful reconstruction of specific original game UI designs, rather
-than generic inspiration. Exact game versions and screenshots/links are required before
+The owner requests ONLY overhead unit nameplates from WoW Classic, Dragonflight, Guild Wars 2,
+SWTOR, ESO, FFXIV and Diablo IV, matching their originals. Do not substitute target portraits,
+player HUDs, screen-wide boss bars or new editor artwork. Generic-inspired designs do not satisfy
+this scope. Read docs/NAMEPLATE_REFERENCES.md for pinned WoW sources and the concrete network block. Exact game versions and screenshots/links are required before
 claiming a matched design. The existing presets and AI illustration are placeholders, not
 reference-accurate or approved visuals. Use reference-bound ART_ASSET_REQUESTS.md prompts;
 do not invent a source or promise pixel identity from image generation. If reference geometry

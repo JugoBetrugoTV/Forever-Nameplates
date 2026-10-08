@@ -37,7 +37,12 @@ def validate(source: Path, spec: dict) -> Image.Image:
     if spec.get("window"):
         w, h = spec["window"]
         x, y = image.width // 2, image.height // 2
-        values = list(image.getchannel("A").crop((x-w//2, y-h//2, x+(w+1)//2, y+(h+1)//2)).getdata())
+        box = spec.get("window_box", (x-w//2, y-h//2, x+(w+1)//2, y+(h+1)//2))
+        if (len(box) != 4 or any(type(v) is not int for v in box)
+                or box[2]-box[0] != w or box[3]-box[1] != h
+                or not (0 <= box[0] < box[2] <= image.width and 0 <= box[1] < box[3] <= image.height)):
+            raise ValueError("Invalid health-fill window box")
+        values = list(image.getchannel("A").crop(box).getdata())
         if sum(v < 16 for v in values) / len(values) < .95:
             raise ValueError("Health-fill window must be at least 95% transparent")
     return image
@@ -78,14 +83,17 @@ def run(drop: Path, addon: Path, contract: Path = CONTRACT) -> tuple[int, list[s
             errors += 1
             messages.append(f"REJECT {source.name}: {exc}")
     known = {s["id"] for s in specs.values()}
+    specs_by_id = {s["id"]: s for s in specs.values()}
     for key, item in manifest["assets"].items():
         # A replaced contract or missing/damaged output marks stale entries, never deletes them.
         filename = item.get("file", "")
         valid_filename = filename == key + ".tga" and key in known
         target = media / filename if valid_filename else None
-        if target is None or not target.is_file() or target.is_symlink() or hashlib.sha256(target.read_bytes()).hexdigest() != item.get("sha256"):
+        dimensions_match = (key in known and item.get("width") == specs_by_id[key]["width"]
+                            and item.get("height") == specs_by_id[key]["height"])
+        if not dimensions_match or target is None or not target.is_file() or target.is_symlink() or hashlib.sha256(target.read_bytes()).hexdigest() != item.get("sha256"):
             item["status"] = "obsolete"
-            messages.append(f"OBSOLETE {key}: output missing, altered or outside current contract")
+            messages.append(f"OBSOLETE {key}: output missing, altered or outside current contract dimensions")
     for key in sorted(known):
         if key not in manifest["assets"] or manifest["assets"][key]["status"] != "imported":
             messages.append(f"MISSING {key}: procedural fallback remains active")

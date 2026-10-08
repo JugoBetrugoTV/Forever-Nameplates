@@ -205,7 +205,7 @@ def test_use_frame_artwork_removes_preset_ornaments_preserves_custom_and_undo(ru
         assert(s:Update("artFrame",{enabled=false,color={.2,.3,.4,.5},width=300}))
         assert(s:UseFrameArtwork())
         assert(s:Element("artFrame").enabled and s:Element("artFrame").color[1]==1)
-        assert(s:Element("artFrame").width==256)
+        assert(s:Element("artFrame").width==128)
         assert(not s:Element("leftWing").enabled and not s:Element("rightWing").enabled)
         assert(s:Element(custom).enabled and s:Element("health").enabled and s:Element("name").enabled)
         assert(NS.DB.Current().elements[8].enabled==false)

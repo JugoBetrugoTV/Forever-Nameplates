@@ -11,13 +11,14 @@ args = parser.parse_args()
 docs = args.reference / "docs/api"
 required = {
     "Guild-Social-Chat/RaidMarkers.md": ["RaidMarkers.GetRaidTargetIndex"],
+    "UI-Widgets-Frames/C_Texture.md": ["C_Texture.GetAtlasInfo"],
     "System-Config/C_Secrets.md": ["C_Secrets.ShouldUnitIdentityBeSecret"],
     "UI-Systems-Input/C_NamePlate.md": ["C_NamePlate.GetNamePlateForUnit"],
     "UI-Widgets-Frames/SimpleStatusBarAPI.md": ["SimpleStatusBarAPI.SetValue", "SimpleStatusBarAPI.SetMinMaxValues", "SimpleStatusBarAPI.SetTimerDuration", "SimpleStatusBarAPI.SetOrientation", "SimpleStatusBarAPI.SetReverseFill"],
-    "UI-Widgets-Frames/SimpleTextureBaseAPI.md": ["SimpleTextureBaseAPI.SetRotation", "SimpleTextureBaseAPI.SetTexture", "SimpleTextureBaseAPI.SetTexCoord"],
+    "UI-Widgets-Frames/SimpleTextureBaseAPI.md": ["SimpleTextureBaseAPI.SetRotation", "SimpleTextureBaseAPI.SetTexture", "SimpleTextureBaseAPI.SetTexCoord", "SimpleTextureBaseAPI.SetBlendMode", "SimpleTextureBaseAPI.SetAtlas"],
     "UI-Widgets-Frames/SimpleFrameAPI.md": ["SimpleFrameAPI.CreateMaskTexture", "SimpleFrameAPI.RegisterEvent", "SimpleFrameAPI.SetClipsChildren"],
     "UI-Widgets-Frames/SimpleButtonAPI.md": ["SimpleButtonAPI.IsEnabled"],
-    "UI-Widgets-Frames/SimpleFontStringAPI.md": ["SimpleFontStringAPI.SetText", "SimpleFontStringAPI.SetFont"],
+    "UI-Widgets-Frames/SimpleFontStringAPI.md": ["SimpleFontStringAPI.SetText", "SimpleFontStringAPI.SetFont", "SimpleFontStringAPI.SetShadowColor", "SimpleFontStringAPI.SetShadowOffset"],
     "Units-Combat-PvP/Unit.md": ["Unit.UnitHealth", "Unit.UnitHealthMax", "Unit.UnitCastingDuration", "Unit.UnitChannelDuration", "Unit.UnitClassBase", "Unit.UnitClassification", "Unit.UnitReaction", "Unit.UnitIsPlayer", "Unit.UnitPlayerControlled"],
 }
 count = 0

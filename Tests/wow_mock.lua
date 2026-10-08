@@ -49,7 +49,7 @@ function F:ClearFocus() self.focus=false end
 function F:HighlightText() self.highlighted=true end
 function F:SetScrollChild(child) self.scrollChild=child end
 function F:SetTexCoord(...) self.texCoord={...} end
-function F:SetTexture(path) self.texture=path end
+function F:SetTexture(path) self.texture=path; self.atlas=nil; return true end
 function F:SetColorTexture(...) self.color={...} end
 function F:SetVertexColor(...) self.vertexColor={...} end
 function F:SetRotation(v) self.rotation=v end
@@ -121,3 +121,10 @@ function SetRaidTargetIconTexture(texture,index)
     local column=(index-1)%4; local row=math.floor((index-1)/4)
     texture:SetTexCoord(column/4,(column+1)/4,row/4,(row+1)/4)
 end
+
+function F:SetShadowOffset(...) self.shadowOffset={...} end
+function F:SetShadowColor(...) self.shadowColor={...} end
+function F:SetBlendMode(mode) self.blendMode=mode end
+
+C_Texture={GetAtlasInfo=function(atlas) return Mock.atlases and Mock.atlases[atlas] end}
+function F:SetAtlas(atlas,useSize,filter,reset) self.atlas=atlas; self.atlasReset=reset end

@@ -42,7 +42,10 @@ local function draw(part,e)
         t:SetVertexColor(unpack(e.color)); if rotation and t.SetRotation then t:SetRotation(rotation) end; t:Show()
     end
     local w,h=e.width,e.height
-    if e.shape=="brackets" then
+    if e.shape=="outline" then
+        rect(1,-w/2-.5,0,1,h+2); rect(2,w/2+.5,0,1,h+2)
+        rect(3,0,h/2+.5,w,1); rect(4,0,-h/2-.5,w,1)
+    elseif e.shape=="brackets" then
         for i=1,4 do
             local x=(i%2==1 and -1 or 1)*w/2
             local y=(i<=2 and 1 or -1)*h/2
@@ -79,19 +82,40 @@ function Renderer.Apply(view,layout)
         f:ClearAllPoints(); f:SetPoint("CENTER",view.root,"CENTER",e.x,e.y)
         f:SetSize(e.width,e.height); f:SetAlpha(e.alpha); f:SetFrameLevel(view.root:GetFrameLevel()+e.layer)
         if part.bar then
+            local native=NS.NativeMedia[e.asset]
+            f:SetStatusBarTexture(native and native.path or white)
             f:SetStatusBarColor(unpack(e.color)); f:SetOrientation(e.vertical and "VERTICAL" or "HORIZONTAL")
             if f.SetReverseFill then f:SetReverseFill(e.reverse) end
         end
         if part.text then
-            part.text:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",e.fontSize,"OUTLINE")
+            local native=NS.NativeMedia[e.asset]
+            part.text:SetFont(native and native.font or STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",e.fontSize,native and native.flags or "OUTLINE")
+            part.text:SetShadowColor(0,0,0,1)
+            part.text:SetShadowOffset(native and native.shadow and native.shadow[1] or 0,native and native.shadow and native.shadow[2] or 0)
             part.text:SetTextColor(unpack(e.color)); part.text:SetJustifyH("CENTER")
         end
         draw(part,e)
         if part.raid then part.raid:SetVertexColor(unpack(e.color)) end
         if part.image then
             part.image:SetVertexColor(unpack(e.color))
-            local path=NS.Media.files[e.asset]
-            if path then part.image:SetTexture("Interface\\AddOns\\"..NS.folder.."\\Media\\"..path) end
+            local native=NS.NativeMedia[e.asset]
+            local file=NS.Media.files[e.asset]
+            local path=native and native.path or (file and ("Interface\\AddOns\\"..NS.folder.."\\Media\\"..file))
+            part.imageReady=false
+            if native and native.atlas then
+                local info=C_Texture and NS.Compat.Public(C_Texture.GetAtlasInfo,native.atlas)
+                if type(info)=="table" and part.image.SetAtlas then
+                    part.imageReady=pcall(part.image.SetAtlas,part.image,native.atlas,false,nil,true)
+                    if part.imageReady then part.image:SetBlendMode("BLEND") end
+                end
+            elseif path then
+                local ok,success=pcall(part.image.SetTexture,part.image,path)
+                part.imageReady=ok and not NS.Compat.Secret(success) and success==true
+                if part.imageReady then
+                    part.image:SetTexCoord(unpack(native and native.coords or {0,1,0,1}))
+                    part.image:SetBlendMode(native and native.blend or "BLEND")
+                end
+            end
         end
         f:SetShown(e.enabled)
         view.parts[#view.parts+1]=part
@@ -107,7 +131,8 @@ function Renderer.Update(view,state,unit)
     for _,part in ipairs(view.parts) do
         local e=part.element
         local show=e.enabled
-        if part.image then show=show and NS.Media.files[e.asset]~=nil end
+        if part.image then show=show and part.imageReady end
+        if e.source=="target" then show=show and state.target==true end
         if part.kind=="target" then show=show and state.target end
         if part.raid then
             local marker=state.raidMarker
@@ -132,6 +157,10 @@ function Renderer.Update(view,state,unit)
             end
         end
         if part.text then
+            local native=NS.NativeMedia[e.asset]
+            if native and native.reactionText then
+                part.text:SetTextColor(unpack(NS.Rules.HealthColor(view.layout.rules,{colorMode="reaction"},state,e.color)))
+            end
             local value=e.text
             if e.source=="name" then value=state.name
             elseif e.source=="health" then value=state.healthText

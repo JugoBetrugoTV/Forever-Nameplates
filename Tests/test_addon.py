@@ -160,7 +160,7 @@ def test_protected_forbidden_and_combat_attachments(runtime):
 def test_gui_load_controls_drag_history_and_combat_pause(runtime):
     runtime.execute('''
         SlashCmdList.FOREVERNAMEPLATES("")
-        assert(NS.Studio.root:IsShown() and NS.Studio.page=="gallery")
+        assert(NS.Studio.root:IsShown() and NS.Studio.page=="studio")
         NS.Studio.ShowPage("studio"); NS.Studio.Select("health")
         NS.Studio.Change({width=220}); assert(NS.DB.Current().elements[2].width==220)
         assert(NS.Studio.session:Undo()); NS.Studio.Refresh(); assert(NS.DB.Current().elements[2].width==180)
@@ -221,7 +221,8 @@ def test_asset_contract_matches_registered_keys(runtime):
     contract = json.loads((ROOT / "Tools/art_requests.json").read_text())
     for asset in contract["assets"]:
         assert runtime.globals().NS.Model.assets[asset["id"]] is True
-    assert len(contract["assets"]) == 13
+    assert len(contract["assets"]) == 7
+    assert all(a["reference"]["element"] == "overhead unit nameplate" for a in contract["assets"])
 
 def test_undo_paste_keeps_selection_valid(runtime):
     runtime.execute('''

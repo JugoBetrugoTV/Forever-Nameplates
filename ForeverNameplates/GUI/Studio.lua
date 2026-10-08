@@ -41,6 +41,12 @@ end
 function Studio.Select(id)
     Studio.session.selected=id; Studio.RefreshInspector(); Studio.RefreshHandles()
 end
+function Studio.ArtworkReady(element)
+    for _,part in ipairs(Studio.view and Studio.view.parts or {}) do
+        if part.element.id==element.id and part.image then return part.imageReady==true end
+    end
+    return false
+end
 function Studio.RefreshInspector()
     local e=Studio.session:Element()
     if not e or not Studio.inspector then return end
@@ -63,7 +69,7 @@ function Studio.RefreshInspector()
     Studio.elementPicker:SetValue(e.id)
     local art=Studio.session:Element("artFrame")
     Studio.useFrameArt:SetEnabled(art~=nil and art.kind=="artwork" and NS.Media.files[art.asset]~=nil)
-    Studio.resizeHandle:SetShown(e.enabled and not e.locked and (e.kind~="artwork" or NS.Media.files[e.asset]~=nil))
+    Studio.resizeHandle:SetShown(e.enabled and not e.locked and (e.kind~="artwork" or Studio.ArtworkReady(e)))
     Studio.resizeHandle:ClearAllPoints()
     Studio.resizeHandle:SetPoint("CENTER",Studio.view.root,"CENTER",e.x+e.width/2,e.y-e.height/2)
 end
@@ -113,7 +119,7 @@ function Studio.StartDrag(handle,mode)
 end
 function Studio.RefreshHandles()
     if not Studio.canvas then return end
-    for _,h in ipairs(Studio.handles) do h:Hide() end
+    for _,h in ipairs(Studio.handles) do h:Hide(); h.element=nil end
     for i,e in ipairs(Studio.session.layout.elements) do
         local h=Studio.handles[i]
         if not h then
@@ -127,7 +133,7 @@ function Studio.RefreshHandles()
         h.element=e; h:SetSize(math.max(10,e.width),math.max(10,e.height))
         h:ClearAllPoints(); h:SetPoint("CENTER",Studio.view.root,"CENTER",e.x,e.y)
         h:SetFrameLevel(Studio.view.root:GetFrameLevel()+25+e.layer)
-        h.mark:SetShown(e.id==Studio.session.selected); h:SetShown(e.enabled and (e.kind~="artwork" or NS.Media.files[e.asset]~=nil))
+        h.mark:SetShown(e.id==Studio.session.selected); h:SetShown(e.enabled and (e.kind~="artwork" or Studio.ArtworkReady(e)))
     end
 end
 function Studio.RefreshGrid()
@@ -157,6 +163,11 @@ function Studio.Refresh()
     R.Update(Studio.view,Studio.scenarios[Studio.scenario])
     Studio.RefreshHandles(); Studio.RefreshInspector(); Studio.RefreshGrid(); Studio.Status()
     Studio.gridButton.label:SetText(Studio.session.snap==0 and "Grid: off" or "Grid: 4 px")
+    local sourceChoice="Game nameplates"
+    for i,entry in ipairs(NS.GameNameplates) do
+        if entry.layout and entry.layout.name==Studio.session.layout.name then sourceChoice=i; break end
+    end
+    Studio.gameNameplatePicker:SetValue(sourceChoice)
     if Studio.page=="sandbox" then Studio.RefreshSandbox() end
     if Studio.page=="rules" then Studio.RefreshRules() end
 end
@@ -243,6 +254,20 @@ function Studio.CreateEditor(page)
     Studio.useFrameArt=W.Button(page,"Use imported frame; remove preset ornaments",0,-536,360,function()
         if attempt(Studio.session:UseFrameArtwork()) then Studio.Refresh() end
     end)
+    Studio.gameNameplatePicker=W.Dropdown(page,376,-536,214,function()
+        local choices={}
+        for i,entry in ipairs(NS.GameNameplates) do
+            choices[#choices+1]={value=i,label=entry.game..(entry.layout and " / source draft" or " / reference unavailable"),disabled=entry.layout==nil}
+        end
+        return choices
+    end,function(value)
+        local entry=NS.GameNameplates[value]
+        if not entry or not entry.layout then return false end
+        local ok,err=Studio.session:Commit(entry.layout)
+        if attempt(ok,err) then Studio.Refresh(); return true end
+        return false
+    end)
+    Studio.gameNameplatePicker:SetValue("Game nameplates")
     local inspector=CreateFrame("Frame",nil,page); inspector:SetSize(258,478); inspector:SetPoint("TOPLEFT",610,-80); W.Paint(inspector,"panel")
     Studio.inspector={fields={}}
     Studio.inspector.title=W.Label(inspector,"",13,12,-12)
@@ -276,7 +301,7 @@ function Studio.CreateEditor(page)
     Studio.inspector.source=W.Dropdown(inspector,12,-338,234,{{value="name",label="Unit name"},{value="health",label="Health text"},
         {value="level",label="Level"},{value="classification",label="Classification"},{value="class",label="Class abbreviation"},{value="cast",label="Cast text"},{value="static",label="Custom text"}},function(value) return Studio.Change({source=value}) end)
     Studio.inspector.shape=W.Dropdown(inspector,12,-370,234,{{value="rect",label="Rectangle"},{value="diamond",label="Diamond"},
-        {value="rune",label="Rune"},{value="brackets",label="Brackets"},{value="segments",label="Segments"}},function(value) return Studio.Change({shape=value}) end)
+        {value="outline",label="Outline"},{value="rune",label="Rune"},{value="brackets",label="Brackets"},{value="segments",label="Segments"}},function(value) return Studio.Change({shape=value}) end)
     Studio.inspector.asset=W.Dropdown(inspector,12,-370,234,function()
         local choices={}; for _,id in ipairs(NS.Catalog.Assets()) do choices[#choices+1]={value=id,label=id} end; return choices
     end,function(value) return Studio.Change({asset=value}) end)
@@ -494,5 +519,5 @@ function Studio.Open()
         W.Label(root,"FNP  "..NS.version.."\n\nOriginal layouts\nLive preview\nLocal profiles\n\nArtwork pending",10,28,-324,{.6,.6,.62,1})
         UISpecialFrames=UISpecialFrames or {}; table.insert(UISpecialFrames,"ForeverNameplatesStudio")
     end
-    Studio.root:Show(); Studio.ShowPage(Studio.page or "gallery")
+    Studio.root:Show(); Studio.ShowPage(Studio.page or "studio")
 end

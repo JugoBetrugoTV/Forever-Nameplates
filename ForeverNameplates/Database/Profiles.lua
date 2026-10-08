@@ -19,7 +19,7 @@ function DB.Initialize(saved)
         if migrated then data.profiles.Default = migrated end
     elseif type(saved) == "table" and (saved.version == 1 or saved.version == 2) then
         local n = 1
-        data.profiles.Default=NS.Copy(NS.Presets[1].layout)
+        data.profiles.Default=NS.Copy(NS.GameNameplates[1].layout)
         if type(saved.profiles) == "table" then
             local default=NS.Model.Validate(saved.profiles.Default)
             if default then data.profiles.Default=default end
@@ -39,7 +39,7 @@ function DB.Initialize(saved)
         if data.profiles[saved.active] then data.active = saved.active end
         data.live = saved.live == true
     end
-    data.profiles.Default = data.profiles.Default or NS.Copy(NS.Presets[1].layout)
+    data.profiles.Default = data.profiles.Default or NS.Copy(NS.GameNameplates[1].layout)
     DB.data = data
     return data
 end

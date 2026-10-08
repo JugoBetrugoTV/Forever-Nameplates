@@ -14,6 +14,8 @@ function Catalog.Assets()
     return assets
 end
 function Catalog.AssetSize(asset)
+    local size=NS.ImportSizes[asset]
+    if size then return size[1],size[2] end
     for _,preset in ipairs(NS.Presets) do
         for _,element in ipairs(preset.layout.elements) do
             if element.kind=="artwork" and element.asset==asset then return element.width,element.height end

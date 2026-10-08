@@ -1,26 +1,32 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.3.1**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.4.0**, kein fertig poliertes Release.
 
-## Designziel: konkrete Originalreferenzen
+## Designziel: ausschließlich Nameplates aus sieben Spielen
 
-Gewünscht ist der möglichst genaue Look ausgewählter Spiel-Oberflächen. Die vorhandenen
-Presets sind **Platzhalter**, keine 1:1-Nachbauten. Für die endgültigen Designs müssen konkrete
-Spielversionen und UI-Ansichten feststehen. Die Grafikaufträge sind jetzt referenzgebunden;
-freie generische Fantasy-Prompts werden nicht mehr als Lösung verwendet.
+Gewünscht sind die **Nameplates über Units**, möglichst 1:1 wie in WoW Classic,
+Dragonflight, Guild Wars 2, SWTOR, ESO, FFXIV und Diablo IV. Keine Target-Portraitframes,
+Player-HUDs oder zusätzliche GUI-Artwork. Die zwölf bisherigen Presets sind Legacy-Platzhalter.
 
-Im Studio aktiviert **Use imported frame; remove preset ornaments** den importierten Rahmen
-ohne Farbtint und blendet die vorgegebenen geometrischen Ornamente aus. Eigene Komponenten
-bleiben erhalten. Diese Aktion ist mit Undo rückgängig zu machen; sie ersetzt keine Designabnahme.
-Die Grafikmaße werden übernommen, einschließlich der höheren Arena-Grafik. Passt das Original
-nicht zum aktuellen Importvertrag, werden zuerst Layout und Vertrag angepasst, statt das Original
-zu verzerren. Bisher fehlt für jeden Slot die genaue Originalansicht.
+Unter **Game nameplates** im Layout-Studio stehen zwei quellengestützte Varianten bereit:
+Classic **1.15.8** und Dragonflight **10.2.7**. Sie verwenden echte clientseitige Nameplate-
+Texturpfade und aus FrameXML abgeleitete Maße/Anordnung. Beide sind `source draft`, noch kein
+bestätigter 1:1-Pixelvergleich im Forever-Client. Die anderen fünf Spiele sind dort deaktiviert,
+weil ihre Originalseiten durch den Cloud-Netzwerkproxy blockiert werden. Neue Installationen
+starten mit der Classic-Quellenvariante; vorhandene Profile werden nicht umgestaltet. Es werden dafür keine
+erfundenen Designs angeboten. [Quellen, tatsächlicher Stand und benötigter Netzwerkzugriff](docs/NAMEPLATE_REFERENCES.md).
+
+Die aktive Grafikliste enthält sieben Nameplate-Rahmen. Classic benötigt eine versetzte
+103×10-Öffnung im 128×16-Frame; Dragonflight einen 86×4-Fill. Alte Importausgaben mit
+abweichenden Vertragsmaßen werden als obsolete markiert und bleiben auf der Platte erhalten.
+Die Maße der anderen Spiele bleiben vorläufig. Die Rahmenersatz-Aktion im Editor betrifft
+statische Artwork/Ornamente; sie gleicht alte freie Profile nicht automatisch vollständig ab.
 
 ## Was dieser Stand enthält
 
 - Eigene Studio-Oberfläche: Preset-Galerie, Layout-Editor, Mehrfachvorschau, Einheiten-Regeln, Profile und Diagnose.
-- Zwölf unterschiedliche prozedurale Layouts mit eigenständigen Silhouetten.
+- Zwei quellengestützte WoW-Nameplate-Layouts und zwölf weiter editierbare Legacy-Platzhalter.
 - Neue Health-, Cast-, Text-, Hintergrund-, Ziel-, Dekorations- und importierte Artwork-Elemente
   über den Komponenten-Katalog hinzufügen; fehlendes Artwork wird erst nach Import angeboten.
 - Elemente verschieben und per Eckgriff skalieren, Koordinaten/Größe/Ebene/Deckkraft bearbeiten, Sichtbarkeit und Sperren,
@@ -46,15 +52,11 @@ neue Overlays im Kampf werden bis zum Kampfende zurückgestellt. Gesundheitswert
 direkt an StatusBar-Widgets; geheime Texte und Prozentwerte werden ausgelassen.
 Dies ist keine vollständige Ablösung der Blizzard-Nameplates.
 
-## Visuelle Vorschau
+## Frühere Illustration
 
-![KI-generierte Illustration von Studio, Galerie und Unit-Regeln](docs/previews/forever-nameplates-0.3.0.png)
-
-**KI-generierte Illustration, kein Ingame-Screenshot und keine pixelgenaue Darstellung.**
-Sie veranschaulicht die implementierten Bereiche anhand des Quellcodes; Anordnung, Farben,
-Schrift, Bedienelemente und einzelne Preset-Silhouetten können abweichen. Die Klassenkürzel
-und Leveltexte im Beispiel wurden als zusätzliche Komponenten dargestellt und sind nicht
-Bestandteil des unveränderten Classic-Presets. Finale Originalgrafiken stehen weiterhin aus.
+Die [KI-Illustration aus Version 0.3.0](docs/previews/forever-nameplates-0.3.0.png) ist archiviert.
+Sie zeigt eine angenäherte Editor-Oberfläche und freie Platzhalter, keine originalgetreuen
+Game-Nameplates und keinen tatsächlichen Screenshot. Sie ist keine Vorlage für den aktuellen Auftrag.
 
 ## Im Spiel installieren
 
@@ -84,7 +86,8 @@ nicht als „Other units“. Die Vorschau simuliert diese Fälle. Sie verändert
 Im Komponenten-Katalog stehen **Raid marker** und **Class badge** zur Verfügung;
 Klassenmarker sind farbige Kürzel, eigene Klassenicons sind noch nicht enthalten.
 Neue Share-Codes beginnen mit `FN2:` und benötigen mindestens Version 0.3.0 für den Import.
-Alte `FN1:`-Codes bleiben importierbar. Profile und Layouts werden auf Datenversion 2 migriert.
+Alte `FN1:`-Codes bleiben importierbar. Neue native WoW-Layouts mit ihren Asset-IDs
+und Outline benötigen mindestens 0.4.0 zum Import. Profile und Layouts werden auf Datenversion 2 migriert.
 
 Auf der Profilseite schützt eine Rückfrage vor Löschen und vollständigem Zurücksetzen.
 `Default` ist nicht löschbar. Charaktere eines gelöschten Profils werden auf `Default` umgestellt.
@@ -129,8 +132,8 @@ Ein Language-Server-Binary ist nicht Bestandteil des Addon-ZIPs.
 
 ## Artwork und weitere Entwicklung
 
-[ART_ASSET_REQUESTS.md](ART_ASSET_REQUESTS.md) enthält die 13 referenzgebundenen Grafikaufträge
-in vier Batches inklusive vollständiger Bildgenerierungs-Prompts.
+[ART_ASSET_REQUESTS.md](ART_ASSET_REQUESTS.md) enthält die sieben Nameplate-Grafikaufträge
+in zwei Batches inklusive vollständiger Bildgenerierungs-Prompts.
 PNGs einfach in `ArtDrop/` ablegen und den Importer ausführen; `--watch` überwacht den Ordner.
 Im Spiel anschließend `/reload`, damit Manifest und Texturen neu geladen werden.
 Die erste Version verwendet keine angeblich fertigen oder kopierten Spielgrafiken.

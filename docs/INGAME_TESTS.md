@@ -34,6 +34,17 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Copy/Paste erzeugt unabhängige IDs; Löschen und Element-Reset funktionieren.
 - [ ] Kein Datenverlust bei Kampfbeginn während Drag, Textbearbeitung oder ColorPicker.
 
+## Quellengestützte Spiel-Nameplates
+
+- [ ] Game nameplates: Classic 1.15.8 / DF 10.2.7 übernehmen, Undo/Redo und Share-Export prüfen.
+- [ ] Client besitzt Nameplate-Border/BarFill; tatsächliche Pixel gegen die Originalversion vergleichen.
+- [ ] Classic-Border-Crop 0..1/0.5..1, Level rechts und Raidmarker links stimmen bei Scale=1.
+- [ ] DF: 86×4 Health, 86×8 Cast, Kontur, Target-Highlight und Raidmarker links vergleichen.
+- [ ] Cast-Hintergrundatlas verfügbar oder unsichtbar; kein Atlas-Sheet statt des gewünschten Ausschnitts.
+- [ ] Lateinische Friz-Schrift, Shadow, Fontgröße und CVar/UI-Scale gegen Original messen.
+- [ ] Ressourcenwechsel zwischen Source-/Legacy-/Custom-Profilen hinterlässt keine alten Crops oder Blend-Modi.
+- [ ] Erst nach direktem visuellem Vergleich 1:1-Abnahme dokumentieren; bisher keine Abnahme.
+
 ## Unit-Regeln und Marker
 
 - [ ] Preset-/Klassen-/Reaktionsfarben stimmen bei Spieler, NPC und Pet; Unbekanntes fällt zurück.
@@ -79,7 +90,7 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Importierte TGAs haben echte Transparenz, freie Healthöffnung und keine Artefakte.
 - [ ] Jede Karte besitzt eine erkennbare eigenständige Silhouette bei nativer Größe.
 - [ ] Importierter Rahmen ohne Farbtint: Preset-Ornamente entfernen, Custom-Elemente bewahren, Undo/Locks prüfen.
-- [ ] Arena-/Header-Artwork beim Hinzufügen in den vertraglichen Originalmaßen anzeigen.
+- [ ] Classic-Frame 128×16/versetzte 103×10-Öffnung und DF-Frame 128×32 in korrekten Importmaßen anzeigen.
 - [ ] Originalvorlage bei 100 % mit Silhouette, Text, Icons, Material und Zustand vergleichen.
 - [ ] Fehlende Art-Dateien behalten die prozeduralen Platzhalter; keine fehlenden Texture-Pfade.
 - [ ] 40+ sichtbare Plates: Speicher, FPS und CPU im Client messen, nicht aus Mock-Zeiten ableiten.

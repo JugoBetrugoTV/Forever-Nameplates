@@ -105,3 +105,18 @@ einer festgelegten grafischen Komponente. Die vorhandenen 13 Grafikaufträge ble
 9. Entstehen Blocked-Action-/Taint-Fehler oder Interaktionen mit anderen Nameplate-Addons?
 
 Abweichungen zu diesen Quellen sind bislang **nicht gemessen**, da kein Client vorhanden ist.
+
+## Nameplate-only-Quellenlayouts ab 0.4.0
+
+Die Original-Nameplate-Struktur von Classic 1.15.8 und Dragonflight 10.2.7 wurde gesondert aus
+historischen FrameXML-Tags abgeleitet; sie ersetzt nicht die Forever-API als Laufzeitreferenz.
+Die Quellen dienen ausschließlich dem Look der Nameplates, nicht Targetframes/HUDs. Runtime-
+Aufrufe verwenden weiterhin die Forever-Definitionen. Neue recherchierte Methoden sind
+SetBlendMode, SetAtlas, GetAtlasInfo sowie FontString SetShadowColor/SetShadowOffset.
+Native/Owned-Texture-Crops und Blend-Modi werden beim Pool-Reuse zurückgesetzt. SetTexture-
+Ergebnis muss öffentlich `true` sein; fehlgeschlagene/abgelehnte Image-Texturen bleiben unsichtbar.
+Native Atlasverfügbarkeit wird anhand öffentlicher GetAtlasInfo-Daten geprüft; der Aufruf darf
+keine heimliche Alternative für blockierte Geheimwerte verwenden.
+
+[Quellen, genaue Geometrie und Einschränkungen](NAMEPLATE_REFERENCES.md). Die fünf weiteren
+Spiele sind wegen HTTP-403-Netzwerkblockade unrecherchiert; es wird kein Original-Look behauptet.
