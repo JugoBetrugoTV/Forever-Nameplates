@@ -1,5 +1,27 @@
 # Forever API-Audit — 2026-10-08
 
+## Referenzbilder und importierte Fill-Texturen ab 0.5.0
+
+Vier offizielle FFXIV-JPEGs wurden erfolgreich heruntergeladen und visuell geprüft.
+[Originalansichten, SHA-256 und Arbeitsmessungen](INTERNET_IMAGE_REFERENCES.md).
+FFXIV ist damit nicht mehr wegen fehlenden Bildzugriffs blockiert; fertige Assets,
+Originalschrift und unbekannte Client-Patch-/UI-Skalierung bleiben offen.
+Der rote Referenzentwurf setzt keine FFXIV-Claim-Erkennung oder Spawn-Buchstaben in WoW voraus.
+
+`SimpleStatusBarAPI.SetStatusBarTexture(asset)` hat laut Forever-Dokumentation eine boolesche
+Rückgabe. Apply prüft sie mit pcall und Secret-Prädikat; fehlende/abgelehnte Texture-Ergebnisse
+blenden die Bar aus und zeigen keine alte gepoolte Füllung. Zulässig sind vorhandene native
+Pfadressourcen oder bekannte importierte Fill-Dateien. Der Plain-Default verwendet WHITE8X8.
+Importierte Gradienten liegen im Fill selbst; das FFXIV-Template verwendet weißen Tint und
+Preset-Farbmodus. Secret-Health wird weiterhin direkt an StatusBar-Widgets weitergereicht.
+Health/Cast-Auswahl und dekorative Artwork-Auswahl filtern unterschiedliche Asset-Rollen.
+
+Die helle Textkontur nutzt acht verschobene FontStrings hinter dem dynamischen Text.
+Sie werden einmal angelegt, wiederverwendet und bei anderem Layout verborgen. `Lv` wird nur
+mit öffentlichen Zahlen/Strings zusammengesetzt, geheime oder leere Level bleiben leer.
+Arial Narrow ist ausdrücklich eine vorhandene lokale Ersatzschrift, kein Originalfont-Nachweis.
+Zusätzliche Drawcalls und Pixelwirkung müssen im Client geprüft werden; kein Ingame-Performancebeleg.
+
 ## Clientfehler und Minimap ab 0.4.1
 
 Der tatsächliche Client meldete `SimpleEditBoxAPI.SetFont`: Flags sind obligatorisch,
@@ -136,5 +158,5 @@ Ergebnis muss öffentlich `true` sein; fehlgeschlagene/abgelehnte Image-Texturen
 Native Atlasverfügbarkeit wird anhand öffentlicher GetAtlasInfo-Daten geprüft; der Aufruf darf
 keine heimliche Alternative für blockierte Geheimwerte verwenden.
 
-[Quellen, genaue Geometrie und Einschränkungen](NAMEPLATE_REFERENCES.md). Die fünf weiteren
-Spiele sind wegen HTTP-403-Netzwerkblockade unrecherchiert; es wird kein Original-Look behauptet.
+[Quellen, genaue Geometrie und Einschränkungen](NAMEPLATE_REFERENCES.md). Die übrigen vier
+Fremdspiele haben noch keine visuell geprüfte Nameplate-Vorlage; es wird kein Original-Look behauptet.

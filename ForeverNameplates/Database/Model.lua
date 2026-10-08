@@ -4,7 +4,8 @@ NS.Model = Model
 Model.kinds = {health=true, cast=true, text=true, panel=true, target=true, ornament=true, artwork=true,raid=true,class=true}
 Model.assets = {classic_frame=true,dragonflight_frame=true,guildwars_frame=true,galactic_frame=true,
     medieval_frame=true,fantasy_frame=true,minimal_frame=true,arena_frame=true,neon_frame=true,
-    arcane_frame=true,horde_frame=true,celestial_frame=true,studio_header=true,wow_nameplate_fill=true,wow_classic_nameplate_border=true,wow_nameplate_selection=true,wow_df_cast_background=true,wow_nameplate_name=true,wow_classic_name=true,wow_nameplate_level=true}
+    arcane_frame=true,horde_frame=true,celestial_frame=true,studio_header=true,wow_nameplate_fill=true,wow_classic_nameplate_border=true,wow_nameplate_selection=true,wow_df_cast_background=true,wow_nameplate_name=true,wow_classic_name=true,wow_nameplate_level=true,
+    ffxiv_hp_fill=true,ffxiv_enemy_icon=true,ffxiv_name_label=true,ffxiv_level_label=true}
 Model.sources = {name=true, health=true, level=true, cast=true, static=true,classification=true,class=true,target=true}
 Model.shapes = {rect=true, diamond=true, rune=true, brackets=true, segments=true,outline=true}
 Model.fields = {id=true, kind=true, source=true, text=true, x=true, y=true, width=true,

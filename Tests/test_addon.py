@@ -221,7 +221,8 @@ def test_asset_contract_matches_registered_keys(runtime):
     contract = json.loads((ROOT / "Tools/art_requests.json").read_text())
     for asset in contract["assets"]:
         assert runtime.globals().NS.Model.assets[asset["id"]] is True
-    assert len(contract["assets"]) == 7
+    assert len(contract["assets"]) == 9
+    assert sum(asset.get("role", "frame") == "frame" for asset in contract["assets"]) == 7
     assert all(a["reference"]["element"] == "overhead unit nameplate" for a in contract["assets"])
 
 def test_undo_paste_keeps_selection_valid(runtime):

@@ -1,4 +1,4 @@
-# Forever Nameplates — Entwicklungsstand 0.4.1
+# Forever Nameplates — Entwicklungsstand 0.5.0
 
 Stand: 2026-10-08. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
@@ -6,6 +6,16 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Implementiert
 
+- Vier offizielle FFXIV-Overhead-Referenzen heruntergeladen, angesehen und gehasht;
+  rote Claimed-Enemy-Plate vermessen. 896×192-JPEGs, unbekannte UI-Skalierung/Version,
+  Messunsicherheit ±2 Pixel und tatsächliche Grenzen dokumentiert.
+- FFXIV-Layout-Entwurf mit gemessenem 236×12-Innenraum, importierter HP-Füllung/Frame/Icon,
+  hellem Label-Outline und `Lv`-Präfix. Menüauswahl erst mit allen drei importierten Assets.
+  Lokale Arial-Narrow-Ersatzschrift, kein erfundener Spawn-Buchstabe oder WoW-Claim-Status.
+- Health/Cast verwenden passende importierte Fill-Texturen, eigene Inspector-Auswahl und Plain-Reset;
+  öffentliche boolesche Texture-Ergebnisse prüfen, fehlende/abgelehnte Texturen und alte Pool-Inhalte ausblenden.
+- Transparente Rahmen/Icon-Verträge und getrennt deckende RGBA-Füllungen; neun PNG-Aufträge
+  (sieben Rahmen plus zwei FFXIV-Komponenten), synchronisierte Prompt-Dokumentation mit CI-Prüfung.
 - Alle GUI-SetFont-Aufrufe mit obligatorischem Flags-Argument; strenger Mock reproduziert die
   gemeldete Client-Signatur. Studio-Aufbau wird erst nach vollständiger Konstruktion freigegeben;
   fehlgeschlagene Builds werden verborgen/verworfen und sind erneut öffnungsfähig.
@@ -42,14 +52,14 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
   berücksichtigt die neuen Classic-/Dragonflight-Importmaße; bestehende Legacy-Profile bleiben erhalten.
 - Galerie kennzeichnet fehlendes Artwork sichtbar als Platzhalter.
 - Asset-Importer/Watcher, TGA-Konvertierung, Alpha-/Öffnungsprüfung, Checksums, Manifest,
-  Erkennung fehlender/veränderter Dateien, sieben aktive Nameplate-Aufträge; GUI-Header aus dem Auftrag entfernt.
+  Erkennung fehlender/veränderter Dateien, neun aktive Nameplate-Asset-Aufträge; GUI-Header aus dem Auftrag entfernt.
 - Installierbares versioniertes ZIP, gepinnte eingebettete Libraries, geprüfter Upstream-Refresh.
 - GitHub-Workflow für Tests und Paket-Artefakt; laufende Änderungen werden gemäß Nutzerwunsch
   nach lokaler Prüfung direkt auf `origin/main` gepusht. Veröffentlichungspräferenz in AGENTS.md.
 
 ## Geprüft und Grenzen der Evidenz
 
-- **133 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **143 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -69,8 +79,11 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Zusätzlich obligatorische Font-Flags, fehlgeschlagener Aufbau an drei verschiedenen Seiten,
   Wiederöffnung ohne doppelte Sandbox/Registrierung sowie Minimap-Klick/Tooltip/Hide/Drag,
   UI-Skalierung, fünf Winkel, Speicherung/Migration, verspätete Minimap und Kampfsperre.
-- Version 0.4.1 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
-- 36 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- Zusätzlich FFXIV-Vertragsöffnung/Alpha, deckender 32-Bit-Fill, obsolete Frame-Datenbewahrung,
+  Filtern von Frame-/Fill-Auswahl, Plain-Reset/Undo, drei notwendige Assets, Source-Share-Roundtrip,
+  fehlende/abgelehnte/Secret-Texture-Ergebnisse, Secret-Health-Forwarding und Outline-/Prefix-Pool-Reset.
+- Version 0.5.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 37 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.
@@ -85,18 +98,20 @@ Keine Fremdspiel-Grafik wurde in das Addon kopiert. Die Clientressourcen werden 
 Die beiden Quellenlayouts sind noch keine vollständig abgenommenen 1:1-Replikate: tatsächliche
 Texturpixel, Fonts/CVar-Scaling und zusätzliche Unit-Zustände sind im Client ungeprüft.
 
-Die anderen fünf Spiel-Layouts sind noch deaktiviert, weil keine visuell geprüfte Originalreferenz
-vorliegt. Inzwischen sind mehrere Webseiten erreichbar; vier konkrete FFXIV-Originalbildlinks
-wurden im offiziellen UI-Guide gefunden. Deren Bildhost bleibt per CONNECT-403 gesperrt.
-GW2/WoW-Wikis und SWTOR-Suche liefern HTTP 403. [Aktuelle Bildquellen und Abrufbefunde](docs/INTERNET_IMAGE_REFERENCES.md).
-Die Allowlist ist inzwischen lesbar und wurde unter Erhalt bestehender Regeln ergänzt;
-Netzwerkentwürfe sind gespeichert, die Aktivierung des FFXIV-CDNs bleibt ungeprüft.
+Vier FFXIV-Originalbilder sind jetzt tatsächlich heruntergeladen und angesehen. Die rote
+Gegner-Plate ist als vermessener Entwurf vorbereitet; ihre Menüauswahl bleibt bis zum Import
+von Rahmen, Fill und Icon gesperrt. Keine Originalschrift vorhanden, keine automatische
+FFXIV-Claim-Erkennung oder Spawn-Letter-Nachbildung. [Originalbilder, Messungen und Abrufbefunde](docs/INTERNET_IMAGE_REFERENCES.md).
+Die anderen vier Fremdspiele bleiben ohne geprüfte Vorlage deaktiviert. GW2/WoW-Wikis und
+SWTOR-Suche liefern weiterhin HTTP 403; weitere Web-/RSS-Suchen ergaben keine geeignete Vorlage.
+Die ergänzten Netzwerkregeln bleiben erhalten; FFXIV-CDN-Zugriff ist durch HTTP 200 bestätigt.
 
-**Alle sieben aktiven Nameplate-PNGs** stehen noch aus. Classic/Dragonflight können für den
+**Alle neun aktiven Nameplate-PNGs** stehen noch aus. Classic/Dragonflight können für den
 jetzigen Strukturstand vorhandene Clientressourcen verwenden. Die Grafikaufträge verlangen
 Original-Nameplate-Crops; frühere generische Themes, GUI-Header und Targetframe-/HUD-Aufträge
 sind nicht Teil des neuen Auftrags. Die KI-Illustration 0.3.0 wurde in der README als frühere
-Illustration archiviert. Für fremde Spiele bestehen noch vorläufige Importmaße, keine erfundene
+Illustration archiviert. FFXIV-Maße sind Arbeitsmessungen in JPEG-Pixeln; Patch/UI-Scale unbekannt.
+Für die anderen vier Fremdspiele bestehen noch vorläufige Importmaße, keine erfundene
 Originalgeometrie. Pixelidentität wird nicht von technischen PNG- oder Mock-Tests behauptet.
 
 ## API-Grenzen
@@ -113,8 +128,8 @@ Originalgeometrie. Pixelidentität wird nicht von technischen PNG- oder Mock-Tes
 
 ## Nächste Phasen
 
-1. Netzwerkzugriff für die fünf blockierten Original-Nameplate-Quellen ermöglichen und reale Bilder prüfen.
-2. GW2/SWTOR/ESO/FFXIV/Diablo-IV-Nameplates mit gemessener Geometrie und konkreten Artwork-Aufträgen nachbauen.
+1. Die drei FFXIV-Komponenten anhand der jetzt verfügbaren Originale liefern/importieren und am Bild vergleichen.
+2. GW2/SWTOR/ESO/Diablo-IV-Originalbilder finden, prüfen, vermessen und deren Nameplates nachbauen.
 3. Native WoW-Layouts am Referenzbild und Forever-Client abgleichen; Font-/Scale-/Textur-Abweichungen dokumentieren.
 4. Namens-/Level-/Elite-/Target-/Cast-Details ausschließlich zur Abbildung dieser Nameplates ergänzen.
 5. Gelieferte Nameplate-Grafiken importieren, nebeneinander bei 100 % vergleichen und im Spiel polieren.

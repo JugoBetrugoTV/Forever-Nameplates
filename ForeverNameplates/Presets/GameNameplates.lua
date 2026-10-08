@@ -28,12 +28,24 @@ local dragonflight={version=2,name="WoW Dragonflight — Nameplate 10.2.7",rules
     E("raid","raid",-69,0,22,22,{1,1,1,1},{layer=8}),
     E("castBack","artwork",0,-8,84,8,{1,1,1,1},{layer=2,asset="wow_df_cast_background"}),
 }}
+-- Measured JPEG coordinates, not inferred game UI units. Only the claimed-enemy appearance.
+-- Font is a documented local fallback; FFXIV claim/spawn states are not WoW unit states.
+local ffxiv={version=2,name="FFXIV — Claimed enemy reference draft",rules=NS.Rules.Defaults(),elements={
+    E("back","panel",0,0,236,12,{72/255,25/255,28/255,1},{layer=1}),
+    E("health","health",0,0,236,12,{1,1,1,1},{asset="ffxiv_hp_fill"}),
+    E("artFrame","artwork",0,0,256,32,{1,1,1,1},{layer=6,asset="fantasy_frame"}),
+    E("name","text",22,24,194,32,{1,.35,.36,1},{source="name",fontSize=32,layer=7,asset="ffxiv_name_label"}),
+    E("level","text",-112,24,70,32,{1,.35,.36,1},{source="level",fontSize=30,layer=7,asset="ffxiv_level_label"}),
+    E("enemyIcon","artwork",-168,24,32,32,{1,1,1,1},{layer=7,asset="ffxiv_enemy_icon"}),
+}}
 NS.GameNameplates={
     {id="wow_classic",game="World of Warcraft Classic",version="1.15.8",layout=classic,status="source_reconstruction"},
     {id="wow_dragonflight",game="World of Warcraft Dragonflight",version="10.2.7",layout=dragonflight,status="source_reconstruction"},
     {id="guildwars2",game="Guild Wars 2",status="reference_blocked"},
     {id="swtor",game="Star Wars: The Old Republic",status="reference_blocked"},
     {id="eso",game="The Elder Scrolls Online",status="reference_blocked"},
-    {id="ffxiv",game="Final Fantasy XIV",status="reference_blocked"},
+    {id="ffxiv",game="Final Fantasy XIV",status="reference_measured_assets_pending",layout=ffxiv,
+        requires={"fantasy_frame","ffxiv_hp_fill","ffxiv_enemy_icon"},
+        reference="https://na.finalfantasyxiv.com/uiguide/battle/battle-np/battle_np_bar.html"},
     {id="diablo4",game="Diablo IV",status="reference_blocked"},
 }

@@ -8,23 +8,24 @@ Legacy-Platzhalter und erfüllen den neuen Original-Look nicht.
 
 ## Quellenstand 2026-10-08
 
-Aktualisierung 0.4.1: Die Tabelle dokumentiert den ursprünglichen Abrufblock. Mehrere Webseiten
-sind inzwischen erreichbar; FFXIV-Bildlinks wurden im offiziellen Guide gefunden, deren CDN
-bleibt gesperrt. [Aktuelle Abrufbefunde und konkrete Originalbildlinks](INTERNET_IMAGE_REFERENCES.md).
+Aktualisierung 0.5.0: Vier FFXIV-Bilder
+sind jetzt heruntergeladen und angesehen; die rote Gegner-Plate wurde vermessen und als
+Asset-abhängiger Layout-Entwurf vorbereitet. Patch/UI-Scale und Originalschrift bleiben offen.
+[Originalansichten, Messungen und Abrufbefunde](INTERNET_IMAGE_REFERENCES.md).
 
 | Spiel | Quelle / Abruf | Umsetzungsstand |
 | --- | --- | --- |
 | WoW Classic | Gethe/wow-ui-source Tag 1.15.8, Commit `e0099491e5ce94ef87c791b053f1e1509b5fd7ac` | Struktur als eigenes Nameplate-Layout rekonstruiert; Client-Texturpixel nicht geprüft |
 | WoW Dragonflight | Gethe/wow-ui-source Tag 10.2.7, Commit `6b65c2922baca3db5a28fb39b69c95cef1047bec` | Struktur als eigenes Nameplate-Layout rekonstruiert; Client-Texturpixel nicht geprüft |
 | Guild Wars 2 | Abruf von `wiki.guildwars2.com` durch Proxy mit HTTP 403 abgelehnt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
-| SWTOR | Abruf von `www.swtor.com` durch Proxy mit HTTP 403 abgelehnt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
-| ESO | Abruf von `help.elderscrollsonline.com` durch Proxy mit HTTP 403 abgelehnt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
-| FFXIV | Abruf von `na.finalfantasyxiv.com` durch Proxy mit HTTP 403 abgelehnt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
-| Diablo IV | Abruf von `news.blizzard.com` durch Proxy mit HTTP 403 abgelehnt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
+| SWTOR | Forumstartseite erreichbar, gezielte Nameplate-Suche HTTP 403 | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
+| ESO | Supportseite inzwischen erreichbar, keine geeignete Nameplate-Referenz bestätigt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
+| FFXIV | [Offizieller Enemy-Display-Names-Guide](https://na.finalfantasyxiv.com/uiguide/battle/battle-np/battle_np_bar.html), vier JPEGs HTTP 200 | Rote Gegner-Plate vermessen, Entwurf bis zum Import dreier Assets gesperrt; Ersatzschrift/Version/Scale offen |
+| Diablo IV | Newsstartseite inzwischen erreichbar, keine geeignete Nameplate-Referenz bestätigt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
 
 Die zwei WoW-Versionen sind Arbeitsreferenzen des Agenten, keine vom Nutzer ausdrücklich
 gewählten Patches. GitHub-Zugriff funktioniert über den bereitgestellten HTTPS-Proxy.
-Auch der eskalierte Versuch auf die FFXIV-Seite blieb am HTTP-403-Netzwerkproxy hängen;
+Der frühere eskalierte Versuch auf die FFXIV-Seite blieb am HTTP-403-Netzwerkproxy hängen;
 das war keine Ablehnung der automatischen Genehmigungsprüfung. Ein HTTP-403-Tunnelabbruch
 bestätigt nicht, dass die angefragte URL existiert oder ein geeignetes Bild enthalten würde.
 Es wurden keine blockierten Bilder als angeschaut oder nachgebaut protokolliert.
@@ -91,7 +92,7 @@ Bild-CDN-Hosts erst ergänzen, wenn sie tatsächlich aus einer erreichbaren Refe
 ermittelt wurden. Die Allowlist wurde inzwischen mit dem Konfigurations-Lesetool geprüft.
 Die oben genannten Hosts, `warcraft.wiki.gg`, `www.google.com`, `www.bing.com` und der tatsächlich
 nachgewiesene FFXIV-Bildhost `lds-img.finalfantasyxiv.com` wurden als Entwurf gespeichert.
-Bestehende Regeln und voreingestellte Git-/Paketdomains bleiben erhalten. Die CDN-Freigabe ist
-noch nicht als aktiv nachgewiesen. Nach Änderung speichern/veröffentlichen und die betroffenen
+Bestehende Regeln und voreingestellte Git-/Paketdomains bleiben erhalten. Der FFXIV-CDN-Zugriff ist jetzt durch vier
+JPEG-Abrufe HTTP 200 nachgewiesen. Nach Änderung speichern/veröffentlichen und die betroffenen
 Abrufe wiederholen. Originalbild, Version, Nameplate-Zustand und gemessene Pixelgeometrie
 festhalten, erst dann das nächste Spiel-Layout nachbauen.

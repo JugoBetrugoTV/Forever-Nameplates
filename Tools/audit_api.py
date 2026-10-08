@@ -14,7 +14,7 @@ required = {
     "UI-Widgets-Frames/C_Texture.md": ["C_Texture.GetAtlasInfo"],
     "System-Config/C_Secrets.md": ["C_Secrets.ShouldUnitIdentityBeSecret"],
     "UI-Systems-Input/C_NamePlate.md": ["C_NamePlate.GetNamePlateForUnit"],
-    "UI-Widgets-Frames/SimpleStatusBarAPI.md": ["SimpleStatusBarAPI.SetValue", "SimpleStatusBarAPI.SetMinMaxValues", "SimpleStatusBarAPI.SetTimerDuration", "SimpleStatusBarAPI.SetOrientation", "SimpleStatusBarAPI.SetReverseFill"],
+    "UI-Widgets-Frames/SimpleStatusBarAPI.md": ["SimpleStatusBarAPI.SetValue", "SimpleStatusBarAPI.SetMinMaxValues", "SimpleStatusBarAPI.SetTimerDuration", "SimpleStatusBarAPI.SetOrientation", "SimpleStatusBarAPI.SetReverseFill", "SimpleStatusBarAPI.SetStatusBarTexture"],
     "UI-Widgets-Frames/SimpleTextureBaseAPI.md": ["SimpleTextureBaseAPI.SetRotation", "SimpleTextureBaseAPI.SetTexture", "SimpleTextureBaseAPI.SetTexCoord", "SimpleTextureBaseAPI.SetBlendMode", "SimpleTextureBaseAPI.SetAtlas"],
     "UI-Widgets-Frames/SimpleFrameAPI.md": ["SimpleFrameAPI.CreateMaskTexture", "SimpleFrameAPI.RegisterEvent", "SimpleFrameAPI.SetClipsChildren"],
     "UI-Widgets-Frames/SimpleButtonAPI.md": ["SimpleButtonAPI.IsEnabled", "SimpleButtonAPI.RegisterForClicks", "SimpleButtonAPI.SetHighlightTexture"],

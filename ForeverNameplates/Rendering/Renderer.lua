@@ -83,7 +83,10 @@ function Renderer.Apply(view,layout)
         f:SetSize(e.width,e.height); f:SetAlpha(e.alpha); f:SetFrameLevel(view.root:GetFrameLevel()+e.layer)
         if part.bar then
             local native=NS.NativeMedia[e.asset]
-            f:SetStatusBarTexture(native and native.path or white)
+            local file=NS.ImportKinds[e.asset]=="fill" and NS.Media.files[e.asset]
+            local path=native and native.path or (file and ("Interface\\AddOns\\"..NS.folder.."\\Media\\"..file))
+            local ok,success=pcall(f.SetStatusBarTexture,f,path or white)
+            part.barReady=ok and not NS.Compat.Secret(success) and success==true and (e.asset=="" or path~=nil)
             f:SetStatusBarColor(unpack(e.color)); f:SetOrientation(e.vertical and "VERTICAL" or "HORIZONTAL")
             if f.SetReverseFill then f:SetReverseFill(e.reverse) end
         end
@@ -93,6 +96,18 @@ function Renderer.Apply(view,layout)
             part.text:SetShadowColor(0,0,0,1)
             part.text:SetShadowOffset(native and native.shadow and native.shadow[1] or 0,native and native.shadow and native.shadow[2] or 0)
             part.text:SetTextColor(unpack(e.color)); part.text:SetJustifyH("CENTER")
+            for _,outline in ipairs(part.outlines or {}) do outline:Hide() end
+            if native and native.outline then
+                part.outlines=part.outlines or {}
+                for i,offset in ipairs({{-1,0},{1,0},{0,-1},{0,1},{-1,-1},{-1,1},{1,-1},{1,1}}) do
+                    local outline=part.outlines[i]
+                    if not outline then outline=f:CreateFontString(nil,"BACKGROUND"); part.outlines[i]=outline end
+                    outline:ClearAllPoints(); outline:SetSize(e.width,e.height)
+                    outline:SetPoint("CENTER",f,"CENTER",offset[1],offset[2])
+                    outline:SetFont(native.font,e.fontSize,""); outline:SetTextColor(unpack(native.outline))
+                    outline:SetJustifyH("CENTER"); outline:Show()
+                end
+            end
         end
         draw(part,e)
         if part.raid then part.raid:SetVertexColor(unpack(e.color)) end
@@ -117,7 +132,7 @@ function Renderer.Apply(view,layout)
                 end
             end
         end
-        f:SetShown(e.enabled)
+        f:SetShown(e.enabled and (not part.bar or part.barReady) and (not part.image or part.imageReady))
         view.parts[#view.parts+1]=part
     end
     return true
@@ -146,6 +161,7 @@ function Renderer.Update(view,state,unit)
             part.text:SetTextColor(unpack(NS.Rules.classColors[state.class] or e.color))
         end
         if part.bar then
+            show=show and part.barReady
             if part.kind=="health" then
                 part.bar:SetStatusBarColor(unpack(NS.Rules.HealthColor(view.layout.rules,effect,state,e.color)))
                 if unit then show=show and NS.Compat.Health(part.bar,unit)
@@ -169,7 +185,12 @@ function Renderer.Update(view,state,unit)
             elseif e.source=="classification" then value=state.classification
             elseif e.source=="class" then value=state.isPlayer==true and NS.Rules.classLabels[state.class] or "" end
             if part.kind=="class" then value=NS.Rules.classLabels[state.class] end
+            if native and native.prefix then
+                if not NS.Compat.Secret(value) and (type(value)=="string" or type(value)=="number") and tostring(value)~="" then value=native.prefix..value
+                else value="" end
+            end
             part.text:SetText(value or "")
+            for _,outline in ipairs(part.outlines or {}) do outline:SetText(value or "") end
         end
         part.frame:SetShown(show==true)
     end

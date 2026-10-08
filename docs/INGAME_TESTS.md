@@ -92,6 +92,12 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 
 ## Artwork und Last
 
+- [ ] FFXIV-Auswahl gesperrt bei fehlendem Rahmen/Fill/Icon; nach Import aller drei und `/reload` anwählbar.
+- [ ] FFXIV-Entwurf am roten Originalbild bei Quellmaßstab prüfen: Balken, Icon, Labelkontur und `Lv`-Präfix.
+- [ ] Ersatzschrift, fehlender Spawn-Buchstabe und unbekannte Original-UI-Skalierung separat dokumentieren.
+- [ ] HP-Füllung übernimmt ihre eigenen Farben ohne Tint; Color-Regeln ändern sie nur nach Nutzerkonfiguration.
+- [ ] Health/Cast-Fülltexturen wechseln, auf Plain fill zurückstellen, Undo/Profilwechsel/Widget-Reuse prüfen.
+- [ ] Fehlender/abgelehnter StatusBar-Texture-Aufruf zeigt keinen alten Fill und keine erfundene Originaltextur.
 - [ ] Importierte TGAs haben echte Transparenz, freie Healthöffnung und keine Artefakte.
 - [ ] Jede Karte besitzt eine erkennbare eigenständige Silhouette bei nativer Größe.
 - [ ] Importierter Rahmen ohne Farbtint: Preset-Ornamente entfernen, Custom-Elemente bewahren, Undo/Locks prüfen.

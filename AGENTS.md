@@ -15,13 +15,14 @@ and actual client behavior. Do not circumvent secret values or protected-frame r
 
 Run functional checks with `/workspace/forever-tools/bin/python -m pytest -q` when available,
 otherwise create a local venv and install requirements-dev.lock. Verify bundled libraries
-with `python Tools/vendor_libraries.py`, then package with `python Tools/package.py`.
+with `python Tools/vendor_libraries.py`, check generated prompts with
+`python Tools/art_prompts.py --check`, then package with `python Tools/package.py`.
 The GitHub workflow repeats tests and packaging; do not report a remote CI pass without evidence.
 
 The owner requests ONLY overhead unit nameplates from WoW Classic, Dragonflight, Guild Wars 2,
 SWTOR, ESO, FFXIV and Diablo IV, matching their originals. Do not substitute target portraits,
 player HUDs, screen-wide boss bars or new editor artwork. Generic-inspired designs do not satisfy
-this scope. Read docs/NAMEPLATE_REFERENCES.md for pinned WoW sources and the concrete network block. Exact game versions and screenshots/links are required before
+this scope. Read docs/NAMEPLATE_REFERENCES.md and docs/INTERNET_IMAGE_REFERENCES.md for current sources and access evidence. Four FFXIV originals are now inspected; its red-plate geometry is a JPEG measurement with unknown patch/UI scale and a local font fallback, not a confirmed match. Require all three imported FFXIV assets before enabling its menu choice. Exact game versions and screenshots/links are required before
 claiming a matched design. The existing presets and AI illustration are placeholders, not
 reference-accurate or approved visuals. Use reference-bound ART_ASSET_REQUESTS.md prompts;
 do not invent a source or promise pixel identity from image generation. If reference geometry

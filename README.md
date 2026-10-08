@@ -1,7 +1,7 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.4.1**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.5.0**, kein fertig poliertes Release.
 
 Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
 den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
@@ -17,22 +17,30 @@ Player-HUDs oder zusätzliche GUI-Artwork. Die zwölf bisherigen Presets sind Le
 Unter **Game nameplates** im Layout-Studio stehen zwei quellengestützte Varianten bereit:
 Classic **1.15.8** und Dragonflight **10.2.7**. Sie verwenden echte clientseitige Nameplate-
 Texturpfade und aus FrameXML abgeleitete Maße/Anordnung. Beide sind `source draft`, noch kein
-bestätigter 1:1-Pixelvergleich im Forever-Client. Die anderen fünf Spiele sind dort deaktiviert,
-weil noch keine vollständige Original-Nameplate visuell geprüft wurde. Konkrete FFXIV-Bildlinks
-liegen inzwischen im [Rechercheprotokoll](docs/INTERNET_IMAGE_REFERENCES.md); deren Bildhost ist noch gesperrt. Neue Installationen
+bestätigter 1:1-Pixelvergleich im Forever-Client. Für FFXIV wurden vier offizielle Originalbilder
+heruntergeladen und angesehen. Ein dritter Entwurf folgt der vermessenen roten Gegner-Plate;
+er wird erst nach Import der drei zugehörigen Assets auswählbar. Die Originalschrift fehlt noch,
+Arial Narrow ist eine lokale Ersatzschrift. Claim-Zustände/Spawn-Buchstaben werden nicht aus
+WoW-Unit-Daten erfunden. Die anderen vier Fremdspiele bleiben ohne geprüfte Vorlage deaktiviert.
+[Originalbilder und Vermessung](docs/INTERNET_IMAGE_REFERENCES.md). Neue Installationen
 starten mit der Classic-Quellenvariante; vorhandene Profile werden nicht umgestaltet. Es werden dafür keine
 erfundenen Designs angeboten. [Quellen, tatsächlicher Stand und benötigter Netzwerkzugriff](docs/NAMEPLATE_REFERENCES.md).
 
 Die aktive Grafikliste enthält sieben Nameplate-Rahmen. Classic benötigt eine versetzte
 103×10-Öffnung im 128×16-Frame; Dragonflight einen 86×4-Fill. Alte Importausgaben mit
 abweichenden Vertragsmaßen werden als obsolete markiert und bleiben auf der Platte erhalten.
-Die Maße der anderen Spiele bleiben vorläufig. Die Rahmenersatz-Aktion im Editor betrifft
+FFXIV: Rahmen-Canvas 256×32 mit 236×12-Öffnung, passende 236×12-Fülltextur und 32×32-Gegnericon.
+Die Maße beziehen sich auf JPEG-Pixel mit ungefähr ±2 Pixel Kantenunsicherheit, nicht nachgewiesene
+Spiel-UI-Punkte. Die Maße der anderen Spiele bleiben vorläufig. Die Rahmenersatz-Aktion im Editor betrifft
 statische Artwork/Ornamente; sie gleicht alte freie Profile nicht automatisch vollständig ab.
 
 ## Was dieser Stand enthält
 
 - Eigene Studio-Oberfläche: Preset-Galerie, Layout-Editor, Mehrfachvorschau, Einheiten-Regeln, Profile und Diagnose.
-- Zwei quellengestützte WoW-Nameplate-Layouts und zwölf weiter editierbare Legacy-Platzhalter.
+- Zwei quellengestützte WoW-Nameplate-Layouts, ein FFXIV-Referenzentwurf mit erforderlichem Artwork
+  und zwölf weiter editierbare Legacy-Platzhalter.
+- Importierte HP-/Cast-Fülltexturen mit eigenem Asset-Auswahlfeld, public-bool-Rückgabeprüfung
+  und Pool-Reset; FFXIV-Label mit heller Kontur und `Lv`-Präfix bei öffentlichen Levelwerten.
 - Neue Health-, Cast-, Text-, Hintergrund-, Ziel-, Dekorations- und importierte Artwork-Elemente
   über den Komponenten-Katalog hinzufügen; fehlendes Artwork wird erst nach Import angeboten.
 - Elemente verschieben und per Eckgriff skalieren, Koordinaten/Größe/Ebene/Deckkraft bearbeiten, Sichtbarkeit und Sperren,
@@ -138,7 +146,8 @@ Ein Language-Server-Binary ist nicht Bestandteil des Addon-ZIPs.
 
 ## Artwork und weitere Entwicklung
 
-[ART_ASSET_REQUESTS.md](ART_ASSET_REQUESTS.md) enthält die sieben Nameplate-Grafikaufträge
+[ART_ASSET_REQUESTS.md](ART_ASSET_REQUESTS.md) enthält die sieben Nameplate-Rahmenaufträge
+plus FFXIV-Fülltextur und Gegnericon (neun PNGs insgesamt),
 in zwei Batches inklusive vollständiger Bildgenerierungs-Prompts.
 PNGs einfach in `ArtDrop/` ablegen und den Importer ausführen; `--watch` überwacht den Ordner.
 Im Spiel anschließend `/reload`, damit Manifest und Texturen neu geladen werden.

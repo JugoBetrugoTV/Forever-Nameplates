@@ -32,8 +32,12 @@ def validate(source: Path, spec: dict) -> Image.Image:
             raise ValueError("An explicit alpha channel is required")
         image = original.convert("RGBA")
     low, high = image.getchannel("A").getextrema()
-    if low == 255 or high == 0:
-        raise ValueError("Image is entirely opaque or invisible; genuine transparency is required")
+    if high == 0:
+        raise ValueError("Image is entirely invisible")
+    if spec.get("alpha", True) and low == 255:
+        raise ValueError("Image is entirely opaque; genuine transparency is required")
+    if spec.get("alpha", True) is False and low != 255:
+        raise ValueError("Health-fill textures must be fully opaque RGBA")
     if spec.get("window"):
         w, h = spec["window"]
         x, y = image.width // 2, image.height // 2

@@ -59,7 +59,7 @@ function F:SetTexture(path) self.texture=path; self.atlas=nil; return true end
 function F:SetColorTexture(...) self.color={...} end
 function F:SetVertexColor(...) self.vertexColor={...} end
 function F:SetRotation(v) self.rotation=v end
-function F:SetStatusBarTexture(path) self.statusTexture=path end
+function F:SetStatusBarTexture(path) self.statusTexture=path; return true end
 function F:SetStatusBarColor(...) self.statusColor={...} end
 function F:SetMinMaxValues(low,high) self.min=low; self.max=high end
 function F:SetValue(v) self.value=v end

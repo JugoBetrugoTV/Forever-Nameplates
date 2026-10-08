@@ -26,6 +26,8 @@ jobs:
         run: python Tools/vendor_libraries.py
       - name: Run Lua and asset tests
         run: python -m pytest -q
+      - name: Verify artwork prompt contracts
+        run: python Tools/art_prompts.py --check
       - name: Package addon
         run: python Tools/package.py
       - name: Upload installable addon

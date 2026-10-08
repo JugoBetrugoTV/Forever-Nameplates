@@ -7,11 +7,19 @@ Catalog.entries = {
     {id="target", label="Target brackets"}, {id="ornament", label="Decoration"},
     {id="artwork", label="Imported artwork"}, {id="raid",label="Raid marker"}, {id="class",label="Class badge"},
 }
-function Catalog.Assets()
+function Catalog.Assets(kind)
     local assets={}
-    for id in pairs(NS.Media.files) do if NS.Model.assets[id] then assets[#assets+1]=id end end
+    local bars=kind=="health" or kind=="cast"
+    for id in pairs(NS.Media.files) do
+        if NS.Model.assets[id] and (NS.ImportKinds[id]=="fill")==bars then assets[#assets+1]=id end
+    end
     table.sort(assets)
     return assets
+end
+function Catalog.GameReady(entry)
+    if not entry or not entry.layout then return false end
+    for _,asset in ipairs(entry.requires or {}) do if not NS.Media.files[asset] then return false end end
+    return true
 end
 function Catalog.AssetSize(asset)
     local size=NS.ImportSizes[asset]

@@ -63,10 +63,11 @@ function Studio.RefreshInspector()
     Studio.inspector.reverse:SetEnabled(e.kind=="health" or e.kind=="cast")
     Studio.inspector.fields.fontSize:SetEnabled(e.kind=="text" or e.kind=="class")
     Studio.inspector.text:SetText(e.text); Studio.inspector.text:SetEnabled(e.kind=="text")
-    Studio.inspector.asset:SetShown(e.kind=="artwork")
-    Studio.inspector.shape:SetShown(e.kind~="artwork")
+    local textured=e.kind=="artwork" or e.kind=="health" or e.kind=="cast"
+    Studio.inspector.asset:SetShown(textured)
+    Studio.inspector.shape:SetShown(not textured)
     Studio.inspector.asset:SetValue(e.asset)
-    Studio.inspector.asset:SetEnabled(#NS.Catalog.Assets()>0)
+    Studio.inspector.asset:SetEnabled(#NS.Catalog.Assets(e.kind)>0 or e.kind=="health" or e.kind=="cast")
     Studio.elementPicker:SetValue(e.id)
     local art=Studio.session:Element("artFrame")
     Studio.useFrameArt:SetEnabled(art~=nil and art.kind=="artwork" and NS.Media.files[art.asset]~=nil)
@@ -259,12 +260,13 @@ function Studio.CreateEditor(page)
     Studio.gameNameplatePicker=W.Dropdown(page,376,-536,214,function()
         local choices={}
         for i,entry in ipairs(NS.GameNameplates) do
-            choices[#choices+1]={value=i,label=entry.game..(entry.layout and " / source draft" or " / reference unavailable"),disabled=entry.layout==nil}
+            local ready=NS.Catalog.GameReady(entry)
+            choices[#choices+1]={value=i,label=entry.game..(ready and " / source draft" or entry.layout and " / artwork pending" or " / reference unavailable"),disabled=not ready}
         end
         return choices
     end,function(value)
         local entry=NS.GameNameplates[value]
-        if not entry or not entry.layout then return false end
+        if not NS.Catalog.GameReady(entry) then return false end
         local ok,err=Studio.session:Commit(entry.layout)
         if attempt(ok,err) then Studio.Refresh(); return true end
         return false
@@ -305,7 +307,12 @@ function Studio.CreateEditor(page)
     Studio.inspector.shape=W.Dropdown(inspector,12,-370,234,{{value="rect",label="Rectangle"},{value="diamond",label="Diamond"},
         {value="outline",label="Outline"},{value="rune",label="Rune"},{value="brackets",label="Brackets"},{value="segments",label="Segments"}},function(value) return Studio.Change({shape=value}) end)
     Studio.inspector.asset=W.Dropdown(inspector,12,-370,234,function()
-        local choices={}; for _,id in ipairs(NS.Catalog.Assets()) do choices[#choices+1]={value=id,label=id} end; return choices
+        local e=Studio.session:Element(); local kind=e and e.kind
+        local choices={}
+        if kind=="health" or kind=="cast" then choices[1]={value="",label="Plain fill"} end
+        if e and NS.NativeMedia[e.asset] and NS.NativeMedia[e.asset].path then choices[#choices+1]={value=e.asset,label=e.asset} end
+        for _,id in ipairs(NS.Catalog.Assets(kind)) do choices[#choices+1]={value=id,label=id} end
+        return choices
     end,function(value) return Studio.Change({asset=value}) end)
     W.Button(inspector,"Copy",12,-406,70,function() Studio.session:Copy() end)
     W.Button(inspector,"Paste",90,-406,70,function() attempt(Studio.session:Paste()); Studio.Refresh() end)

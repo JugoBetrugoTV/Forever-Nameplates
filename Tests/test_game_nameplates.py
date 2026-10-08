@@ -7,6 +7,7 @@ def test_only_nameplate_game_entries_and_source_geometry(runtime):
         assert(#NS.GameNameplates==7)
         for i,entry in ipairs(NS.GameNameplates) do
             if i<=2 then assert(entry.layout and NS.Model.Validate(entry.layout))
+            elseif i==6 then assert(entry.layout and NS.Model.Validate(entry.layout) and not NS.Catalog.GameReady(entry))
             else assert(not entry.layout and entry.status=="reference_blocked") end
         end
         local c=NS.GameNameplates[1].layout
@@ -25,7 +26,7 @@ def test_only_nameplate_game_entries_and_source_geometry(runtime):
     ''')
 
 
-@pytest.mark.parametrize('index', [1, 2])
+@pytest.mark.parametrize('index', [1, 2, 6])
 def test_game_nameplate_share_preserves_native_resources(runtime, index):
     runtime.globals().gameIndex = index
     runtime.execute('''

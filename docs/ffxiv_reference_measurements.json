@@ -1,0 +1,102 @@
+{
+  "game": "Final Fantasy XIV",
+  "source": "https://na.finalfantasyxiv.com/uiguide/battle/battle-np/battle_np_bar.html",
+  "retrieved": "2026-10-08",
+  "patch": null,
+  "ui_scale": null,
+  "references": [
+    {
+      "state": "unclaimed",
+      "url": "https://lds-img.finalfantasyxiv.com/uiguide/na/5e/9e139cf87504d0b6e816c272c1515abd38faed.jpg",
+      "sha256": "b38d54647d77c8f58e866761e66808aaf05f3b22bf32a4298416d7d8d1332837",
+      "dimensions": [
+        896,
+        192
+      ],
+      "seen": true
+    },
+    {
+      "state": "claimed",
+      "url": "https://lds-img.finalfantasyxiv.com/uiguide/na/51/66741e445c904df9cd7f06f839b03551192e53.jpg",
+      "sha256": "05fa79e89bed38a7e09e8327234b78e805a0a8fa3b764d6a00a0eb7a240b1cf4",
+      "dimensions": [
+        896,
+        192
+      ],
+      "seen": true
+    },
+    {
+      "state": "attacking",
+      "url": "https://lds-img.finalfantasyxiv.com/uiguide/na/71/bfd57bcf3542c45e03da53cefbd8999f9d1057.jpg",
+      "sha256": "036b8bc1c897f21031a0812ed1662c683f04b397b422199e20eb8b610a09c08c",
+      "dimensions": [
+        896,
+        192
+      ],
+      "seen": true
+    },
+    {
+      "state": "other-party",
+      "url": "https://lds-img.finalfantasyxiv.com/uiguide/na/37/0faba07d80ef234d73f8e584613faf85630ff5.jpg",
+      "sha256": "3be397ed838735a4421552d7d87015f74870ba88d0328c89b502d08fc599f187",
+      "dimensions": [
+        896,
+        192
+      ],
+      "seen": true
+    }
+  ],
+  "claimed_measurements": {
+    "units": "pixels in supplied JPEG, not game UI coordinates",
+    "bounds_approximate": true,
+    "uncertainty_pixels": 2,
+    "outer_bar_box": [
+      334,
+      102,
+      582,
+      122
+    ],
+    "bar_body_box": [
+      336,
+      104,
+      580,
+      120
+    ],
+    "fill_window_box": [
+      340,
+      106,
+      576,
+      118
+    ],
+    "level_box": [
+      308,
+      74,
+      380,
+      104
+    ],
+    "name_box": [
+      384,
+      74,
+      574,
+      104
+    ],
+    "enemy_icon_box": [
+      278,
+      74,
+      304,
+      104
+    ],
+    "spawn_letter_box": [
+      578,
+      72,
+      610,
+      104
+    ]
+  },
+  "implementation_limits": [
+    "No original font available; Arial Narrow fallback only.",
+    "FFXIV claim colors are not automatically mapped to WoW target/reaction states.",
+    "Enemy spawn letter is not represented in WoW data.",
+    "Only claimed-enemy template implemented; other three colors remain visual references."
+  ]
+}
