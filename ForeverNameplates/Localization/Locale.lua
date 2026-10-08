@@ -1,0 +1,18 @@
+local _, NS = ...
+local de = GetLocale and GetLocale() == "deDE"
+local messages = {
+    title = {"Forever Nameplates", "Forever Nameplates"},
+    gallery = {"Preset Gallery", "Preset-Galerie"},
+    studio = {"Layout Studio", "Layout-Studio"},
+    profiles = {"Profiles & Sharing", "Profile & Austausch"},
+    diagnostics = {"Diagnostics", "Diagnose"},
+    combat = {"Editing paused during combat.", "Bearbeitung im Kampf pausiert."},
+    apply = {"Apply layout", "Layout anwenden"},
+    undo = {"Undo", "Rückgängig"}, redo = {"Redo", "Wiederholen"},
+    preview = {"DESIGN SANDBOX", "DESIGN-VORSCHAU"},
+    live = {"Enable experimental live overlay", "Experimentelles Live-Overlay aktivieren"},
+    pending = {"Forever API and in-game validation pending", "Forever-API und Ingame-Test ausstehend"},
+}
+NS.L = setmetatable({}, {__index = function(_, key)
+    return messages[key] and messages[key][de and 2 or 1] or key
+end})

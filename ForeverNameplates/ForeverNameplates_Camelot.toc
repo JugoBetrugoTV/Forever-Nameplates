@@ -1,0 +1,21 @@
+## Interface: 16001
+## Title: Forever Nameplates
+## Notes: A visual nameplate studio. Forever API verification pending.
+## Author: JugoBetrugoTV
+## Version: 0.1.0
+## SavedVariables: ForeverNameplatesDB
+Libraries/LibStub.lua
+Libraries/LibDeflate.lua
+Core/Namespace.lua
+Localization/Locale.lua
+Media/Assets.lua
+Database/Model.lua
+Presets/Presets.lua
+Database/Profiles.lua
+Database/Share.lua
+Compatibility/Forever.lua
+Rendering/Renderer.lua
+Editor/Session.lua
+GUI/Widgets.lua
+GUI/Studio.lua
+Core/Bootstrap.lua

@@ -1,0 +1,7 @@
+{
+  "runtime.version": "Lua 5.1",
+  "workspace.library": ["../research/forever-api/types"],
+  "workspace.checkThirdParty": false,
+  "workspace.ignoreDir": ["Tests", "dist", ".venv"],
+  "diagnostics.globals": ["ForeverNameplatesDB", "SLASH_FOREVERNAMEPLATES1", "SLASH_FOREVERNAMEPLATES2", "LibStub", "ColorPickerFrame", "DEFAULT_CHAT_FRAME", "UISpecialFrames", "SlashCmdList", "STANDARD_TEXT_FONT"]
+}

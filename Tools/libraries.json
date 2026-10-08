@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "libraries": [
+    {
+      "file": "LibStub.lua",
+      "repository": "WoWUIDev/Ace3",
+      "commit": "40f4cc1356ae7fcc0cf71fc0a19dc7d50d6ae6c2",
+      "path": "LibStub/LibStub.lua",
+      "license": "Public Domain",
+      "sha256": "26401bc42c26d1d1b6f7ad9410aa464edcbe4d32d74ebadeeecd8c0110236f7d"
+    },
+    {
+      "file": "LibDeflate.lua",
+      "repository": "SafeteeWoW/LibDeflate",
+      "commit": "afc3b78d12fb3bcfa6b21e5332031ad3d7572e19",
+      "path": "LibDeflate.lua",
+      "license": "zlib",
+      "sha256": "880e396fbaac7dcf99d33fc706a7f129147f2910f8414a143f8dea57e327c06b"
+    },
+    {
+      "file": "LibDeflate-LICENSE.txt",
+      "repository": "SafeteeWoW/LibDeflate",
+      "commit": "afc3b78d12fb3bcfa6b21e5332031ad3d7572e19",
+      "path": "LICENSE.txt",
+      "license": "zlib",
+      "sha256": "07f118887f364847a7389185c703a1b0abf5a7f353d5cdc9da6a48c7f142bb16"
+    }
+  ]
+}
