@@ -1,7 +1,21 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.3.0**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.3.1**, kein fertig poliertes Release.
+
+## Designziel: konkrete Originalreferenzen
+
+Gewünscht ist der möglichst genaue Look ausgewählter Spiel-Oberflächen. Die vorhandenen
+Presets sind **Platzhalter**, keine 1:1-Nachbauten. Für die endgültigen Designs müssen konkrete
+Spielversionen und UI-Ansichten feststehen. Die Grafikaufträge sind jetzt referenzgebunden;
+freie generische Fantasy-Prompts werden nicht mehr als Lösung verwendet.
+
+Im Studio aktiviert **Use imported frame; remove preset ornaments** den importierten Rahmen
+ohne Farbtint und blendet die vorgegebenen geometrischen Ornamente aus. Eigene Komponenten
+bleiben erhalten. Diese Aktion ist mit Undo rückgängig zu machen; sie ersetzt keine Designabnahme.
+Die Grafikmaße werden übernommen, einschließlich der höheren Arena-Grafik. Passt das Original
+nicht zum aktuellen Importvertrag, werden zuerst Layout und Vertrag angepasst, statt das Original
+zu verzerren. Bisher fehlt für jeden Slot die genaue Originalansicht.
 
 ## Was dieser Stand enthält
 
@@ -115,7 +129,7 @@ Ein Language-Server-Binary ist nicht Bestandteil des Addon-ZIPs.
 
 ## Artwork und weitere Entwicklung
 
-[ART_ASSET_REQUESTS.md](ART_ASSET_REQUESTS.md) enthält die 13 konkreten Grafikaufträge
+[ART_ASSET_REQUESTS.md](ART_ASSET_REQUESTS.md) enthält die 13 referenzgebundenen Grafikaufträge
 in vier Batches inklusive vollständiger Bildgenerierungs-Prompts.
 PNGs einfach in `ArtDrop/` ablegen und den Importer ausführen; `--watch` überwacht den Ordner.
 Im Spiel anschließend `/reload`, damit Manifest und Texturen neu geladen werden.

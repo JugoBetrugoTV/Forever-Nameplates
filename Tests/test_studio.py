@@ -194,3 +194,61 @@ def test_paste_clamps_coordinates_at_layout_boundary(runtime):
         s.selected="health"; assert(s:Update("health",{x=512,y=-512})); assert(s:Copy())
         assert(s:Paste()); assert(s:Element().x==512 and s:Element().y==-512)
     ''')
+
+
+def test_use_frame_artwork_removes_preset_ornaments_preserves_custom_and_undo(runtime):
+    runtime.execute('''
+        local s=NS.Session.New(NS.DB.Current(),NS.DB.Save)
+        assert(not s:UseFrameArtwork() and #s.undo==0)
+        NS.Media.files.classic_frame="classic_frame.tga"
+        assert(s:Add("ornament")); local custom=s.selected
+        assert(s:Update("artFrame",{enabled=false,color={.2,.3,.4,.5},width=300}))
+        assert(s:UseFrameArtwork())
+        assert(s:Element("artFrame").enabled and s:Element("artFrame").color[1]==1)
+        assert(s:Element("artFrame").width==256)
+        assert(not s:Element("leftWing").enabled and not s:Element("rightWing").enabled)
+        assert(s:Element(custom).enabled and s:Element("health").enabled and s:Element("name").enabled)
+        assert(NS.DB.Current().elements[8].enabled==false)
+        assert(s:Undo()); assert(s:Element("leftWing").enabled and not s:Element("artFrame").enabled)
+        assert(s:Redo()); assert(not s:Element("leftWing").enabled)
+        assert(NS.Share.Import(NS.Share.Export(s.layout)).elements[8].enabled==false)
+    ''')
+
+
+def test_frame_artwork_respects_locks_and_combat_atomically(runtime):
+    runtime.execute('''
+        local s=NS.Session.New(NS.DB.Current(),NS.DB.Save)
+        NS.Media.files.classic_frame="classic_frame.tga"
+        assert(s:Update("leftWing",{locked=true}))
+        local count=#s.undo
+        assert(not s:UseFrameArtwork() and s:Element("leftWing").enabled and #s.undo==count)
+        assert(s:Update("leftWing",{locked=false})); assert(s:Update("artFrame",{locked=true}))
+        assert(not s:UseFrameArtwork() and s:Element("leftWing").enabled)
+        assert(s:Update("artFrame",{locked=false}))
+        Mock.combat=true; count=#s.undo
+        assert(not s:UseFrameArtwork() and s:Element("leftWing").enabled and #s.undo==count)
+    ''')
+
+
+def test_artwork_catalog_respects_native_asset_dimensions(runtime):
+    runtime.execute('''
+        NS.Media.files.arena_frame="arena_frame.tga"
+        local item=assert(NS.Catalog.Create("artwork","arena"))
+        assert(item.width==256 and item.height==128)
+        NS.Media.files.arena_frame=nil; NS.Media.files.studio_header="studio_header.tga"
+        item=assert(NS.Catalog.Create("artwork","header"))
+        assert(item.width==512 and item.height==64)
+    ''')
+
+
+def test_frame_artwork_button_requires_import_and_applies_operation(runtime):
+    runtime.execute('''
+        NS.Studio.Open(); NS.Studio.ShowPage("studio")
+        assert(not NS.Studio.useFrameArt:IsEnabled())
+        NS.Studio.useFrameArt.scripts.OnClick(); assert(#NS.Studio.session.undo==0)
+        NS.Media.files.classic_frame="classic_frame.tga"; NS.Studio.Refresh()
+        assert(NS.Studio.useFrameArt:IsEnabled())
+        NS.Studio.useFrameArt.scripts.OnClick()
+        assert(not NS.Studio.session:Element("leftWing").enabled)
+        assert(NS.Studio.session:Element("artFrame").enabled)
+    ''')

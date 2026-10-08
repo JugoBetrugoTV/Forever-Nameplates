@@ -78,6 +78,9 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 
 - [ ] Importierte TGAs haben echte Transparenz, freie Healthöffnung und keine Artefakte.
 - [ ] Jede Karte besitzt eine erkennbare eigenständige Silhouette bei nativer Größe.
+- [ ] Importierter Rahmen ohne Farbtint: Preset-Ornamente entfernen, Custom-Elemente bewahren, Undo/Locks prüfen.
+- [ ] Arena-/Header-Artwork beim Hinzufügen in den vertraglichen Originalmaßen anzeigen.
+- [ ] Originalvorlage bei 100 % mit Silhouette, Text, Icons, Material und Zustand vergleichen.
 - [ ] Fehlende Art-Dateien behalten die prozeduralen Platzhalter; keine fehlenden Texture-Pfade.
 - [ ] 40+ sichtbare Plates: Speicher, FPS und CPU im Client messen, nicht aus Mock-Zeiten ableiten.
 - [ ] Häufiges Ein-/Ausblenden, Profilwechsel, Kampfwechsel und Zone wechseln unter Last.

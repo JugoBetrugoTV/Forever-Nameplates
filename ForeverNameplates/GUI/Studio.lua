@@ -61,6 +61,8 @@ function Studio.RefreshInspector()
     Studio.inspector.asset:SetValue(e.asset)
     Studio.inspector.asset:SetEnabled(#NS.Catalog.Assets()>0)
     Studio.elementPicker:SetValue(e.id)
+    local art=Studio.session:Element("artFrame")
+    Studio.useFrameArt:SetEnabled(art~=nil and art.kind=="artwork" and NS.Media.files[art.asset]~=nil)
     Studio.resizeHandle:SetShown(e.enabled and not e.locked and (e.kind~="artwork" or NS.Media.files[e.asset]~=nil))
     Studio.resizeHandle:ClearAllPoints()
     Studio.resizeHandle:SetPoint("CENTER",Studio.view.root,"CENTER",e.x+e.width/2,e.y-e.height/2)
@@ -174,7 +176,7 @@ local function makePage(root)
 end
 function Studio.CreateGallery(page)
     W.Label(page,NS.L.gallery,22,0,0)
-    W.Label(page,"Twelve silhouettes. Original procedural placeholders; artwork pending.",11,0,-32)
+    W.Label(page,"Placeholder layouts. Exact game references and final artwork are pending.",11,0,-32)
     Studio.galleryCards={}
     for index,preset in ipairs(NS.Presets) do
         local x=((index-1)%3)*288; local y=-58-math.floor((index-1)/3)*124
@@ -185,7 +187,8 @@ function Studio.CreateGallery(page)
         Studio.galleryCards[index]=card
         card:SetHeight(114); W.Line(card,0,0,278)
         W.Label(card,preset.layout.name,12,12,-10)
-        W.Label(card,preset.description,9,12,-94)
+        local art=preset.layout.elements[#preset.layout.elements]
+        W.Label(card,NS.Media.files[art.asset] and "Artwork imported; reference match unverified" or "PLACEHOLDER / no frame artwork",9,12,-94)
         local view=R.Create(card); view.root:SetPoint("CENTER",card,"CENTER",0,-4); view.previewScale=.65
         R.Apply(view,preset.layout); R.Update(view,{name="",health=72,healthText="",target=false,casting=false,castName=""})
     end
@@ -237,6 +240,9 @@ function Studio.CreateEditor(page)
     end,function(value) Studio.scenario=value; Studio.Refresh() end)
     Studio.previewPicker:SetValue(Studio.scenario)
     W.Label(page,"Drag to move. Drag the gold corner to resize. Changes save automatically.",10,0,-508)
+    Studio.useFrameArt=W.Button(page,"Use imported frame; remove preset ornaments",0,-536,360,function()
+        if attempt(Studio.session:UseFrameArtwork()) then Studio.Refresh() end
+    end)
     local inspector=CreateFrame("Frame",nil,page); inspector:SetSize(258,478); inspector:SetPoint("TOPLEFT",610,-80); W.Paint(inspector,"panel")
     Studio.inspector={fields={}}
     Studio.inspector.title=W.Label(inspector,"",13,12,-12)

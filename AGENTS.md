@@ -18,6 +18,13 @@ otherwise create a local venv and install requirements-dev.lock. Verify bundled 
 with `python Tools/vendor_libraries.py`, then package with `python Tools/package.py`.
 The GitHub workflow repeats tests and packaging; do not report a remote CI pass without evidence.
 
+The owner now requests faithful reconstruction of specific original game UI designs, rather
+than generic inspiration. Exact game versions and screenshots/links are required before
+claiming a matched design. The existing presets and AI illustration are placeholders, not
+reference-accurate or approved visuals. Use reference-bound ART_ASSET_REQUESTS.md prompts;
+do not invent a source or promise pixel identity from image generation. If reference geometry
+differs, change the contract/layout rather than distorting the design.
+
 Artwork comes from the owner separately. Keep ART_ASSET_REQUESTS.md accurate; use procedural
 fallbacks until real assets arrive. Import only requested files through Tools/import_art.py.
 Do not substitute generated-looking placeholders for completed art or copy game graphics.

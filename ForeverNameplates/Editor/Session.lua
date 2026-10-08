@@ -58,6 +58,30 @@ function Session:Add(kind)
     if ok then self.selected=element.id end
     return ok,message
 end
+function Session:UseFrameArtwork()
+    local frameElement,index=self:Element("artFrame")
+    if not frameElement or frameElement.kind~="artwork" then return nil,"This layout has no preset artFrame" end
+    if not NS.Media.files[frameElement.asset] then return nil,"Import the matching frame artwork first" end
+    if frameElement.locked then return nil,"Frame artwork is locked" end
+    local placeholderIds={}
+    for _,preset in ipairs(NS.Presets) do
+        for _,element in ipairs(preset.layout.elements) do
+            if element.kind=="ornament" then placeholderIds[element.id]=true end
+        end
+    end
+    local layout=NS.Copy(self.layout)
+    for _,element in ipairs(layout.elements) do
+        if element.kind=="ornament" and placeholderIds[element.id] and element.enabled then
+            if element.locked then return nil,"Unlock preset decorations before replacing them" end
+            element.enabled=false
+        end
+    end
+    local artwork=layout.elements[index]
+    artwork.enabled=true; artwork.color={1,1,1,1}
+    local width,height=NS.Catalog.AssetSize(artwork.asset)
+    if width then artwork.width=width; artwork.height=height end
+    return self:Commit(layout)
+end
 function Session:Resize(id,width,height,keepTopLeft)
     local e=self:Element(id)
     if not e then return nil,"No element selected" end

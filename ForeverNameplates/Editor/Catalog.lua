@@ -13,6 +13,14 @@ function Catalog.Assets()
     table.sort(assets)
     return assets
 end
+function Catalog.AssetSize(asset)
+    for _,preset in ipairs(NS.Presets) do
+        for _,element in ipairs(preset.layout.elements) do
+            if element.kind=="artwork" and element.asset==asset then return element.width,element.height end
+        end
+    end
+    if asset=="studio_header" then return 512,64 end
+end
 function Catalog.Create(kind,id)
     if not NS.Model.kinds[kind] then return nil,"Unknown component" end
     local width,height,color,extra=160,12,{.75,.58,.3,1},{}
@@ -26,7 +34,7 @@ function Catalog.Create(kind,id)
     elseif kind=="artwork" then
         local asset=Catalog.Assets()[1]
         if not asset then return nil,"Import artwork through ArtDrop before adding an artwork component" end
-        width,height=256,64; color={1,1,1,1}; extra.asset=asset; extra.layer=6
+        width,height=Catalog.AssetSize(asset); color={1,1,1,1}; extra.asset=asset; extra.layer=6
     end
     return NS.Model.Element(id,kind,0,0,width,height,color,extra)
 end

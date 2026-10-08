@@ -1,4 +1,4 @@
-# Forever Nameplates — Entwicklungsstand 0.3.0
+# Forever Nameplates — Entwicklungsstand 0.3.1
 
 Stand: 2026-10-08. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
@@ -26,6 +26,12 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Account-/Charakterprofile, Duplizieren/Umbenennen, bestätigtes Löschen/Factory-Reset,
   Default-Fallback aller betroffenen Charaktere, Datenversion 2 und explizite v0/v1-Migration ohne Änderung der alten Darstellung.
 - Komprimierte, validierte FN2-Share-Codes inklusive Regeln; FN1-Import weiter unterstützt.
+- Referenzgebundene statt frei erfundener Art-Prompts: Originalspiel, Patch und konkrete Ansicht
+  müssen feststehen. Alle Slots ausdrücklich „Originalreferenz fehlt“; keine 1:1-Abnahme behauptet.
+- Importierter Preset-Rahmen lässt sich ohne Farbtint und bekannte generische Ornamente aktivieren;
+  eigene Komponenten bleiben erhalten, Locks/Combat/Undo werden berücksichtigt. Artwork-Katalog
+  übernimmt die bekannten tatsächlichen Assetmaße, auch Arena 256×128 und Header 512×64.
+- Galerie kennzeichnet fehlendes Artwork sichtbar als Platzhalter.
 - Asset-Importer/Watcher, TGA-Konvertierung, Alpha-/Öffnungsprüfung, Checksums, Manifest,
   Erkennung fehlender/veränderter Dateien, zwölf Theme-Aufträge plus GUI-Header.
 - Installierbares versioniertes ZIP, gepinnte eingebettete Libraries, geprüfter Upstream-Refresh.
@@ -34,7 +40,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **104 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **108 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -42,16 +48,28 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Zusätzlich Komponentenlimits/Artwork-Verfügbarkeit, Resize/Snap/Zoom, Align-Referenzen,
   Menü-Paginierung, deaktivierte Aktionen, Vierfachvorschau und Widget-Reuse, GUI-Textfarben,
   Profil-Fallback/32er-Limit/Combat-Sperre, Confirm/Cancel, Preset-Undo und Grenzkoordinaten.
+- Zusätzlich Rahmenersatz mit Custom-Komponenten, Locks/Combat/Undo, tatsächliche Assetgrößen
+  und der deaktivierte/aktive Frame-Artwork-Button.
 - Zusätzlich echte FN1-Fixture aus Commit `90fc278`, FN2-Regel-Roundtrip und Malformationen,
   Migration mit Charakterbindung, Secret-Identity-Sperren, Regelpriorität, Reaktionswechsel,
   nativer Raid-Helper inklusive fehlendem/verweigertem Aufruf, Marker-Reuse, Vorschau-Skalierung sowie neue GUI-Callbacks und Undo.
-- Version 0.3.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- Version 0.3.1 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
 - 26 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.
 - Keiner dieser Tests lief in einem WoW-Client. Tatsächliche Combat-Freigaben, Nameplate-Anbindung,
   Timer-Verhalten, Pixelqualität und Persistenz müssen mit `docs/INGAME_TESTS.md` geprüft werden.
+
+## Maßstab für die Gestaltung
+
+Der Nutzer fordert nun den konkreten Look anderer Spiele möglichst 1:1. Die ursprünglichen
+„inspiriert von“-Prompts waren dafür zu allgemein und sind ersetzt. Die aktuelle KI-Vorschau
+stellt keinen solchen Nachbau dar. Als Quellen nennt das Briefing Classic, Dragonflight, GW2,
+SWTOR, ESO, FFXIV und Diablo IV; Patch und konkrete Nameplate-/HUD-Ansicht fehlen noch.
+Die Auswahl der ersten genauen Vorlage wurde beim Nutzer angefragt. Vorläufige Canvasmaße
+und Fenster aus den Platzhaltern dürfen die Referenzgestaltung nicht erzwingen. Die eigentliche
+visuelle Rekonstruktion bleibt offen, bis Originalansicht und vom Nutzer gelieferte Assets vorliegen.
 
 ## Artwork fehlt
 

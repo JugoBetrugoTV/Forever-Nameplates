@@ -12,9 +12,16 @@
         180,
         14
       ],
-      "style": "antique bronze, worn stone, restrained heraldic wings",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: antique bronze, worn stone, restrained heraldic wings. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 180 x 14 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from World of Warcraft Classic as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 180 x 14 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": "World of Warcraft Classic",
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "dragonflight_frame",
@@ -27,9 +34,16 @@
         192,
         9
       ],
-      "style": "sleek teal and silver rails, clean modern fantasy",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: sleek teal and silver rails, clean modern fantasy. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 192 x 9 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from World of Warcraft Dragonflight as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 192 x 9 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": "World of Warcraft Dragonflight",
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "guildwars_frame",
@@ -42,9 +56,16 @@
         174,
         12
       ],
-      "style": "asymmetric green botanical branches and ivory leaves",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: asymmetric green botanical branches and ivory leaves. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 174 x 12 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from Guild Wars 2 as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 174 x 12 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": "Guild Wars 2",
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "galactic_frame",
@@ -57,9 +78,16 @@
         176,
         8
       ],
-      "style": "cyan telemetry reticle, graphite metal, precise technical geometry",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: cyan telemetry reticle, graphite metal, precise technical geometry. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 176 x 8 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from Star Wars: The Old Republic as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 176 x 8 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": "Star Wars: The Old Republic",
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "medieval_frame",
@@ -72,9 +100,16 @@
         158,
         18
       ],
-      "style": "blackened iron, crimson inlays, sharp gothic central crest",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: blackened iron, crimson inlays, sharp gothic central crest. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 158 x 18 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from the specific game UI assigned to this slot; assignment is still required as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 158 x 18 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "fantasy_frame",
@@ -87,9 +122,16 @@
         182,
         12
       ],
-      "style": "engraved gold, violet crystals, luminous facets",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: engraved gold, violet crystals, luminous facets. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 182 x 12 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from the specific game UI assigned to this slot; assignment is still required as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 182 x 12 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "minimal_frame",
@@ -102,9 +144,16 @@
         168,
         5
       ],
-      "style": "fine ivory lines, clear competitive readability, no ornaments",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: fine ivory lines, clear competitive readability, no ornaments. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 168 x 5 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from the specific game UI assigned to this slot; assignment is still required as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 168 x 5 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "arena_frame",
@@ -117,9 +166,16 @@
         22,
         64
       ],
-      "style": "bold red side brackets, vertical competitive indicator",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: bold red side brackets, vertical competitive indicator. Canvas EXACTLY 256 x 128 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 64). Leave the central 22 x 64 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from the specific game UI assigned to this slot; assignment is still required as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 128 pixels, RGBA PNG, real transparent alpha, design centered at (128, 64), central health-fill opening 22 x 64 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "neon_frame",
@@ -132,9 +188,16 @@
         194,
         8
       ],
-      "style": "offset purple holographic rails, restrained cyber geometry",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: offset purple holographic rails, restrained cyber geometry. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 194 x 8 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from the specific game UI assigned to this slot; assignment is still required as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 194 x 8 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "arcane_frame",
@@ -147,9 +210,16 @@
         172,
         10
       ],
-      "style": "indigo etched runes, tiny magical stones, symmetrical rhythm",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: indigo etched runes, tiny magical stones, symmetrical rhythm. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 172 x 10 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from the specific game UI assigned to this slot; assignment is still required as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 172 x 10 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "horde_frame",
@@ -162,9 +232,16 @@
         156,
         20
       ],
-      "style": "rough dark iron, red leather, jagged war fins",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: rough dark iron, red leather, jagged war fins. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 156 x 20 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from the specific game UI assigned to this slot; assignment is still required as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 156 x 20 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "celestial_frame",
@@ -177,9 +254,16 @@
         182,
         6
       ],
-      "style": "delicate silver orbit, pale blue star points, airy mystical detail",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Decorative frame over health bar, unscaled logical size",
-      "prompt": "Create an original premium MMORPG nameplate frame asset: delicate silver orbit, pale blue star points, airy mystical detail. Canvas EXACTLY 256 x 64 pixels, RGBA PNG, genuine transparent alpha background. Center the design at (128, 32). Leave the central 182 x 6 pixel health-fill rectangle entirely transparent. Decoration only, no health fill, no text, no numbers, no logos, no names. Strong distinctive silhouette and readable details at native size. Do not copy any game artwork. No baked glow across the empty center, no checkerboard transparency, no drop shadow extending beyond the canvas. One isolated asset only, no atlas and no contact sheet."
+      "prompt": "Use the attached original UI crop from the specific game UI assigned to this slot; assignment is still required as the binding reference for the exact frame component. Identify the game patch, the exact UI element (nameplate versus target frame versus player HUD), faction/theme and selection state before reconstruction. Reconstruct the visible design as closely as possible: exact outer silhouette, border thickness, corner cuts, bevels, materials, highlight direction, palette, surface marks and every ornament position. Do not replace the reference with generic diamonds, wings, botanical leaves, runes or a differently colored rectangular bar. Do not add details absent from the reference. Separate the decorative frame from dynamic health fill, numbers and labels, which will be rendered independently by the addon. Current PROVISIONAL export contract: EXACTLY 256 x 64 pixels, RGBA PNG, real transparent alpha, design centered at (128, 32), central health-fill opening 182 x 6 pixels entirely transparent. Preserve original proportions and native pixel measurements. If the reference does not match this canvas or opening, report the required layout/contract dimensions before generating; never squeeze, stretch or simplify the original design to satisfy this provisional placeholder contract. One isolated asset, no screenshot scenery, text, numbers, baked-in logos, health fill, checkerboard, atlas or contact sheet. No generic MMORPG reinterpretation. A missing reference is a reason to request that reference, not invent one. Image generation alone cannot promise pixel-identical reconstruction; compare output with the original at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     },
     {
       "id": "studio_header",
@@ -189,9 +273,16 @@
       "batch": 4,
       "alpha": true,
       "window": null,
-      "style": "engraved charcoal metal with aged brass rules",
+      "style": "Exact reference reconstruction; no free-form theme interpretation",
       "purpose": "Quiet header artwork behind separate readable addon title",
-      "prompt": "Create an original premium MMORPG editor header ornament, EXACTLY 512 x 64 pixels, RGBA PNG with genuine transparent alpha. A restrained charcoal metal edge with fine antique brass engraving, concentrated at the far left and bottom edge. Keep the title area x=20..430, y=8..48 quiet and mostly transparent for independently rendered typography. No text, logos, copied game artwork, checkerboard, or contact sheet. Sharp rectangular silhouette, no rounded cards, no heavy glow."
+      "prompt": "Use the attached original-game UI crop as the binding visual reference for this editor header. The source game, patch and UI element must be specified first. Reconstruct its exact visible contour, border construction, materials, highlight placement, palette and small details. Do not improvise a generic fantasy header or add ornament that is absent from the reference. Separate static decoration from title lettering and buttons, which the addon renders independently. Current provisional export contract: EXACTLY 512 x 64 pixels, RGBA PNG, real transparent alpha, one isolated header asset. Keep x=20..430, y=8..48 clear for separate text. If the reference dimensions or text placement conflict with this provisional contract, report the required geometry changes before generating; do not stretch or redesign the reference to fit. No screenshot background, health fill, text, baked-in logos, checkerboard, atlas or contact sheet. A missing reference is a reason to request that reference, not to invent one. Image generation alone does not guarantee pixel-identical output; compare the result with the reference at native scale.",
+      "reference": {
+        "game": null,
+        "version": null,
+        "element": null,
+        "source_url": null,
+        "status": "awaiting_exact_reference"
+      }
     }
   ]
 }
