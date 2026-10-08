@@ -48,6 +48,7 @@ function F:SetFocus() self.focus=true end
 function F:ClearFocus() self.focus=false end
 function F:HighlightText() self.highlighted=true end
 function F:SetScrollChild(child) self.scrollChild=child end
+function F:SetTexCoord(...) self.texCoord={...} end
 function F:SetTexture(path) self.texture=path end
 function F:SetColorTexture(...) self.color={...} end
 function F:SetVertexColor(...) self.vertexColor={...} end
@@ -105,4 +106,18 @@ end
 function Mock.Secret()
     local function fail() error("Secret value was evaluated") end
     return setmetatable({secret=true},{__tostring=fail,__add=fail,__sub=fail,__mul=fail,__div=fail,__lt=fail,__le=fail})
+end
+
+function UnitIsPlayer(unit) return Mock.units[unit] and Mock.units[unit].isPlayer end
+function UnitPlayerControlled(unit) return Mock.units[unit] and Mock.units[unit].controlled end
+function UnitClassBase(unit) return Mock.units[unit] and Mock.units[unit].class end
+function UnitReaction(unit,other) assert(other=="player"); return Mock.units[unit] and Mock.units[unit].reaction end
+function UnitClassification(unit) return Mock.units[unit] and Mock.units[unit].classification end
+function GetRaidTargetIndex(unit) return Mock.units[unit] and Mock.units[unit].raidMarker end
+
+-- Mock of the exported UI helper, based on general FrameXML's 4x4 sprite grid.
+-- The real Forever implementation and pixels remain an in-game check.
+function SetRaidTargetIconTexture(texture,index)
+    local column=(index-1)%4; local row=math.floor((index-1)/4)
+    texture:SetTexCoord(column/4,(column+1)/4,row/4,(row+1)/4)
 end

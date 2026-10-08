@@ -7,17 +7,17 @@ function DB.Editable()
     return true
 end
 function DB.Initialize(saved)
-    if type(saved) == "table" and type(saved.version) == "number" and saved.version > 1 then
+    if type(saved) == "table" and type(saved.version) == "number" and saved.version > 2 then
         NS.databaseBlocked = true
         return nil, "Newer SavedVariables version; data preserved."
     end
     NS.databaseBlocked=false
-    local data = {version=1, profiles={}, characters={}, active="Default", live=false}
+    local data = {version=2, profiles={}, characters={}, active="Default", live=false}
     -- Explicit v0 migration: one declarative layout, no executable values.
     if type(saved) == "table" and saved.version == 0 then
         local migrated = NS.Model.Validate(saved.layout)
         if migrated then data.profiles.Default = migrated end
-    elseif type(saved) == "table" and saved.version == 1 then
+    elseif type(saved) == "table" and (saved.version == 1 or saved.version == 2) then
         local n = 1
         data.profiles.Default=NS.Copy(NS.Presets[1].layout)
         if type(saved.profiles) == "table" then

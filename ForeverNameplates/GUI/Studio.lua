@@ -12,6 +12,25 @@ Studio.scenarios={
     {name="Casting • Runeweaver",health=76,healthText="76%",level=60,target=false,casting=true,castName="Arcane Bolt",progress=64},
     {name="Target • Ashen Sentinel",health=76,healthText="76%",level=60,target=true,casting=false,castName=""},
 }
+-- Preview identities are explicit simulated public data, never sampled from combat.
+for i,state in ipairs(Studio.scenarios) do
+    state.isPlayer=i==4 or i==5; state.controlled=state.isPlayer
+    state.reaction=i==4 and 5 or 3; state.classification=i==2 and "elite" or i==3 and "worldboss" or "normal"
+    state.class=state.isPlayer and (i==4 and "PRIEST" or "ROGUE") or nil
+    state.raidMarker=i==2 and 8 or nil
+end
+local extraScenarios={
+    {name="Friendly NPC • Keeper",isPlayer=false,controlled=false,reaction=5,classification="normal"},
+    {name="Neutral NPC • Merchant",isPlayer=false,controlled=false,reaction=4,classification="normal"},
+    {name="Pet • Spirit Wolf",isPlayer=false,controlled=true,reaction=3,classification="normal"},
+    {name="Rare Elite • Watcher",isPlayer=false,controlled=false,reaction=3,classification="rareelite",raidMarker=4},
+    {name="Restricted • Unknown"},
+}
+for _,state in ipairs(extraScenarios) do
+    state.health=72; state.healthText="72%"; state.level=60; state.casting=false; state.castName=""
+    if state.name~="Restricted • Unknown" then state.target=false end
+    Studio.scenarios[#Studio.scenarios+1]=state
+end
 local function attempt(ok,err) if not ok and err then NS.Print(err) end; return ok end
 function Studio.LoadSession()
     Studio.session=NS.Session.New(NS.DB.Current(),NS.DB.Save)
@@ -35,7 +54,7 @@ function Studio.RefreshInspector()
     Studio.inspector.shape:SetEnabled(e.kind=="ornament" or e.kind=="panel" or e.kind=="target")
     Studio.inspector.vertical:SetEnabled(e.kind=="health" or e.kind=="cast")
     Studio.inspector.reverse:SetEnabled(e.kind=="health" or e.kind=="cast")
-    Studio.inspector.fields.fontSize:SetEnabled(e.kind=="text")
+    Studio.inspector.fields.fontSize:SetEnabled(e.kind=="text" or e.kind=="class")
     Studio.inspector.text:SetText(e.text); Studio.inspector.text:SetEnabled(e.kind=="text")
     Studio.inspector.asset:SetShown(e.kind=="artwork")
     Studio.inspector.shape:SetShown(e.kind~="artwork")
@@ -112,7 +131,7 @@ end
 function Studio.RefreshGrid()
     for _,line in ipairs(Studio.grid) do line:Hide() end
     if Studio.session.snap==0 then return end
-    local spacing=Studio.session.snap*Studio.zoom
+    local spacing=Studio.session.snap*Studio.zoom*(Studio.view.effect and Studio.view.effect.scale or 1)
     local count=0
     local function line(x,y,w,h)
         count=count+1
@@ -131,12 +150,13 @@ function Studio.RefreshSandbox()
 end
 function Studio.Refresh()
     if not Studio.session then return end
+    Studio.view.previewScale=Studio.zoom
     R.Apply(Studio.view,Studio.session.layout)
     R.Update(Studio.view,Studio.scenarios[Studio.scenario])
-    Studio.view.root:SetScale(Studio.zoom)
     Studio.RefreshHandles(); Studio.RefreshInspector(); Studio.RefreshGrid(); Studio.Status()
     Studio.gridButton.label:SetText(Studio.session.snap==0 and "Grid: off" or "Grid: 4 px")
     if Studio.page=="sandbox" then Studio.RefreshSandbox() end
+    if Studio.page=="rules" then Studio.RefreshRules() end
 end
 function Studio.ShowPage(name)
     if NS.InCombat() then NS.Print(NS.L.combat); return end
@@ -147,6 +167,7 @@ function Studio.ShowPage(name)
     if name=="profiles" then Studio.RefreshProfiles() end
     if name=="diagnostics" then Studio.RefreshDiagnostics() end
     if name=="sandbox" then Studio.RefreshSandbox() end
+    if name=="rules" then Studio.RefreshRules() end
 end
 local function makePage(root)
     local p=CreateFrame("Frame",nil,root); p:SetSize(872,566); p:SetPoint("TOPLEFT",182,-76); return p
@@ -165,7 +186,7 @@ function Studio.CreateGallery(page)
         card:SetHeight(114); W.Line(card,0,0,278)
         W.Label(card,preset.layout.name,12,12,-10)
         W.Label(card,preset.description,9,12,-94)
-        local view=R.Create(card); view.root:SetPoint("CENTER",card,"CENTER",0,-4); view.root:SetScale(.65)
+        local view=R.Create(card); view.root:SetPoint("CENTER",card,"CENTER",0,-4); view.previewScale=.65
         R.Apply(view,preset.layout); R.Update(view,{name="",health=72,healthText="",target=false,casting=false,castName=""})
     end
 end
@@ -247,7 +268,7 @@ function Studio.CreateEditor(page)
     Studio.inspector.vertical=W.Toggle(inspector,"Vertical",12,-306,110,false,function(v) Studio.Change({vertical=v}) end)
     Studio.inspector.reverse=W.Toggle(inspector,"Reverse",130,-306,116,false,function(v) Studio.Change({reverse=v}) end)
     Studio.inspector.source=W.Dropdown(inspector,12,-338,234,{{value="name",label="Unit name"},{value="health",label="Health text"},
-        {value="level",label="Level"},{value="cast",label="Cast text"},{value="static",label="Custom text"}},function(value) return Studio.Change({source=value}) end)
+        {value="level",label="Level"},{value="classification",label="Classification"},{value="class",label="Class abbreviation"},{value="cast",label="Cast text"},{value="static",label="Custom text"}},function(value) return Studio.Change({source=value}) end)
     Studio.inspector.shape=W.Dropdown(inspector,12,-370,234,{{value="rect",label="Rectangle"},{value="diamond",label="Diamond"},
         {value="rune",label="Rune"},{value="brackets",label="Brackets"},{value="segments",label="Segments"}},function(value) return Studio.Change({shape=value}) end)
     Studio.inspector.asset=W.Dropdown(inspector,12,-370,234,function()
@@ -267,13 +288,75 @@ function Studio.CreateSandbox(page)
         tile:SetPoint("TOPLEFT",((i-1)%2)*442,-62-math.floor((i-1)/2)*234); W.Paint(tile,"bg"); tile:SetClipsChildren(true)
         local caption=W.Label(tile,"SAMPLE 0"..i,10,12,-12,"accent")
         local preview={scenario=i==1 and 1 or i==2 and 3 or i==3 and 6 or 8,view=R.Create(tile)}
-        preview.view.root:SetPoint("CENTER",tile,"CENTER",0,8); preview.view.root:SetScale(.85)
+        preview.view.root:SetPoint("CENTER",tile,"CENTER",0,8); preview.view.previewScale=.85
         preview.picker=W.Dropdown(tile,12,-176,400,function()
             local choices={}; for j,state in ipairs(Studio.scenarios) do choices[#choices+1]={value=j,label=state.name} end; return choices
         end,function(value) preview.scenario=value; Studio.RefreshSandbox() end)
         preview.picker:SetValue(preview.scenario)
         Studio.sandboxViews[#Studio.sandboxViews+1]=preview
     end
+end
+function Studio.ChangeRules(patch,category)
+    local ok,err=Studio.session:UpdateRules(patch,category)
+    attempt(ok,err); Studio.RefreshRules(); Studio.Refresh()
+    return ok==true
+end
+function Studio.RefreshRules()
+    local ui=Studio.ruleUI
+    if not ui then return end
+    local config=Studio.session.layout.rules; local rule=config.overrides[ui.category]
+    ui.globalMode:SetValue(config.healthColor); ui.categoryPicker:SetValue(ui.category)
+    ui.enabled:SetValue(rule.enabled); ui.visible:SetValue(rule.visible)
+    ui.alpha:SetText(tostring(rule.alpha)); ui.scale:SetText(tostring(rule.scale)); ui.colorMode:SetValue(rule.colorMode)
+    R.Apply(ui.view,Studio.session.layout); R.Update(ui.view,Studio.scenarios[ui.scenario])
+    ui.result:SetText("Resolved category: "..ui.view.effect.category.."  /  "..(ui.view.effect.visible and "shown" or "hidden"))
+end
+function Studio.CreateRules(page)
+    W.Label(page,NS.L.rules,22,0,0)
+    W.Label(page,"Rules save with your profile. Unknown identities use safe fallbacks.",11,0,-34)
+    local ui={category="enemyPlayers",scenario=5}; Studio.ruleUI=ui
+    local modes={{value="preset",label="Preset color"},{value="class",label="Player class color"},{value="reaction",label="Reaction color"}}
+    W.Label(page,"Default health color",12,0,-70)
+    ui.globalMode=W.Dropdown(page,0,-94,260,modes,function(v) return Studio.ChangeRules({healthColor=v}) end)
+    for i,key in ipairs({"friendlyColor","neutralColor","hostileColor"}) do
+        W.Button(page,key,0,-136-(i-1)*38,260,function()
+            local session=Studio.session
+            W.Color(session.layout.rules[key],function(color)
+                if Studio.session==session then Studio.ChangeRules({[key]=color}) end
+            end)
+        end)
+    end
+    W.Label(page,"Category override",12,302,-70)
+    local choices={}; for _,category in ipairs(NS.Rules.categories) do choices[#choices+1]={value=category.id,label=category.label} end
+    ui.categoryPicker=W.Dropdown(page,302,-94,270,choices,function(v) ui.category=v; Studio.RefreshRules() end)
+    ui.enabled=W.Toggle(page,"Enable this rule",302,-136,270,false,function(v) return Studio.ChangeRules({enabled=v},ui.category) end)
+    ui.visible=W.Toggle(page,"Show matching overlay",302,-174,270,true,function(v) return Studio.ChangeRules({visible=v},ui.category) end)
+    W.Label(page,"Opacity 0–1",11,302,-216); W.Label(page,"Scale 0.5–2",11,442,-216)
+    ui.alpha=W.Edit(page,302,-236,126,"1",function(v) Studio.ChangeRules({alpha=tonumber(v) or -1},ui.category) end)
+    ui.scale=W.Edit(page,442,-236,130,"1",function(v) Studio.ChangeRules({scale=tonumber(v) or -1},ui.category) end)
+    local categoryModes={{value="inherit",label="Inherit earlier color"},{value="fixed",label="Fixed color"}}
+    for _,mode in ipairs(modes) do categoryModes[#categoryModes+1]=mode end
+    ui.colorMode=W.Dropdown(page,302,-278,270,categoryModes,function(v) return Studio.ChangeRules({colorMode=v},ui.category) end)
+    W.Button(page,"Fixed color / opacity",302,-316,270,function()
+        local session,category=Studio.session,ui.category
+        W.Color(session.layout.rules.overrides[category].color,function(color)
+            if Studio.session==session then Studio.ChangeRules({color=color},category) end
+        end)
+    end)
+    local preview=CreateFrame("Frame",nil,page); preview:SetSize(264,230); preview:SetPoint("TOPLEFT",598,-70)
+    W.Paint(preview,"bg"); preview:SetClipsChildren(true)
+    ui.view=R.Create(preview); ui.view.root:SetPoint("CENTER",preview,"CENTER",0,0); ui.view.previewScale=.65
+    ui.scenarioPicker=W.Dropdown(page,598,-316,264,function()
+        local result={}; for i,state in ipairs(Studio.scenarios) do result[#result+1]={value=i,label=state.name} end; return result
+    end,function(v) ui.scenario=v; Studio.RefreshRules() end)
+    ui.scenarioPicker:SetValue(ui.scenario)
+    ui.result=W.Label(page,"",11,0,-378)
+    W.Label(page,"Priority: unit category → elite / rare / boss → target / other.\n"..
+        "Each enabled rule replaces visibility, opacity and scale; Inherit keeps the earlier color.\n"..
+        "Rules affect the Forever overlay; the default client plate is separate.\n"..
+        "Add Raid marker or Class badge in Layout Studio. Text can display level / classification.",11,0,-412)
+    W.Button(page,NS.L.undo,0,-514,100,function() attempt(Studio.session:Undo()); Studio.Refresh() end)
+    W.Button(page,NS.L.redo,110,-514,100,function() attempt(Studio.session:Redo()); Studio.Refresh() end)
 end
 function Studio.RefreshProfiles()
     local names={}; for name in pairs(NS.DB.data.profiles) do names[#names+1]=name end; table.sort(names)
@@ -396,10 +479,10 @@ function Studio.Open()
         end)
         Studio.status=W.Label(root,"",10,490,-648)
         Studio.pages={}
-        for _,name in ipairs({"gallery","studio","sandbox","profiles","diagnostics"}) do Studio.pages[name]=makePage(root) end
+        for _,name in ipairs({"gallery","studio","sandbox","rules","profiles","diagnostics"}) do Studio.pages[name]=makePage(root) end
         Studio.CreateGallery(Studio.pages.gallery); Studio.CreateEditor(Studio.pages.studio)
-        Studio.CreateSandbox(Studio.pages.sandbox); Studio.CreateProfiles(Studio.pages.profiles); Studio.CreateDiagnostics(Studio.pages.diagnostics)
-        for i,name in ipairs({"gallery","studio","sandbox","profiles","diagnostics"}) do
+        Studio.CreateSandbox(Studio.pages.sandbox); Studio.CreateRules(Studio.pages.rules); Studio.CreateProfiles(Studio.pages.profiles); Studio.CreateDiagnostics(Studio.pages.diagnostics)
+        for i,name in ipairs({"gallery","studio","sandbox","rules","profiles","diagnostics"}) do
             W.Button(root,NS.L[name],20,-90-(i-1)*38,146,function() Studio.ShowPage(name) end)
         end
         W.Label(root,"FNP  "..NS.version.."\n\nOriginal layouts\nLive preview\nLocal profiles\n\nArtwork pending",10,28,-324,{.6,.6,.62,1})

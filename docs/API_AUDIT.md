@@ -36,6 +36,10 @@ werden aufgefangen und als Diagnose gezählt, nicht durch alternative verbotene 
 | MaskTexture | `CreateMaskTexture`/Mask-APIs vorhanden | Für spätere validierte Formen vorgesehen; keine Kreis-/Arc-Füllung behauptet |
 | AnimationGroups | Frame-Animationen sind dokumentiert | Im ersten Stand keine automatischen Gameplay-Effekte oder Daueranimationen |
 | Combat | Frame-Schutz und Secret Values werden dynamisch geprüft | Editor pausiert; neue Live-Frames werden außerhalb des Kampfes erstellt |
+| Unit-Identität | `UnitClassBase`, `UnitClassification`, `UnitReaction`, `UnitIsPlayer`, `UnitPlayerControlled` dokumentiert | Nur öffentliche normalisierte Rückgaben; kein Identitätscache, Unknown-Fallback |
+| Identitätsrestriktion | `C_Secrets.ShouldUnitIdentityBeSecret(unit)` dokumentiert | Bei öffentlichem `true` keine Name-/Level-/Klassen-/Reaktions-/Zielabfragen; ansonsten jede Rückgabe einzeln prüfen |
+| Raidmarker | `GetRaidTargetIndex(target)` und `RAID_TARGET_UPDATE` dokumentiert | Index 1–8; lokales Client-Texturatlas über exportierten UI-Helper `SetRaidTargetIconTexture`; Marker fehlt bei geheimer Rückgabe |
+| Regelaktualisierung | `UNIT_FACTION`, `UNIT_CLASSIFICATION_CHANGED`, Target-/Raid-Events dokumentiert | Ereignisbasierte Farbe/Sichtbarkeit/Skalierung nur am eigenen ungeschützten Overlay |
 | Threat/Auras | Exakte Werte und Aura-Zugriffe können gesperrt sein | Keine eigene Threat-Rechnung oder Aura-/Quest-Erkennung implementiert |
 | SavedVariables | Kit meldet Schreiben ohne Laden bei Client-Neustart | Reguläre SavedVariables plus manueller Share-Code-Backup; kein ausführbarer Daten-Bridge-Code |
 
@@ -60,8 +64,33 @@ Drag-Skalierung und vier parallel angezeigte simulierte Units. `SimpleFrameAPI.S
 begrenzt Canvas und Sandbox-Karten; `SimpleButtonAPI.IsEnabled` sichert deaktivierte Menüeinträge.
 Beide Methoden sind in der Forever-Referenz dokumentiert und im Widget-Mock abgebildet.
 Freie Ankergruppen,
-Maskenformen, Regelwerk, Klassenfarben, Raid-/Questmarker, Casticons, Threat, Minimap-Launcher,
+Maskenformen, grafische Klassenicons, Questmarker, Casticons, Threat, Minimap-Launcher,
 vollständige Localization, Animationen und die restlichen Spezialseiten folgen separat.
+
+## Regeln und Marker ab 0.3.0
+
+`UnitClassBase` liefert den Klassentoken im ersten Rückgabewert; damit ist kein ungeprüfter
+Mehrfach-Rückgabewert von `UnitClass` nötig. Reaktion und Raidindex werden auf Ganzzahlen
+1–8 begrenzt. Spieler-/Kontrollflags müssen öffentlich und boolesch sein. Fehlende Kontrollinformation
+bei Nicht-Spielern führt zu Unknown statt zur ungesicherten Unterscheidung NPC/Pet.
+Ein unbekannter Zielstatus aktiviert keine NonTarget-Regel. Farben fallen auf das Preset zurück,
+wenn die für den gewünschten Modus nötigen öffentlichen Angaben fehlen.
+
+Die zwölf Regeln liegen im versionierten Profil, mit Priorität Kategorie → Elite → Rare → Boss
+→ Ziel/andere Units. Regeln ersetzen nur eigene Overlay-Eigenschaften. Die Datenmigration fügt
+standardmäßig deaktivierte Regeln hinzu; FN1-Import bleibt erhalten, FN2 speichert die neuen Felder.
+Die Rule-Vorschau und Editor-Zoom multiplizieren dieselbe Skalierung wie der Renderer.
+
+Raidmarker referenzieren `Interface\\TargetingFrame\\UI-RaidTargetingIcons` im installierten Client.
+Es wird keine Spielgrafik in dieses Repository kopiert. `SetRaidTargetIconTexture` ist im
+Forever-Kit-Export `data/forever_api.json` enthalten, besitzt in der generierten API-Dokumentation
+aber keine eigenständige Signatur. Der Renderer delegiert den Ausschnitt an diesen UI-Helper;
+fehlt er oder wird der Aufruf abgelehnt, bleibt der Marker ausgeblendet. Die allgemeine Mainline-
+FrameXML-Referenz benutzt ein 4×4-Sprite-Raster, keinen 4×2-Atlas; dieses Raster wird ausschließlich
+im Mock simuliert, nicht im Addon festgeschrieben. Der Dateipfad, tatsächliche Helper-Implementierung,
+Orientierung und alle acht Ausschnitte gehören zur Ingame-Prüfung. Klassenmarker sind
+derzeit prozedurale, farbige Textkürzel; eigenständige Klassenicon-Artwork-Aufträge folgen erst mit
+einer festgelegten grafischen Komponente. Die vorhandenen 13 Grafikaufträge bleiben unverändert.
 
 ## Ingame noch zu klären
 
@@ -70,6 +99,9 @@ vollständige Localization, Animationen und die restlichen Spezialseiten folgen 
 3. Liefern Casting-/Channel-Duration-APIs zulässige Objekte für Nameplate-Units in allen Situationen?
 4. Welche Masken und Effekte erfüllen Combat- und Secret-Regeln unter Last?
 5. Lädt der aktuelle Forever-Build SavedVariables inzwischen wieder korrekt?
-6. Entstehen Blocked-Action-/Taint-Fehler oder Interaktionen mit anderen Nameplate-Addons?
+6. Ist der Raid-Atlaspfad korrekt und werden alle acht Marker ohne Verschiebung angezeigt?
+7. Bleiben öffentliche Klassen-/Reaktionsangaben in Solo, Dungeon, Raid und PvP nutzbar?
+8. Sind Regeländerungen von Alpha, Scale und Sichtbarkeit an vorhandenen Overlays im Kampf zulässig?
+9. Entstehen Blocked-Action-/Taint-Fehler oder Interaktionen mit anderen Nameplate-Addons?
 
 Abweichungen zu diesen Quellen sind bislang **nicht gemessen**, da kein Client vorhanden ist.

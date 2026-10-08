@@ -12,7 +12,7 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Studio passt auf 1920×1080 und kleinere Displays mit verschiedenen UI-Skalierungen.
 - [ ] Fenster lässt sich verschieben; Dark RPG, Light Fantasy und Modern Studio sind lesbar.
 - [ ] Alle zwölf Galeriekarten sind erkennbar und übernehmen das richtige Preset.
-- [ ] Alle acht Sandbox-Zustände stellen Health-, Cast- und Zielzustand korrekt dar.
+- [ ] Alle 13 Sandbox-Zustände stellen Health-, Cast- und Zielzustand korrekt dar.
 - [ ] Vier Sandbox-Plates gleichzeitig: individuell wählbare Zustände, gleiches aktives Layout.
 
 ## Editor
@@ -33,6 +33,19 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Preset-Wechsel lässt sich rückgängig machen; gültige Elementauswahl bleibt erhalten.
 - [ ] Copy/Paste erzeugt unabhängige IDs; Löschen und Element-Reset funktionieren.
 - [ ] Kein Datenverlust bei Kampfbeginn während Drag, Textbearbeitung oder ColorPicker.
+
+## Unit-Regeln und Marker
+
+- [ ] Preset-/Klassen-/Reaktionsfarben stimmen bei Spieler, NPC und Pet; Unbekanntes fällt zurück.
+- [ ] Friendly/Neutral/Hostile-Palette bleibt nach Undo, Profilwechsel und Share-Import erhalten.
+- [ ] Alle 12 Kategorien und Priorität Kategorie → Klassifikation → Ziel prüfen, inklusive Rare-Elite.
+- [ ] Sichtbarkeit/Alpha/Scale stimmen in Rule-Vorschau, Studio mit Zoom und Vierfach-Sandbox.
+- [ ] Versteckte Overlays lassen die Standardplate sichtbar; Auswahl eines anderen Zustands zeigt sie wieder.
+- [ ] Geheime Identität und Zielstatus lösen keine NPC-/NonTarget-Fehlklassifikation aus.
+- [ ] Reaktions-/Klassifikations-/Zielwechsel im Kampf aktualisieren zulässige bestehende Overlays.
+- [ ] Alle acht Raidmarker: tatsächlicher Atlaspfad, Farbe, Ausschnitt, Rotation und Markerentfernung.
+- [ ] Klassenkürzel und Level-/Klassifikationstexte lassen sich positionieren und skalieren.
+- [ ] Recycelte Plates behalten keine Klassenfarbe oder Marker der vorherigen Unit.
 
 ## Live-Rendering und Einschränkungen
 
@@ -55,11 +68,11 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Löschen und Factory-Reset zeigen eine Bestätigung; Abbrechen bewahrt Daten.
 - [ ] Gelöschtes Profil setzt alle betroffenen Charaktere auf Default; Default ist nicht löschbar.
 - [ ] Charakterbindung auf zwei Charakteren und zwei Accountprofilen prüfen.
-- [ ] Export/Import für jedes Preset; beschädigte/fremde Codes werden abgelehnt.
+- [ ] FN2-Export/Import für jedes Preset inklusive Regeln; alte FN1-Codes importieren; beschädigte/fremde Codes werden abgelehnt.
 - [ ] Normales Logout und kalter Neustart: Daten wirklich vorhanden oder Beta-Ladefehler?
 - [ ] Bei Beta-Ladefehler: extern gesicherter Code stellt Layout manuell wieder her.
 - [ ] `/reload`-Persistenz getrennt von kaltem Neustart dokumentieren.
-- [ ] Migration v0 und unbekannte neuere Datenversion: kein stiller Datenverlust.
+- [ ] Migration v0/v1 nach v2 und unbekannte neuere Datenversion: kein stiller Datenverlust.
 
 ## Artwork und Last
 

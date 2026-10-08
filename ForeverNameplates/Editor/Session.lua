@@ -31,6 +31,16 @@ function Session:Update(id,patch)
     for key,value in pairs(patch) do nextLayout.elements[index][key]=NS.Copy(value) end
     return self:Commit(nextLayout)
 end
+function Session:UpdateRules(patch,category)
+    local layout=NS.Copy(self.layout)
+    local target=layout.rules
+    if category then
+        target=layout.rules.overrides[category]
+        if not target then return nil,"Unknown rule category" end
+    end
+    for key,value in pairs(patch) do target[key]=NS.Copy(value) end
+    return self:Commit(layout)
+end
 function Session:Move(id,x,y)
     local snap=self.snap
     if snap>0 then x=math.floor(x/snap+.5)*snap; y=math.floor(y/snap+.5)*snap end

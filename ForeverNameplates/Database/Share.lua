@@ -24,7 +24,18 @@ end
 function Share.Export(layout)
     local valid, err=NS.Model.Validate(layout)
     if not valid then return nil,err end
-    local lines={"1",hex(valid.name)}
+    local lines={"2",hex(valid.name)}
+    local row={hex(valid.rules.healthColor)}
+    for _,key in ipairs({"friendlyColor","hostileColor","neutralColor"}) do
+        for i=1,4 do row[#row+1]=string.format("%.6f",valid.rules[key][i]) end
+    end
+    lines[#lines+1]=table.concat(row,";")
+    for _,category in ipairs(NS.Rules.categories) do
+        local rule=valid.rules.overrides[category.id]
+        row={rule.enabled and "1" or "0",rule.visible and "1" or "0",string.format("%.6f",rule.alpha),string.format("%.6f",rule.scale),hex(rule.colorMode)}
+        for i=1,4 do row[#row+1]=string.format("%.6f",rule.color[i]) end
+        lines[#lines+1]=table.concat(row,";")
+    end
     for _, e in ipairs(valid.elements) do
         local row={}
         for _, key in ipairs(fields) do
@@ -45,12 +56,12 @@ function Share.Export(layout)
         local compressed=Deflate:CompressDeflate(raw:sub(i,i+159),{level=5})
         blocks[#blocks+1]=Deflate:EncodeForPrint(compressed)
     end
-    local code="FN1:"..table.concat(blocks,".")
+    local code="FN2:"..table.concat(blocks,".")
     if #code>48000 then return nil,"Share code too large" end
     return code
 end
 local function decode(code)
-    if type(code)~="string" or #code>48000 or code:sub(1,4)~="FN1:" then error("Invalid share header or size") end
+    if type(code)~="string" or #code>48000 or (code:sub(1,4)~="FN1:" and code:sub(1,4)~="FN2:") then error("Invalid share header or size") end
     local blocks=split(code:sub(5),".")
     local raw,total={},0
     if #blocks>205 then error("Too many compressed blocks") end
@@ -64,9 +75,26 @@ local function decode(code)
         raw[#raw+1]=text
     end
     local lines=split(table.concat(raw),"\n")
-    if lines[1]~="1" or #lines<3 or #lines>66 then error("Invalid layout envelope") end
-    local layout={version=1,name=unhex(lines[2]),elements={}}
-    for i=3,#lines do
+    local version=code:sub(1,4)=="FN1:" and 1 or 2
+    local first=version==1 and 3 or 16
+    if lines[1]~=tostring(version) or #lines<first or #lines>first+63 then error("Invalid layout envelope") end
+    local layout={version=version,name=unhex(lines[2]),elements={}}
+    if version==2 then
+        local row=split(lines[3],";")
+        if #row~=13 then error("Invalid color configuration") end
+        layout.rules=NS.Rules.Defaults(); layout.rules.healthColor=unhex(row[1])
+        for c,key in ipairs({"friendlyColor","hostileColor","neutralColor"}) do
+            for j=1,4 do layout.rules[key][j]=tonumber(row[1+(c-1)*4+j]) end
+        end
+        for c,category in ipairs(NS.Rules.categories) do
+            row=split(lines[3+c],";")
+            if #row~=9 or (row[1]~="0" and row[1]~="1") or (row[2]~="0" and row[2]~="1") then error("Invalid rule configuration") end
+            local rule={enabled=row[1]=="1",visible=row[2]=="1",alpha=tonumber(row[3]),scale=tonumber(row[4]),colorMode=unhex(row[5]),color={}}
+            for j=1,4 do rule.color[j]=tonumber(row[5+j]) end
+            layout.rules.overrides[category.id]=rule
+        end
+    end
+    for i=first,#lines do
         local row=split(lines[i],";")
         if #row~=#fields+4 then error("Invalid field count") end
         local e={color={}}

@@ -1,11 +1,11 @@
 local _, NS = ...
-local Model = {version = 1, maxElements = 64}
+local Model = {version = 2, maxElements = 64}
 NS.Model = Model
-Model.kinds = {health=true, cast=true, text=true, panel=true, target=true, ornament=true, artwork=true}
+Model.kinds = {health=true, cast=true, text=true, panel=true, target=true, ornament=true, artwork=true,raid=true,class=true}
 Model.assets = {classic_frame=true,dragonflight_frame=true,guildwars_frame=true,galactic_frame=true,
     medieval_frame=true,fantasy_frame=true,minimal_frame=true,arena_frame=true,neon_frame=true,
     arcane_frame=true,horde_frame=true,celestial_frame=true,studio_header=true}
-Model.sources = {name=true, health=true, level=true, cast=true, static=true}
+Model.sources = {name=true, health=true, level=true, cast=true, static=true,classification=true,class=true}
 Model.shapes = {rect=true, diamond=true, rune=true, brackets=true, segments=true}
 Model.fields = {id=true, kind=true, source=true, text=true, x=true, y=true, width=true,
     height=true, color=true, alpha=true, layer=true, enabled=true, locked=true,
@@ -23,8 +23,10 @@ local function keysOnly(value, allowed)
     return true
 end
 function Model.Validate(layout)
-    if not keysOnly(layout, {version=true, name=true, elements=true}) then return nil, "Invalid layout fields" end
-    if layout.version ~= 1 then return nil, "Unsupported layout version" end
+    if not keysOnly(layout, {version=true, name=true, elements=true,rules=true}) then return nil, "Invalid layout fields" end
+    if layout.version~=1 and layout.version~=2 then return nil,"Unsupported layout version" end
+    local rules,ruleError=NS.Rules.Validate(layout.rules or (layout.version==1 and NS.Rules.Defaults()))
+    if not rules then return nil,ruleError end
     if not Model.Name(layout.name) then return nil, "Invalid layout name" end
     if type(layout.elements) ~= "table" or getmetatable(layout.elements) then return nil, "Missing elements" end
     local count = 0
@@ -33,7 +35,7 @@ function Model.Validate(layout)
         count = count + 1
     end
     if count == 0 or count > Model.maxElements or count ~= #layout.elements then return nil, "Invalid element count" end
-    local ids, result = {}, {version=1, name=layout.name, elements={}}
+    local ids, result = {}, {version=2, name=layout.name, elements={},rules=rules}
     for _, e in ipairs(layout.elements) do
         if not keysOnly(e, Model.fields) then return nil, "Invalid element fields" end
         if type(e.id) ~= "string" or #e.id > 32 or not e.id:match("^[%w_%-]+$") or ids[e.id] then return nil, "Invalid or duplicate element ID" end

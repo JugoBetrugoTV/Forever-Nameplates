@@ -52,10 +52,31 @@ function Compat.Health(bar,unit)
     return ok
 end
 function Compat.State(unit)
-    local name=Compat.Public(UnitName,unit)
-    local level=Compat.Public(UnitLevel,unit)
-    local target=Compat.Public(UnitIsUnit,unit,"target")
-    local state={name=name or "",level=level or "",healthText="—",target=target==true,castName="",casting=false}
+    local restricted=C_Secrets and Compat.Public(C_Secrets.ShouldUnitIdentityBeSecret,unit)==true
+    local state={name="",level="",healthText="—",castName="",casting=false}
+    if not restricted then
+        local name=Compat.Public(UnitName,unit)
+        local level=Compat.Public(UnitLevel,unit)
+        local target=Compat.Public(UnitIsUnit,unit,"target")
+        if type(name)=="string" then state.name=name end
+        if type(level)=="number" then state.level=level end
+        if type(target)=="boolean" then state.target=target end
+    end
+    if not restricted then
+        local player=Compat.Public(UnitIsPlayer,unit)
+        local controlled=Compat.Public(UnitPlayerControlled,unit)
+        if type(player)=="boolean" then state.isPlayer=player end
+        if type(controlled)=="boolean" then state.controlled=controlled end
+        local class=Compat.Public(UnitClassBase,unit)
+        if type(class)=="string" and NS.Rules.classColors[class] then state.class=class end
+        local reaction=Compat.Public(UnitReaction,unit,"player")
+        if type(reaction)=="number" and reaction>=1 and reaction<=8 and reaction%1==0 then state.reaction=reaction end
+        local classification=Compat.Public(UnitClassification,unit)
+        if classification=="normal" or classification=="elite" or classification=="rare" or classification=="rareelite" or classification=="worldboss" then state.classification=classification end
+    end
+    local raid=Compat.Public(GetRaidTargetIndex,unit)
+    if type(raid)=="number" and raid>=1 and raid<=8 and raid%1==0 then state.raidMarker=raid end
+    if type(state.level)~="number" then state.level="" elseif state.level==-1 then state.level="??" end
     local hp=Compat.Public(UnitHealth,unit)
     local maximum=Compat.Public(UnitHealthMax,unit)
     if type(hp)=="number" and type(maximum)=="number" and maximum>0 then

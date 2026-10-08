@@ -13,9 +13,15 @@ local function bar(parent)
     return {frame=f,bar=f}
 end
 Renderer.Register("health",bar); Renderer.Register("cast",bar)
-Renderer.Register("text",function(parent)
+local function textPart(parent)
     local f=frame(parent); local text=f:CreateFontString(nil,"OVERLAY")
     text:SetAllPoints(f); return {frame=f,text=text}
+end
+Renderer.Register("text",textPart); Renderer.Register("class",textPart)
+Renderer.Register("raid",function(parent)
+    local f=frame(parent); local t=texture(f); t:SetAllPoints(f)
+    t:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+    return {frame=f,raid=t}
 end)
 local function decoration(parent)
     local f=frame(parent); local pieces={}
@@ -81,6 +87,7 @@ function Renderer.Apply(view,layout)
             part.text:SetTextColor(unpack(e.color)); part.text:SetJustifyH("CENTER")
         end
         draw(part,e)
+        if part.raid then part.raid:SetVertexColor(unpack(e.color)) end
         if part.image then
             part.image:SetVertexColor(unpack(e.color))
             local path=NS.Media.files[e.asset]
@@ -92,13 +99,30 @@ function Renderer.Apply(view,layout)
     return true
 end
 function Renderer.Update(view,state,unit)
+    local effect=NS.Rules.Resolve(view.layout.rules,state)
+    view.effect=effect
+    view.root:SetScale((view.previewScale or 1)*effect.scale); view.root:SetAlpha(effect.alpha)
+    view.root:SetShown(effect.visible)
+    if not effect.visible then return end
     for _,part in ipairs(view.parts) do
         local e=part.element
         local show=e.enabled
         if part.image then show=show and NS.Media.files[e.asset]~=nil end
         if part.kind=="target" then show=show and state.target end
+        if part.raid then
+            local marker=state.raidMarker
+            show=show and type(marker)=="number" and marker>=1 and marker<=8 and marker%1==0
+            -- Delegate atlas layout to the client's exported UI helper.
+            show=show and type(SetRaidTargetIconTexture)=="function"
+            if show then show=pcall(SetRaidTargetIconTexture,part.raid,marker) end
+        end
+        if part.kind=="class" then
+            show=show and state.isPlayer==true and NS.Rules.classLabels[state.class]~=nil
+            part.text:SetTextColor(unpack(NS.Rules.classColors[state.class] or e.color))
+        end
         if part.bar then
             if part.kind=="health" then
+                part.bar:SetStatusBarColor(unpack(NS.Rules.HealthColor(view.layout.rules,effect,state,e.color)))
                 if unit then show=show and NS.Compat.Health(part.bar,unit)
                 else part.bar:SetMinMaxValues(0,100); part.bar:SetValue(state.health or 75) end
             elseif unit then show=show and NS.Compat.Cast(part.bar,unit)
@@ -112,7 +136,10 @@ function Renderer.Update(view,state,unit)
             if e.source=="name" then value=state.name
             elseif e.source=="health" then value=state.healthText
             elseif e.source=="level" then value=state.level
-            elseif e.source=="cast" then value=state.castName end
+            elseif e.source=="cast" then value=state.castName
+            elseif e.source=="classification" then value=state.classification
+            elseif e.source=="class" then value=state.isPlayer==true and NS.Rules.classLabels[state.class] or "" end
+            if part.kind=="class" then value=NS.Rules.classLabels[state.class] end
             part.text:SetText(value or "")
         end
         part.frame:SetShown(show==true)

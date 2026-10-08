@@ -20,7 +20,7 @@ local assets={"classic","dragonflight","guildwars","galactic","medieval","fantas
 for index, spec in ipairs(specs) do
     local name, description, color, width, height, silhouette = unpack(spec)
     local vertical = silhouette == "vertical"
-    local layout = {version=1, name=name, elements={
+    local layout = {version=2, name=name,rules=NS.Rules.Defaults(), elements={
         E("back", "panel",0,0,width+4,height+4,ink,{layer=1}),
         E("health", "health",0,0,width,height,color,{vertical=vertical}),
         E("name", "text",0,height/2+14,210,18,paper,{source="name",layer=7,fontSize=12}),

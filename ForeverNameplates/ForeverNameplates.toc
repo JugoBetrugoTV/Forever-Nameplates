@@ -2,13 +2,14 @@
 ## Title: Forever Nameplates
 ## Notes: A visual nameplate studio. Forever API verification pending.
 ## Author: JugoBetrugoTV
-## Version: 0.2.0
+## Version: 0.3.0
 ## SavedVariables: ForeverNameplatesDB
 Libraries/LibStub.lua
 Libraries/LibDeflate.lua
 Core/Namespace.lua
 Localization/Locale.lua
 Media/Assets.lua
+Database/Rules.lua
 Database/Model.lua
 Presets/Presets.lua
 Database/Profiles.lua

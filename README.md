@@ -1,11 +1,11 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.2.0**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.3.0**, kein fertig poliertes Release.
 
 ## Was dieser Stand enthält
 
-- Eigene Studio-Oberfläche: Preset-Galerie, Layout-Editor, Mehrfachvorschau, Profile und Diagnose.
+- Eigene Studio-Oberfläche: Preset-Galerie, Layout-Editor, Mehrfachvorschau, Einheiten-Regeln, Profile und Diagnose.
 - Zwölf unterschiedliche prozedurale Layouts mit eigenständigen Silhouetten.
 - Neue Health-, Cast-, Text-, Hintergrund-, Ziel-, Dekorations- und importierte Artwork-Elemente
   über den Komponenten-Katalog hinzufügen; fehlendes Artwork wird erst nach Import angeboten.
@@ -16,8 +16,12 @@ Dies ist der erweiterte Entwicklungsstand **0.2.0**, kein fertig poliertes Relea
   Ornamentik und integrierbare Artwork-Ebene; horizontale und vertikale Balken.
 - Account- und Charakterprofile, Duplikate, Umbenennung, bestätigtes Löschen/Zurücksetzen,
   Auswahl über paginierte Dropdowns und validierte komprimierte Share-Codes.
-- Vier gleichzeitig sichtbare Sandbox-Plates mit separat wählbaren simulierten Zuständen.
+- Vier gleichzeitig sichtbare Sandbox-Plates mit 13 separat wählbaren simulierten Zuständen.
 - Wechselbare GUI-Skins passen Hintergrund- und Textfarben an; ColorPicker bleiben bei Profilwechsel getrennt.
+- Klassen- und Reaktionsfarben sowie 12 Unit-Regelkategorien mit Sichtbarkeit, Alpha und Skalierung.
+- Verschiebbare Raidmarker über die vorhandene Client-Textur und farbige Klassenkürzel;
+  Level und Klassifikation als Textquellen.
+- Migration alter Profile auf Schema 2; neue FN2-Exports und weiter nutzbare FN1-Imports.
 - Ereignisbasiertes experimentelles Live-Overlay mit Frame-Pooling und Secret-Value-Prüfung.
 - Asset-Import mit Dateiname-, Auflösungs-, Alpha- und Balkenöffnungsprüfung, TGA-Konvertierung
   und Manifest. Originalgrafiken werden vom Nutzer separat geliefert.
@@ -45,6 +49,18 @@ festem linken oberen Rand. **Align element** richtet exakt aus und ignoriert daf
 **Design Sandbox** vergleicht vier frei gewählte Zustände desselben Layouts.
 **Reset element** stellt bei Original-Presets das passende Element wieder her; neu hinzugefügte
 oder eigene Elemente erhalten die allgemeinen Komponenten-Defaults.
+
+Unter **Einheiten-Regeln / Unit Rules** wählst du die Healthfarbe aus Preset, Klasse oder
+Reaktion. Jede Kategorie kann Sichtbarkeit, Deckkraft, Skalierung und Farbe überschreiben.
+Die Priorität lautet: Unit-Kategorie → Elite → Rare → Boss → Ziel/andere Units;
+spätere passende Regeln ersetzen Sichtbarkeit, Deckkraft und Skalierung. **Inherit** behält
+die zuvor gewählte Farbe. Regeln sind zunächst deaktiviert, damit alte Layouts gleich aussehen.
+Bei geheimer oder fehlender Identität wird **Unknown** verwendet; unbekannter Zielstatus zählt
+nicht als „Other units“. Die Vorschau simuliert diese Fälle. Sie verändert nur das eigene Overlay.
+Im Komponenten-Katalog stehen **Raid marker** und **Class badge** zur Verfügung;
+Klassenmarker sind farbige Kürzel, eigene Klassenicons sind noch nicht enthalten.
+Neue Share-Codes beginnen mit `FN2:` und benötigen mindestens Version 0.3.0 für den Import.
+Alte `FN1:`-Codes bleiben importierbar. Profile und Layouts werden auf Datenversion 2 migriert.
 
 Auf der Profilseite schützt eine Rückfrage vor Löschen und vollständigem Zurücksetzen.
 `Default` ist nicht löschbar. Charaktere eines gelöschten Profils werden auf `Default` umgestellt.
