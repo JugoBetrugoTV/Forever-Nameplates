@@ -48,6 +48,7 @@ function Studio.ArtworkReady(element)
     return false
 end
 function Studio.RefreshInspector()
+    if not Studio.ready then return end
     local e=Studio.session:Element()
     if not e or not Studio.inspector then return end
     Studio.inspector.title:SetText(e.id.."  /  "..e.kind)
@@ -118,7 +119,7 @@ function Studio.StartDrag(handle,mode)
     end)
 end
 function Studio.RefreshHandles()
-    if not Studio.canvas then return end
+    if not Studio.ready or not Studio.canvas then return end
     for _,h in ipairs(Studio.handles) do h:Hide(); h.element=nil end
     for i,e in ipairs(Studio.session.layout.elements) do
         local h=Studio.handles[i]
@@ -157,7 +158,7 @@ function Studio.RefreshSandbox()
     end
 end
 function Studio.Refresh()
-    if not Studio.session then return end
+    if not Studio.ready or not Studio.session then return end
     Studio.view.previewScale=Studio.zoom
     R.Apply(Studio.view,Studio.session.layout)
     R.Update(Studio.view,Studio.scenarios[Studio.scenario])
@@ -172,6 +173,7 @@ function Studio.Refresh()
     if Studio.page=="rules" then Studio.RefreshRules() end
 end
 function Studio.ShowPage(name)
+    if not Studio.ready then return end
     if NS.InCombat() then NS.Print(NS.L.combat); return end
     Studio.EndDrag(false); W.ClosePopups()
     for key,page in pairs(Studio.pages) do page:SetShown(key==name) end
@@ -446,7 +448,7 @@ function Studio.CreateProfiles(page)
     W.Label(page,"Share code — copy to a text file for beta-safe backups",11,250,-202)
     local scroll=CreateFrame("ScrollFrame",nil,page,"UIPanelScrollFrameTemplate"); scroll:SetSize(564,188); scroll:SetPoint("TOPLEFT",250,-228)
     local edit=CreateFrame("EditBox",nil,scroll); edit:SetSize(550,188); edit:SetMultiLine(true); edit:SetAutoFocus(false)
-    edit:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",11); edit:SetMaxLetters(48000); W.Paint(edit,"bg")
+    edit:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",11,""); edit:SetMaxLetters(48000); W.Paint(edit,"bg")
     edit:SetScript("OnEscapePressed",function(self) self:ClearFocus() end); scroll:SetScrollChild(edit); Studio.shareBox=edit
     W.Button(page,"Export active profile",250,-436,192,function()
         local code,err=NS.Share.Export(NS.DB.Current()); if not code then NS.Print(err); return end
@@ -484,39 +486,60 @@ function Studio.CreateDiagnostics(page)
     Studio.diagnosticText=W.Label(page,"",12,0,-98); Studio.diagnosticText:SetWidth(840)
     W.Button(page,"Refresh diagnostics",0,-508,192,Studio.RefreshDiagnostics)
 end
+local function createStudio()
+    Studio.handles={}; Studio.grid={}; Studio.sandboxViews={}
+    Studio.LoadSession()
+    -- Publish the Escape-key global only after all pages have been constructed.
+    local root=CreateFrame("Frame",nil,UIParent); root:Hide(); Studio.root=root
+    root:SetSize(1080,680); root:SetPoint("CENTER")
+    root:SetFrameStrata("DIALOG"); root:EnableMouse(true); root:SetMovable(true); root:RegisterForDrag("LeftButton"); W.Paint(root,"bg")
+    root:SetScale(math.min(1,(UIParent:GetWidth()-40)/1080,(UIParent:GetHeight()-40)/680))
+    root:SetScript("OnDragStart",function(self) if not NS.InCombat() then self:StartMoving() end end)
+    root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing() end)
+    root:SetScript("OnHide",function() if Studio.ready then Studio.EndDrag(false) end; W.ClosePopups() end)
+    if NS.Media.files.studio_header then
+        local art=root:CreateTexture(nil,"ARTWORK"); art:SetSize(512,64); art:SetPoint("TOPLEFT",0,0)
+        art:SetTexture("Interface\\AddOns\\"..NS.folder.."\\Media\\"..NS.Media.files.studio_header)
+    end
+    W.Label(root,"FOREVER",24,22,-20,{.84,.7,.43,1}); W.Label(root,"NAMEPLATES  /  STUDIO",10,190,-30)
+    W.Label(root,NS.L.pending,10,22,-648,{.7,.6,.4,1})
+    W.Line(root,20,-60,1040)
+    W.Button(root,"×",1028,-18,30,function() root:Hide() end)
+    W.Button(root,"GUI skin",868,-18,146,function()
+        local options={"Dark RPG","Light Fantasy","Modern Studio"}
+        for i,v in ipairs(options) do if W.skin==v then W.Skin(options[i%3+1]); Studio.Refresh(); break end end
+    end)
+    Studio.status=W.Label(root,"",10,490,-648)
+    Studio.pages={}
+    for _,name in ipairs({"gallery","studio","sandbox","rules","profiles","diagnostics"}) do Studio.pages[name]=makePage(root) end
+    Studio.CreateGallery(Studio.pages.gallery); Studio.CreateEditor(Studio.pages.studio)
+    Studio.CreateSandbox(Studio.pages.sandbox); Studio.CreateRules(Studio.pages.rules); Studio.CreateProfiles(Studio.pages.profiles); Studio.CreateDiagnostics(Studio.pages.diagnostics)
+    for i,name in ipairs({"gallery","studio","sandbox","rules","profiles","diagnostics"}) do
+        W.Button(root,NS.L[name],20,-90-(i-1)*38,146,function() Studio.ShowPage(name) end)
+    end
+    W.Label(root,"FNP  "..NS.version.."\n\nOriginal layouts\nLive preview\nLocal profiles\n\nArtwork pending",10,28,-324,{.6,.6,.62,1})
+end
 function Studio.Open()
     if NS.InCombat() then NS.Print(NS.L.combat); return end
     if NS.databaseBlocked then NS.Print("Database version is newer; preserve it before downgrading."); return end
-    if not Studio.root then
-        Studio.LoadSession()
-        local root=CreateFrame("Frame","ForeverNameplatesStudio",UIParent); root:SetSize(1080,680); root:SetPoint("CENTER")
-        root:SetFrameStrata("DIALOG"); root:EnableMouse(true); root:SetMovable(true); root:RegisterForDrag("LeftButton"); W.Paint(root,"bg")
-        root:SetScale(math.min(1,(UIParent:GetWidth()-40)/1080,(UIParent:GetHeight()-40)/680))
-        root:SetScript("OnDragStart",function(self) if not NS.InCombat() then self:StartMoving() end end)
-        root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing() end)
-        root:SetScript("OnHide",function() Studio.EndDrag(false); W.ClosePopups() end)
-        Studio.root=root
-        if NS.Media.files.studio_header then
-            local art=root:CreateTexture(nil,"ARTWORK"); art:SetSize(512,64); art:SetPoint("TOPLEFT",0,0)
-            art:SetTexture("Interface\\AddOns\\"..NS.folder.."\\Media\\"..NS.Media.files.studio_header)
+    if not Studio.ready then
+        local previous={}; for key,value in pairs(Studio) do previous[key]=value end
+        local fonts,surfaces=#W.fonts,#W.surfaces
+        local ok,err=pcall(createStudio)
+        if not ok then
+            if Studio.root then Studio.root:Hide() end
+            for key in pairs(Studio) do Studio[key]=nil end
+            for key,value in pairs(previous) do Studio[key]=value end
+            -- Failed widgets are hidden with their root and must not be retained by skins.
+            for i=#W.fonts,fonts+1,-1 do W.fonts[i]=nil end
+            for i=#W.surfaces,surfaces+1,-1 do W.surfaces[i]=nil end
+            NS.Log("Studio construction failed; incomplete interface discarded.")
+            if not NS.Compat.Secret(err) and type(err)=="string" then NS.Log(err); NS.Print(err) end
+            NS.Print("Studio could not be built. Try /fnp again; check the installed addon version.")
+            return
         end
-        W.Label(root,"FOREVER",24,22,-20,{.84,.7,.43,1}); W.Label(root,"NAMEPLATES  /  STUDIO",10,190,-30)
-        W.Label(root,NS.L.pending,10,22,-648,{.7,.6,.4,1})
-        W.Line(root,20,-60,1040)
-        W.Button(root,"×",1028,-18,30,function() root:Hide() end)
-        W.Button(root,"GUI skin",868,-18,146,function()
-            local options={"Dark RPG","Light Fantasy","Modern Studio"}
-            for i,v in ipairs(options) do if W.skin==v then W.Skin(options[i%3+1]); Studio.Refresh(); break end end
-        end)
-        Studio.status=W.Label(root,"",10,490,-648)
-        Studio.pages={}
-        for _,name in ipairs({"gallery","studio","sandbox","rules","profiles","diagnostics"}) do Studio.pages[name]=makePage(root) end
-        Studio.CreateGallery(Studio.pages.gallery); Studio.CreateEditor(Studio.pages.studio)
-        Studio.CreateSandbox(Studio.pages.sandbox); Studio.CreateRules(Studio.pages.rules); Studio.CreateProfiles(Studio.pages.profiles); Studio.CreateDiagnostics(Studio.pages.diagnostics)
-        for i,name in ipairs({"gallery","studio","sandbox","rules","profiles","diagnostics"}) do
-            W.Button(root,NS.L[name],20,-90-(i-1)*38,146,function() Studio.ShowPage(name) end)
-        end
-        W.Label(root,"FNP  "..NS.version.."\n\nOriginal layouts\nLive preview\nLocal profiles\n\nArtwork pending",10,28,-324,{.6,.6,.62,1})
+        Studio.ready=true
+        _G.ForeverNameplatesStudio=Studio.root
         UISpecialFrames=UISpecialFrames or {}; table.insert(UISpecialFrames,"ForeverNameplatesStudio")
     end
     Studio.root:Show(); Studio.ShowPage(Studio.page or "studio")

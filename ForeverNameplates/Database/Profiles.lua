@@ -12,7 +12,12 @@ function DB.Initialize(saved)
         return nil, "Newer SavedVariables version; data preserved."
     end
     NS.databaseBlocked=false
-    local data = {version=2, profiles={}, characters={}, active="Default", live=false}
+    local data = {version=2, profiles={}, characters={}, active="Default", live=false,minimap={angle=225,hidden=false}}
+    if type(saved)=="table" and type(saved.minimap)=="table" then
+        local angle=saved.minimap.angle
+        if type(angle)=="number" and angle==angle and angle~=math.huge and angle~=-math.huge then data.minimap.angle=angle%360 end
+        data.minimap.hidden=saved.minimap.hidden==true
+    end
     -- Explicit v0 migration: one declarative layout, no executable values.
     if type(saved) == "table" and saved.version == 0 then
         local migrated = NS.Model.Validate(saved.layout)

@@ -26,6 +26,9 @@ function F:SetScript(event,callback) self.scripts[event]=callback end
 function F:RegisterEvent(event) self.events[event]=true end
 function F:UnregisterEvent(event) self.events[event]=nil end
 function F:RegisterForDrag(...) self.dragButtons={...} end
+function F:RegisterForClicks(...) self.clickButtons={...} end
+function F:SetHighlightTexture(path) self.highlightTexture=path end
+function F:GetCenter() return self.centerX or 0,self.centerY or 0 end
 function F:EnableMouse(v) self.mouse=v end
 function F:SetEnabled(v) self.enabled=v end
 function F:IsEnabled() return self.enabled end
@@ -35,7 +38,10 @@ function F:StartMoving() self.moving=true end
 function F:StopMovingOrSizing() self.moving=false end
 function F:IsForbidden() return self.forbidden or false end
 function F:IsProtected() return self.protected or (self.parent and self.parent:IsProtected()) or false end
-function F:SetFont(path,size,flags) self.font={path,size,flags} end
+function F:SetFont(path,size,flags)
+    assert(type(path)=="string" and type(size)=="number" and type(flags)=="string", "SetFont requires fontFile, height, flags")
+    self.font={path,size,flags}; return true
+end
 function F:SetText(value) self.text=tostring(value or "") end
 function F:GetText() return self.text or "" end
 function F:SetTextColor(...) self.textColor={...} end
@@ -70,6 +76,7 @@ function F:CreateTexture(name,layer) return make("Texture",name,self) end
 function F:CreateFontString(name,layer) return make("FontString",name,self) end
 function CreateFrame(kind,name,parent,template) return make(kind,name,parent) end
 UIParent=CreateFrame("Frame"); UIParent:SetSize(1920,1080)
+Minimap=CreateFrame("Frame",nil,UIParent); Minimap:SetSize(140,140)
 STANDARD_TEXT_FONT="Fonts\\FRIZQT__.TTF"
 UISpecialFrames={}; SlashCmdList={}
 DEFAULT_CHAT_FRAME={messages={}}

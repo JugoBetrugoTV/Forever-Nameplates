@@ -19,7 +19,7 @@ function W.Skin(name)
 end
 function W.Label(parent,text,size,x,y,color)
     local f=parent:CreateFontString(nil,"OVERLAY")
-    f:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",size or 12)
+    f:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",size or 12,"")
     f:SetPoint("TOPLEFT",parent,"TOPLEFT",x or 0,y or 0)
     if not color or type(color)=="string" then
         local token=color or "text"
@@ -42,7 +42,7 @@ function W.Button(parent,text,x,y,width,callback)
 end
 function W.Edit(parent,x,y,width,text,callback)
     local f=CreateFrame("EditBox",nil,parent); f:SetSize(width,25); f:SetPoint("TOPLEFT",x,y)
-    W.Paint(f,"bg"); f:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",11)
+    W.Paint(f,"bg"); f:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",11,"")
     f:SetTextColor(unpack(W.skins[W.skin].text)); W.fonts[#W.fonts+1]={font=f,token="text"}
     f:SetTextInsets(7,7,3,3); f:SetAutoFocus(false); f:SetMaxLetters(80); f:SetText(text or "")
     f:SetScript("OnEscapePressed",function(self) self:ClearFocus() end)

@@ -135,8 +135,14 @@
         "game": "Final Fantasy XIV",
         "version": null,
         "element": "overhead unit nameplate",
-        "status": "website_access_blocked",
-        "source_url": null
+        "status": "official_images_located_download_blocked",
+        "source_url": "https://na.finalfantasyxiv.com/uiguide/battle/battle-np/battle_np_bar.html",
+        "image_urls": [
+          "https://lds-img.finalfantasyxiv.com/uiguide/na/5e/9e139cf87504d0b6e816c272c1515abd38faed.jpg",
+          "https://lds-img.finalfantasyxiv.com/uiguide/na/51/66741e445c904df9cd7f06f839b03551192e53.jpg",
+          "https://lds-img.finalfantasyxiv.com/uiguide/na/71/bfd57bcf3542c45e03da53cefbd8999f9d1057.jpg",
+          "https://lds-img.finalfantasyxiv.com/uiguide/na/37/0faba07d80ef234d73f8e584613faf85630ff5.jpg"
+        ]
       }
     },
     {

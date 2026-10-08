@@ -8,6 +8,10 @@ Legacy-Platzhalter und erfüllen den neuen Original-Look nicht.
 
 ## Quellenstand 2026-10-08
 
+Aktualisierung 0.4.1: Die Tabelle dokumentiert den ursprünglichen Abrufblock. Mehrere Webseiten
+sind inzwischen erreichbar; FFXIV-Bildlinks wurden im offiziellen Guide gefunden, deren CDN
+bleibt gesperrt. [Aktuelle Abrufbefunde und konkrete Originalbildlinks](INTERNET_IMAGE_REFERENCES.md).
+
 | Spiel | Quelle / Abruf | Umsetzungsstand |
 | --- | --- | --- |
 | WoW Classic | Gethe/wow-ui-source Tag 1.15.8, Commit `e0099491e5ce94ef87c791b053f1e1509b5fd7ac` | Struktur als eigenes Nameplate-Layout rekonstruiert; Client-Texturpixel nicht geprüft |
@@ -84,8 +88,10 @@ folgende konkrete Hostnamen ergänzen:
 - `news.blizzard.com`
 
 Bild-CDN-Hosts erst ergänzen, wenn sie tatsächlich aus einer erreichbaren Referenzseite
-ermittelt wurden. Die vorhandene Allowlist ist dem Agenten nicht bekannt; sie wurde deshalb
-nicht durch eine neue vollständige Liste überschrieben. Es wurde kein Netzwerkentwurf gespeichert
-und keine Freigabe angewendet. Nach Änderung speichern/veröffentlichen und die betroffenen
+ermittelt wurden. Die Allowlist wurde inzwischen mit dem Konfigurations-Lesetool geprüft.
+Die oben genannten Hosts, `warcraft.wiki.gg`, `www.google.com`, `www.bing.com` und der tatsächlich
+nachgewiesene FFXIV-Bildhost `lds-img.finalfantasyxiv.com` wurden als Entwurf gespeichert.
+Bestehende Regeln und voreingestellte Git-/Paketdomains bleiben erhalten. Die CDN-Freigabe ist
+noch nicht als aktiv nachgewiesen. Nach Änderung speichern/veröffentlichen und die betroffenen
 Abrufe wiederholen. Originalbild, Version, Nameplate-Zustand und gemessene Pixelgeometrie
 festhalten, erst dann das nächste Spiel-Layout nachbauen.

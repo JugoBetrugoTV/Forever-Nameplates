@@ -1,4 +1,4 @@
-# Forever Nameplates — Entwicklungsstand 0.4.0
+# Forever Nameplates — Entwicklungsstand 0.4.1
 
 Stand: 2026-10-08. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
@@ -6,6 +6,12 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Implementiert
 
+- Alle GUI-SetFont-Aufrufe mit obligatorischem Flags-Argument; strenger Mock reproduziert die
+  gemeldete Client-Signatur. Studio-Aufbau wird erst nach vollständiger Konstruktion freigegeben;
+  fehlgeschlagene Builds werden verborgen/verworfen und sind erneut öffnungsfähig.
+- Minimap-Launcher mit Client-Icon, Tooltip, Linksklick Öffnen/Schließen, Rechtsklick Diagnose,
+  Drag am Rand, skalierter Cursor-Geometrie, gespeicherter Position/Sichtbarkeit und `/fnp minimap`.
+  Drag-OnUpdate nur während des Ziehens; Kampf stoppt Drag und blockiert GUI-/Positionseingriffe.
 - Modularer Namespace, Ereignisbus, begrenztes Diagnoseprotokoll und TOC-Ladefolge.
 - Forever-Kompatibilitätsschicht auf Basis der gelieferten client-spezifischen Quellen.
 - Registry mit Health/Cast/Text/Panel/Target/Ornament/Artwork/Raid/Class, deklaratives validiertes Modell.
@@ -43,7 +49,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **121 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **133 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -60,8 +66,11 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Zusätzlich echte FN1-Fixture aus Commit `90fc278`, FN2-Regel-Roundtrip und Malformationen,
   Migration mit Charakterbindung, Secret-Identity-Sperren, Regelpriorität, Reaktionswechsel,
   nativer Raid-Helper inklusive fehlendem/verweigertem Aufruf, Marker-Reuse, Vorschau-Skalierung sowie neue GUI-Callbacks und Undo.
-- Version 0.4.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
-- 31 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- Zusätzlich obligatorische Font-Flags, fehlgeschlagener Aufbau an drei verschiedenen Seiten,
+  Wiederöffnung ohne doppelte Sandbox/Registrierung sowie Minimap-Klick/Tooltip/Hide/Drag,
+  UI-Skalierung, fünf Winkel, Speicherung/Migration, verspätete Minimap und Kampfsperre.
+- Version 0.4.1 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 36 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.
@@ -76,11 +85,12 @@ Keine Fremdspiel-Grafik wurde in das Addon kopiert. Die Clientressourcen werden 
 Die beiden Quellenlayouts sind noch keine vollständig abgenommenen 1:1-Replikate: tatsächliche
 Texturpixel, Fonts/CVar-Scaling und zusätzliche Unit-Zustände sind im Client ungeprüft.
 
-Die anderen fünf Spiele sind wegen HTTP-403-Tunnelablehnung des Cloud-Proxys blockiert.
-Der zusätzliche eskalierte Abruf änderte das Ergebnis nicht. Das war eine Netzwerkblockade,
-keine Ablehnung der automatischen Genehmigungsprüfung. Die Originalbilder wurden nicht gesehen;
-der Spielzugriff ist in der UI entsprechend deaktiviert. [Konkrete Quellen und Domainbedarf](docs/NAMEPLATE_REFERENCES.md).
-Die vorhandene unbekannte Allowlist wurde nicht überschrieben, keine Netzwerkfreigabe gespeichert.
+Die anderen fünf Spiel-Layouts sind noch deaktiviert, weil keine visuell geprüfte Originalreferenz
+vorliegt. Inzwischen sind mehrere Webseiten erreichbar; vier konkrete FFXIV-Originalbildlinks
+wurden im offiziellen UI-Guide gefunden. Deren Bildhost bleibt per CONNECT-403 gesperrt.
+GW2/WoW-Wikis und SWTOR-Suche liefern HTTP 403. [Aktuelle Bildquellen und Abrufbefunde](docs/INTERNET_IMAGE_REFERENCES.md).
+Die Allowlist ist inzwischen lesbar und wurde unter Erhalt bestehender Regeln ergänzt;
+Netzwerkentwürfe sind gespeichert, die Aktivierung des FFXIV-CDNs bleibt ungeprüft.
 
 **Alle sieben aktiven Nameplate-PNGs** stehen noch aus. Classic/Dragonflight können für den
 jetzigen Strukturstand vorhandene Clientressourcen verwenden. Die Grafikaufträge verlangen
@@ -116,7 +126,8 @@ Die umfassende Definition of Done aus dem Briefing ist **noch nicht erfüllt**.
 
 Python-Werkzeuge und die gepinnten Forschungsquellen sind installiert. Das vollständige
 Installationsskript wurde in der aktuellen Maschine erfolgreich ausgeführt. `install_script`
-und `start_skill` sind als Konfigurationsentwurf gespeichert; keine zusätzlichen Secrets
-oder Netzwerkfreigaben waren notwendig. Der Entwurf wurde durch den Agenten nicht publiziert.
+und `start_skill` sind als Konfigurationsentwurf gespeichert; zusätzliche Netzwerkanforderungen
+für die Originalbild-Recherche wurden ergänzt. Keine zusätzlichen Secrets benötigt.
+Der Entwurf wurde durch den Agenten nicht publiziert.
 Für zukünftige Cloud-Tasks bitte die Änderungen in den Umgebungseinstellungen prüfen/speichern
 und die Umgebung veröffentlichen. Wiederherstellung in einer neuen Task wurde noch nicht geprüft.

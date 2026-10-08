@@ -1,7 +1,12 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.4.0**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.4.1**, kein fertig poliertes Release.
+
+Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
+den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
+um seine Position zu speichern. `/fnp minimap` blendet ihn aus oder wieder ein. Im Kampf sind
+Öffnen und Verschieben gesperrt. Die verwendeten Icon-/Randtexturen kommen aus dem Client.
 
 ## Designziel: ausschließlich Nameplates aus sieben Spielen
 
@@ -13,7 +18,8 @@ Unter **Game nameplates** im Layout-Studio stehen zwei quellengestützte Variant
 Classic **1.15.8** und Dragonflight **10.2.7**. Sie verwenden echte clientseitige Nameplate-
 Texturpfade und aus FrameXML abgeleitete Maße/Anordnung. Beide sind `source draft`, noch kein
 bestätigter 1:1-Pixelvergleich im Forever-Client. Die anderen fünf Spiele sind dort deaktiviert,
-weil ihre Originalseiten durch den Cloud-Netzwerkproxy blockiert werden. Neue Installationen
+weil noch keine vollständige Original-Nameplate visuell geprüft wurde. Konkrete FFXIV-Bildlinks
+liegen inzwischen im [Rechercheprotokoll](docs/INTERNET_IMAGE_REFERENCES.md); deren Bildhost ist noch gesperrt. Neue Installationen
 starten mit der Classic-Quellenvariante; vorhandene Profile werden nicht umgestaltet. Es werden dafür keine
 erfundenen Designs angeboten. [Quellen, tatsächlicher Stand und benötigter Netzwerkzugriff](docs/NAMEPLATE_REFERENCES.md).
 

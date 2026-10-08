@@ -9,6 +9,11 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Beide TOCs werden auf Interface 16001 erkannt; keine fehlenden Dateien/Libraries.
 - [ ] Login, `/reload`, Zonenwechsel und Neustart erzeugen keine Lua-Fehler.
 - [ ] `/fnp`, `/forevernameplates`, Escape und Schließen funktionieren.
+- [ ] Inspector und Profile-Sharebox öffnen ohne `SetFont`-Fehler; Preset-Wechsel ohne `visible`-Folgefehler.
+- [ ] Minimap-Icon sichtbar: Linksklick öffnet/schließt, Rechtsklick öffnet Diagnose; Tooltip korrekt.
+- [ ] Icon am Rand ziehen, UI-/Minimap-Scale und runde/quadratische Minimap prüfen; kein Drag-OnUpdate bleibt aktiv.
+- [ ] `/fnp minimap` versteckt und stellt das Icon wieder her; Position und Sichtbarkeit nach `/reload` erhalten.
+- [ ] Kampf startet während Icon-Drag: Drag stoppt, Designer bleibt geschlossen, keine geschützte Aktion.
 - [ ] Studio passt auf 1920×1080 und kleinere Displays mit verschiedenen UI-Skalierungen.
 - [ ] Fenster lässt sich verschieben; Dark RPG, Light Fantasy und Modern Studio sind lesbar.
 - [ ] Alle zwölf Galeriekarten sind erkennbar und übernehmen das richtige Preset.

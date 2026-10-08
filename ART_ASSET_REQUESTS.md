@@ -15,8 +15,10 @@ Classic: Fill 103×10, Border 128×16 mit Level rechts. Dragonflight: Fill 86×4
 bei Scale=1. Diese Maße sind strukturell nachgewiesen. Texturpixel und Darstellung im Forever-
 Client sind nicht geprüft; deshalb ist dies noch keine bestätigte 1:1-Abnahme.
 
-Für die fünf anderen Spiele scheiterten die Website-Abrufe am Cloud-Proxy mit HTTP 403.
-Es wird kein erfundener Ersatz als Originaldesign angeboten. Ihre Canvas-/Fenstermaße bleiben
+Für die fünf anderen Spiele fehlen noch visuell geprüfte Original-Nameplates. Beim erneuten
+Internetabruf wurden [konkrete FFXIV-Bildlinks](docs/INTERNET_IMAGE_REFERENCES.md) im offiziellen Guide
+gefunden; deren Bilddownload ist am separaten CDN noch gesperrt. Es wird kein erfundener Ersatz
+als Originaldesign angeboten. Ihre Canvas-/Fenstermaße bleiben
 vorläufig, bis tatsächliche Nameplate-Bilder erreichbar sind. WoW-Importverträge wurden an die
 bekannten Maße angepasst; Classic hat eine versetzte Healthöffnung statt einer zentrierten.
 
@@ -98,8 +100,9 @@ Reconstruct ONLY the overhead unit NAMEPLATE of Diablo IV. Use the attached ORIG
 ## Final Fantasy XIV — fantasy_frame.png
 
 - Version: **noch nicht verifiziert**.
-- Status: `website_access_blocked`.
-- Quelle: Originalseite vom Cloud-Proxy blockiert; kein bestätigtes Bild.
+- Status: `official_images_located_download_blocked`.
+- Quelle: [Offizieller Guide zu Enemy Display Names](https://na.finalfantasyxiv.com/uiguide/battle/battle-np/battle_np_bar.html).
+- [Vier konkrete Originalbildlinks](docs/INTERNET_IMAGE_REFERENCES.md); Bilddateien noch nicht lokal geprüft, kein vermessener Rahmen.
 - Canvas: **256 × 64**; Healthöffnung: **182 × 12**; zentriert.
 - Kein fertiges PNG geliefert. Außer den zwei WoW-Maßen bleiben die Verträge vorläufig.
 

@@ -1,5 +1,23 @@
 # Forever API-Audit — 2026-10-08
 
+## Clientfehler und Minimap ab 0.4.1
+
+Der tatsächliche Client meldete `SimpleEditBoxAPI.SetFont`: Flags sind obligatorisch,
+nicht nilable. Alle drei GUI-Aufrufstellen (Label, Inspector-EditBox, Share-EditBox) übergeben
+jetzt explizit `""`. Der Mock verlangt ebenfalls alle Argumente und würde die frühere Signatur ablehnen.
+Der Folgefehler `inspector.visible == nil` entstand nach dem abgebrochenen Aufbau.
+Die Studio-Oberfläche wird erst nach vollständigem Aufbau freigegeben; ein gescheiterter
+Aufbau wird verborgen und kann ohne doppelte Sandbox/Globalregistrierung erneut gestartet werden.
+
+Minimap-Button auf eigenem UIParent-Frame mit Minimap-Anker, Client-Icon/Texturrand,
+`RegisterForClicks`, `SetHighlightTexture`, `GetCenter`, `GetWidth` und `GetEffectiveScale`.
+Die zusätzlichen Widgetsignaturen sind in der Forever-Dokumentation geprüft. Vorhandene
+Minimap-Scripts und Controls werden nicht verändert. OnUpdate läuft nur während Drag;
+Kampfbeginn stoppt Drag, Öffnen/Positionseingriffe sind im Kampf gesperrt. Rund und `SQUARE`
+unterstützt; andere Sonderformen verwenden den Kreis-Fallback. SavedVariables bleiben
+Schema 2, Launcher-Metadaten ergänzen sich optional und ändern keine FN1/FN2-Layoutcodes.
+Echte Positionierung/Clienttexturen und Taint müssen noch im Spiel geprüft werden.
+
 ## Quellen und Evidenz
 
 - [Atraeau/WoW-Addons](https://github.com/Atraeau/WoW-Addons), Commit
@@ -64,7 +82,7 @@ Drag-Skalierung und vier parallel angezeigte simulierte Units. `SimpleFrameAPI.S
 begrenzt Canvas und Sandbox-Karten; `SimpleButtonAPI.IsEnabled` sichert deaktivierte Menüeinträge.
 Beide Methoden sind in der Forever-Referenz dokumentiert und im Widget-Mock abgebildet.
 Freie Ankergruppen,
-Maskenformen, grafische Klassenicons, Questmarker, Casticons, Threat, Minimap-Launcher,
+Maskenformen, grafische Klassenicons, Questmarker, Casticons, Threat,
 vollständige Localization, Animationen und die restlichen Spezialseiten folgen separat.
 
 ## Regeln und Marker ab 0.3.0

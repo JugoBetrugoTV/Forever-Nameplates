@@ -9,6 +9,7 @@ local function initialize()
     local data,err=NS.DB.Initialize(ForeverNameplatesDB)
     if not data then NS.Print(err); return end
     ForeverNameplatesDB=data
+    NS.Minimap.Init()
     local name=NS.Compat.Public(UnitName,"player")
     local realm=NS.Compat.Public(GetRealmName)
     if type(name)=="string" and type(realm)=="string" then NS.DB.character=name.."-"..realm end
@@ -29,16 +30,18 @@ events:SetScript("OnEvent",function(_,event,unit)
     if event=="NAME_PLATE_UNIT_ADDED" then NS.Engine.Add(unit)
     elseif event=="NAME_PLATE_UNIT_REMOVED" then NS.Engine.Remove(unit)
     elseif event=="PLAYER_REGEN_DISABLED" then
+        NS.Minimap.StopDrag()
         if NS.Studio.root then NS.Studio.EndDrag(false); NS.Studio.root:Hide() end
         if ColorPickerFrame and ColorPickerFrame:IsShown() then ColorPickerFrame:Hide() end
-    elseif event=="PLAYER_REGEN_ENABLED" or event=="PLAYER_ENTERING_WORLD" then NS.Engine.Refresh()
+    elseif event=="PLAYER_REGEN_ENABLED" or event=="PLAYER_ENTERING_WORLD" then NS.Minimap.Init(); NS.Engine.Refresh()
     elseif event=="PLAYER_TARGET_CHANGED" or event=="RAID_TARGET_UPDATE" then for token in pairs(NS.Engine.units) do NS.Engine.Update(token) end
     else NS.Engine.Update(unit) end
 end)
 SLASH_FOREVERNAMEPLATES1="/fnp"
 SLASH_FOREVERNAMEPLATES2="/forevernameplates"
 SlashCmdList.FOREVERNAMEPLATES=function(command)
-    if command=="diagnostics" then NS.Studio.Open(); if NS.Studio.root and not NS.InCombat() then NS.Studio.ShowPage("diagnostics") end
+    if command=="minimap" then NS.Minimap.Toggle()
+    elseif command=="diagnostics" then NS.Studio.Open(); if NS.Studio.ready and not NS.InCombat() then NS.Studio.ShowPage("diagnostics") end
     else NS.Studio.Open() end
 end
 NS.events=events

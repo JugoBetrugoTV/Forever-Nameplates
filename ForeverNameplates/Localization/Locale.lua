@@ -15,6 +15,9 @@ local messages = {
     preview = {"DESIGN SANDBOX", "DESIGN-VORSCHAU"},
     live = {"Enable experimental live overlay", "Experimentelles Live-Overlay aktivieren"},
     pending = {"Forever API and in-game validation pending", "Forever-API und Ingame-Test ausstehend"},
+    minimapOpen = {"Left click: open / close the designer", "Linksklick: Designer öffnen / schließen"},
+    minimapDiagnostics = {"Right click: diagnostics", "Rechtsklick: Diagnose"},
+    minimapDrag = {"Drag: move around the minimap", "Ziehen: Position an der Minimap ändern"},
 }
 NS.L = setmetatable({}, {__index = function(_, key)
     return messages[key] and messages[key][de and 2 or 1] or key
