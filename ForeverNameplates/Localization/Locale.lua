@@ -4,6 +4,8 @@ local messages = {
     title = {"Forever Nameplates", "Forever Nameplates"},
     gallery = {"Preset Gallery", "Preset-Galerie"},
     studio = {"Layout Studio", "Layout-Studio"},
+    sandbox = {"Design Sandbox", "Design-Vorschau"},
+    confirm = {"Confirm", "Bestätigen"}, cancel = {"Cancel", "Abbrechen"},
     profiles = {"Profiles & Sharing", "Profile & Austausch"},
     diagnostics = {"Diagnostics", "Diagnose"},
     combat = {"Editing paused during combat.", "Bearbeitung im Kampf pausiert."},

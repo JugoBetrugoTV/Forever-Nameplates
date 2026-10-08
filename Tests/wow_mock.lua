@@ -28,6 +28,8 @@ function F:UnregisterEvent(event) self.events[event]=nil end
 function F:RegisterForDrag(...) self.dragButtons={...} end
 function F:EnableMouse(v) self.mouse=v end
 function F:SetEnabled(v) self.enabled=v end
+function F:IsEnabled() return self.enabled end
+function F:SetClipsChildren(v) self.clipsChildren=v end
 function F:SetMovable(v) self.movable=v end
 function F:StartMoving() self.moving=true end
 function F:StopMovingOrSizing() self.moving=false end

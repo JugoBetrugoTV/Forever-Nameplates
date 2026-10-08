@@ -1,6 +1,6 @@
-# Forever Nameplates — Entwicklungsstand 0.1.0
+# Forever Nameplates — Entwicklungsstand 0.2.0
 
-Stand: 2026-10-08. **Erster lokal prüfbarer Kern, kein abgeschlossenes Premium-Release.**
+Stand: 2026-10-08. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
 **Forever Nameplates** ersetzt; technisch lautet der Addon-Ordner `ForeverNameplates`.
 
@@ -11,24 +11,34 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Registry mit Health/Cast/Text/Panel/Target/Ornament/Artwork, deklaratives validiertes Modell.
 - Gepoolte ereignisbasierte Overlay-Engine; keine Veränderung geschützter Blizzard-Frames.
 - Zwölf geometrisch verschiedene Presets, inklusive vertikaler Arena-Plate und Segment-Ornamenten.
-- Eigene Galerie, Studio-Canvas, Inspector, Profil-/Sharing-Seite und Diagnose; drei GUI-Skins.
+- Eigene Galerie, Studio-Canvas, Inspector, Vierfach-Sandbox, Profil-/Sharing-Seite und Diagnose;
+  drei GUI-Skins mit konsistent wechselnden Hintergrund- und Textfarben.
 - Drag-and-Drop, X/Y/Größe, Layer, Alpha, Farbe, Text, Fontgröße, vertikale/reverse Balken,
-  Dekorationsform, Sperren/Sichtbarkeit, Snap, Zoom, Copy/Paste, Löschen, Undo/Redo und Elementreset.
+  Dekorationsform, Sperren/Sichtbarkeit, Zoom-Raster, Copy/Paste, Löschen, Undo/Redo und Elementreset.
+- Komponenten-Katalog, exakte Ausrichtung, Drag-Skalierung bei festem linken oberen Rand;
+  Preset-Wechsel bleiben in der Undo-Historie, Menüs sind bei langen Listen paginiert.
 - Acht Preview-Zustände: normal, elite, boss, freundlich, feindlicher Spieler, low health, cast, target.
-- Account-/Charakterprofile, Duplizieren/Umbenennen, Versionsschema und explizite v0-Migration.
+- Account-/Charakterprofile, Duplizieren/Umbenennen, bestätigtes Löschen/Factory-Reset,
+  Default-Fallback aller betroffenen Charaktere, Versionsschema und explizite v0-Migration.
 - Komprimierte, validierte Share-Codes ohne Ausführung importierten Codes.
 - Asset-Importer/Watcher, TGA-Konvertierung, Alpha-/Öffnungsprüfung, Checksums, Manifest,
   Erkennung fehlender/veränderter Dateien, zwölf Theme-Aufträge plus GUI-Header.
-- Installierbares ZIP, gepinnte eingebettete Libraries, geprüfter Upstream-Refresh.
+- Installierbares versioniertes ZIP, gepinnte eingebettete Libraries, geprüfter Upstream-Refresh.
+- GitHub-Workflow für Tests und Paket-Artefakt; laufende Änderungen werden gemäß Nutzerwunsch
+  nach lokaler Prüfung direkt auf `origin/main` gepusht. Veröffentlichungspräferenz in AGENTS.md.
 
 ## Geprüft und Grenzen der Evidenz
 
-- **47 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **73 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
   Frame-Recycling, fremde Interface-Version, Asset-Konvertierung/Idempotenz und Datenbewahrung.
-- 16 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- Zusätzlich Komponentenlimits/Artwork-Verfügbarkeit, Resize/Snap/Zoom, Align-Referenzen,
+  Menü-Paginierung, deaktivierte Aktionen, Vierfachvorschau und Widget-Reuse, GUI-Textfarben,
+  Profil-Fallback/32er-Limit/Combat-Sperre, Confirm/Cancel, Preset-Undo und Grenzkoordinaten.
+- Version 0.2.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 18 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.
@@ -58,10 +68,10 @@ keine künstlerische Qualität oder jedes künstliche Schachbrettmuster automati
 2. Gelieferte Grafik-Batches importieren, Transparenz/Silhouette/Lesbarkeit im Spiel polieren.
 3. Zulässige vollständige Nameplate-Anbindung untersuchen, ohne die konservativen Regeln zu umgehen.
 4. Echte Icons/Raidmarker, Unit-/PvP-Regeln, Klassenfarben, Medienauswahl und weitere Komponenten.
-5. Gruppen/freie Anker, Drag-Skalierung, multiple Preview-Plates, mehr Typography-/Castoptionen.
+5. Gruppen/freie Anker und mehr Typography-/Castoptionen.
 6. Masken/Animationen nur über bestätigte zulässige Widget-Pfade; Performance-Qualitätsstufen.
-7. Weitere Profilschritte (Löschen/Bereichsreset), vollständige DE/EN-Localization, optionale Launcher.
-8. Vollständige 17-Seiten-Navigation erst mit tatsächlich implementierten Funktionen ausbauen.
+7. Profil-Bereichsreset, vollständige DE/EN-Localization, optionale Launcher.
+8. Fünf vorhandene Bereiche zur vollständigen 17-Seiten-Navigation mit tatsächlich implementierten Funktionen ausbauen.
 9. Echte Lastmessung, Combat-/PvP-/Raid-Abnahme, visuelles Polishing und Release-Vorbereitung.
 
 Die umfassende Definition of Done aus dem Briefing ist **noch nicht erfüllt**.

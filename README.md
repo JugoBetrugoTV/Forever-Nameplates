@@ -1,17 +1,23 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erste Entwicklungsstand **0.1.0**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.2.0**, kein fertig poliertes Release.
 
 ## Was dieser Stand enthält
 
-- Eigene Studio-Oberfläche: Preset-Galerie, Layout-Editor, Profile und Diagnose.
+- Eigene Studio-Oberfläche: Preset-Galerie, Layout-Editor, Mehrfachvorschau, Profile und Diagnose.
 - Zwölf unterschiedliche prozedurale Layouts mit eigenständigen Silhouetten.
-- Elemente verschieben, Koordinaten/Größe/Ebene/Deckkraft bearbeiten, Sichtbarkeit und Sperren,
-  4-Pixel-Snap, Zoom, Copy/Paste, Löschen, Undo/Redo und automatisches Speichern.
+- Neue Health-, Cast-, Text-, Hintergrund-, Ziel-, Dekorations- und importierte Artwork-Elemente
+  über den Komponenten-Katalog hinzufügen; fehlendes Artwork wird erst nach Import angeboten.
+- Elemente verschieben und per Eckgriff skalieren, Koordinaten/Größe/Ebene/Deckkraft bearbeiten, Sichtbarkeit und Sperren,
+  4-Pixel-Snap mit Zoom-Raster, exakte Ausrichtung an der Plate-Mitte oder Healthbar,
+  Copy/Paste, Löschen, Undo/Redo einschließlich Preset-Wechsel und automatisches Speichern.
 - Health- und Castbars, Name/Gesundheit/Level/Casttext, Hintergrund, Zielmarkierung,
   Ornamentik und integrierbare Artwork-Ebene; horizontale und vertikale Balken.
-- Account- und Charakterprofile, Duplikate, Umbenennung, validierte komprimierte Share-Codes.
+- Account- und Charakterprofile, Duplikate, Umbenennung, bestätigtes Löschen/Zurücksetzen,
+  Auswahl über paginierte Dropdowns und validierte komprimierte Share-Codes.
+- Vier gleichzeitig sichtbare Sandbox-Plates mit separat wählbaren simulierten Zuständen.
+- Wechselbare GUI-Skins passen Hintergrund- und Textfarben an; ColorPicker bleiben bei Profilwechsel getrennt.
 - Ereignisbasiertes experimentelles Live-Overlay mit Frame-Pooling und Secret-Value-Prüfung.
 - Asset-Import mit Dateiname-, Auflösungs-, Alpha- und Balkenöffnungsprüfung, TGA-Konvertierung
   und Manifest. Originalgrafiken werden vom Nutzer separat geliefert.
@@ -32,6 +38,16 @@ Oder das ZIP aus `dist/` in `Interface/AddOns` entpacken.
 `/fnp` oder `/forevernameplates` öffnet das Studio.
 Die experimentelle Live-Darstellung wird unter **Diagnose** eingeschaltet.
 Die Oberfläche schließt im Kampf. Nameplates müssen in den Spieleinstellungen aktiviert sein.
+
+Im Studio öffnet **+ Add component** den Elementkatalog. Versteckte/gesperrte Elemente
+lassen sich im Element-Dropdown auswählen. Der goldene Eckgriff verändert die Größe bei
+festem linken oberen Rand. **Align element** richtet exakt aus und ignoriert dafür Snap.
+**Design Sandbox** vergleicht vier frei gewählte Zustände desselben Layouts.
+**Reset element** stellt bei Original-Presets das passende Element wieder her; neu hinzugefügte
+oder eigene Elemente erhalten die allgemeinen Komponenten-Defaults.
+
+Auf der Profilseite schützt eine Rückfrage vor Löschen und vollständigem Zurücksetzen.
+`Default` ist nicht löschbar. Charaktere eines gelöschten Profils werden auf `Default` umgestellt.
 
 Vor einem Client-Neustart ein Profil unter **Profile & Austausch** exportieren und den
 Share-Code extern sichern. Quellen melden einen Beta-Fehler beim Laden von SavedVariables;
@@ -56,7 +72,14 @@ Kein WoW-Client oder Zugangsschlüssel ist für diese lokalen Tests erforderlich
 Lua-Syntax und Logik werden mit **Lua 5.1 via Lupa** geprüft. Die Widget-Simulation ist
 kein Ersatz für echte Ingame-Tests, Sicherheitseinschränkungen, Pixelprüfung oder FPS-Messungen.
 Sie prüft unter anderem den vollständigen TOC-Ladeablauf, Secret-Value-Forwarding, Profile,
-Undo/Redo, Share-Roundtrips, GUI-Callbacks, Drag-and-Drop und 40 gleichzeitige Overlays.
+Undo/Redo, Share-Roundtrips, GUI-Callbacks, Drag-and-Drop/-Skalierung, exakte Ausrichtung,
+Mehrfachvorschau, Profil-Löschung, Menü-Paginierung und 40 gleichzeitige Overlays.
+
+GitHub Actions führt bei Pushes auf `main` und Pull Requests automatisch Library-Prüfung,
+Tests und Paketierung aus. Unter **Actions → Test and package Forever Nameplates** liegt
+nach einem erfolgreichen Lauf das Artefakt **ForeverNameplates** zum Herunterladen.
+Es enthält das installierbare ZIP. Der Workflow wurde lokal vorbereitet; ein erfolgreicher
+lokaler Testlauf beweist noch keinen erfolgreichen GitHub-Actions-Lauf.
 
 Forever-API-Definitionen werden in der Cloud unter `/workspace/research/forever-api/types`
 für Lua Language Server eingebunden. Für einen eigenen Checkout `Atraeau/WoW-Addons`

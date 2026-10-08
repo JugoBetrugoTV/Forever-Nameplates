@@ -13,11 +13,16 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Fenster lässt sich verschieben; Dark RPG, Light Fantasy und Modern Studio sind lesbar.
 - [ ] Alle zwölf Galeriekarten sind erkennbar und übernehmen das richtige Preset.
 - [ ] Alle acht Sandbox-Zustände stellen Health-, Cast- und Zielzustand korrekt dar.
+- [ ] Vier Sandbox-Plates gleichzeitig: individuell wählbare Zustände, gleiches aktives Layout.
 
 ## Editor
 
 - [ ] Elementwahl auf Canvas und vorheriges/nächstes Element stimmen überein.
 - [ ] Drag-Verschiebung berücksichtigt UI-Scale und Editor-Zoom.
+- [ ] Eckgriff skaliert bei festem linken oberen Rand; Snap/Zoom und Abbruch korrekt.
+- [ ] Komponenten-Katalog fügt alle verfügbaren Typen hinzu; fehlendes Artwork ist deaktiviert.
+- [ ] Versteckte/gesperrte Elemente über Dropdown wählbar; lange Listen paginieren korrekt.
+- [ ] Ausrichtung links/rechts/oben/unten an Healthbar; Zentrierung auf Plate trotz aktivem Snap exakt.
 - [ ] 4-Pixel-Snap und freie Positionierung, einschließlich negativer Koordinaten.
 - [ ] X/Y/Breite/Höhe/Ebene/Alpha und Textgröße werden unmittelbar wirksam.
 - [ ] Ungültige Werte verändern das Layout nicht.
@@ -25,6 +30,7 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Unsichtbare Elemente lassen sich über den Inspector wieder einschalten.
 - [ ] Sperre verhindert Drag und Eigenschaftsänderungen; Entsperren funktioniert.
 - [ ] Undo/Redo über mindestens zehn Schritte; neue Änderung verwirft den Redo-Zweig.
+- [ ] Preset-Wechsel lässt sich rückgängig machen; gültige Elementauswahl bleibt erhalten.
 - [ ] Copy/Paste erzeugt unabhängige IDs; Löschen und Element-Reset funktionieren.
 - [ ] Kein Datenverlust bei Kampfbeginn während Drag, Textbearbeitung oder ColorPicker.
 
@@ -46,6 +52,8 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 ## Profile und Beta-Persistenz
 
 - [ ] Accountprofile erstellen, wählen und umbenennen; Default duplizieren.
+- [ ] Löschen und Factory-Reset zeigen eine Bestätigung; Abbrechen bewahrt Daten.
+- [ ] Gelöschtes Profil setzt alle betroffenen Charaktere auf Default; Default ist nicht löschbar.
 - [ ] Charakterbindung auf zwei Charakteren und zwei Accountprofilen prüfen.
 - [ ] Export/Import für jedes Preset; beschädigte/fremde Codes werden abgelehnt.
 - [ ] Normales Logout und kalter Neustart: Daten wirklich vorhanden oder Beta-Ladefehler?

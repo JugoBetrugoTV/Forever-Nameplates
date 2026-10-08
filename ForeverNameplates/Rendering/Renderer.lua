@@ -49,6 +49,10 @@ local function draw(part,e)
     elseif e.shape=="diamond" then rect(1,0,0,w*.7,h*.7,math.pi/4)
     else rect(1,0,0,w,h) end
 end
+function Renderer.Resize(part,width,height)
+    part.frame:SetSize(width,height)
+    if part.pieces then draw(part,{width=width,height=height,shape=part.element.shape,color=part.element.color}) end
+end
 function Renderer.Create(parent)
     local root=frame(parent); root:SetSize(1,1); root:EnableMouse(false)
     return {root=root,parts={},pool={}}
@@ -78,6 +82,7 @@ function Renderer.Apply(view,layout)
         end
         draw(part,e)
         if part.image then
+            part.image:SetVertexColor(unpack(e.color))
             local path=NS.Media.files[e.asset]
             if path then part.image:SetTexture("Interface\\AddOns\\"..NS.folder.."\\Media\\"..path) end
         end

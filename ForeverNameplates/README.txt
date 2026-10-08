@@ -1,4 +1,4 @@
-Forever Nameplates 0.1.0 - initial development build
+Forever Nameplates 0.2.0 - development build
 
 Install this folder into _classic_beta_/Interface/AddOns/ForeverNameplates.
 Use /fnp or /forevernameplates to open the studio.

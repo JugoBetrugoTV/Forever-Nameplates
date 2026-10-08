@@ -55,7 +55,11 @@ Secret-Prädikate werden vor jeder Auswertung geprüft. Secret-Health wird nur i
 verwendet; an Fehlerbehandlung werden keine Secret-Werte oder vertraulichen Dumps übergeben.
 Unbekannte Events werden pro Registrierung mit `pcall` erkannt und protokolliert.
 
-Die GUI unterstützt derzeit Layout-Elemente relativ zur gemeinsamen Plate-Mitte. Freie Ankergruppen,
+Die GUI unterstützt Layout-Elemente relativ zur gemeinsamen Plate-Mitte, exakte Ausrichtung,
+Drag-Skalierung und vier parallel angezeigte simulierte Units. `SimpleFrameAPI.SetClipsChildren`
+begrenzt Canvas und Sandbox-Karten; `SimpleButtonAPI.IsEnabled` sichert deaktivierte Menüeinträge.
+Beide Methoden sind in der Forever-Referenz dokumentiert und im Widget-Mock abgebildet.
+Freie Ankergruppen,
 Maskenformen, Regelwerk, Klassenfarben, Raid-/Questmarker, Casticons, Threat, Minimap-Launcher,
 vollständige Localization, Animationen und die restlichen Spezialseiten folgen separat.
 
