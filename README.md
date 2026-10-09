@@ -10,6 +10,10 @@ Unter **Anker / Auren / Casts** lassen sich die neuen Optionen per Maus einstell
 Regler haben eine lokale Vorschau und Undo. Über das Suchfeld oben einen Begriff eingeben
 und den Treffer klicken. [Bedienung, Grenzen und neue Austauschcodes](docs/PLATER_FEATURES.md).
 
+[Aktuelle lokale GUI-Vorschauen](docs/previews/README.md) zeigen den Layout-Editor und
+die neue Komponentenseite aus dem Lua-Code. Sie verwenden ein Demo-Profil, Ersatzschrift
+und Platzhalter für fehlende Clientgrafiken; keine Ingame-Screenshots.
+
 **0.9.0** macht die vorhandenen Einstellungen per Maus bedienbar: Zahlen haben Schieberegler,
 Plus/Minus und Mausrad; Regler zeigen eine lokale Vorschau und speichern beim Loslassen einen
 Undo-Schritt. Klicks übernehmen getippte Zahlen/Text vor dem Elementwechsel; Escape verwirft

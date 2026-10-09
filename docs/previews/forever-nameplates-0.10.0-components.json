@@ -1,0 +1,21 @@
+{
+  "version": "0.10.0",
+  "page": "components",
+  "demo_profile": true,
+  "in_game": false,
+  "client_textures_available": false,
+  "font": "DejaVuSans.ttf",
+  "missing_textures": [
+    "135846",
+    "136096",
+    "136118",
+    "Interface\\CastingBar\\UI-CastingBar-Spark",
+    "Interface\\Tooltips\\Nameplate-Border"
+  ],
+  "limitations": [
+    "Simplified rendering of recorded Lua widgets",
+    "Approximate text metrics and draw ordering",
+    "Solid statusbar fills; missing client images outlined or hatched",
+    "No native game client or game-world background"
+  ]
+}
