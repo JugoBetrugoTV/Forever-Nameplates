@@ -7,6 +7,7 @@ Catalog.entries = {
     {id="target", label="Target brackets"}, {id="ornament", label="Decoration"},
     {id="artwork", label="Imported artwork"}, {id="raid",label="Raid marker"}, {id="class",label="Class badge"},
     {id="classIcon",label="Class icon"}, {id="castIcon",label="Cast icon"},
+    {id="castShield",label="Interrupt shield"},
 }
 function Catalog.Assets(kind)
     local assets={}
@@ -36,6 +37,8 @@ function Catalog.Create(kind,id)
     if not NS.Model.kinds[kind] then return nil,"Unknown component" end
     local width,height,color,extra=160,12,{.75,.58,.3,1},{}
     if kind=="raid" then width=24; height=24; color={1,1,1,1}; extra.layer=8
+    elseif kind=="castShield" then
+        width=10; height=12; color={1,1,1,1}; extra.layer=9; extra.source="cast"; extra.x=-54; extra.y=-9
     elseif kind=="classIcon" or kind=="castIcon" then
         width=20; height=20; color={1,1,1,1}; extra.layer=8
         extra.source=kind=="classIcon" and "class" or "cast"

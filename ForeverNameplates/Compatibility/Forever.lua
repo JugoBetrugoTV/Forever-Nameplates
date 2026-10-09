@@ -70,18 +70,24 @@ function Compat.LevelColor(level)
     end
     return result
 end
-function Compat.CastInfo(unit)
-    -- Only public name/icon metadata is retained. Timing/interrupt fields are
-    -- deliberately not inspected; durations still go straight to the widget.
+function Compat.CastInfo(unit,wantShield)
+    -- Only requested public metadata is retained. Timing fields are never
+    -- inspected; durations still go straight to the widget.
     for i=1,2 do
         local fn
         if i==1 then fn=UnitCastingInfo else fn=UnitChannelInfo end
         if type(fn)=="function" then
-            local ok,name,_,icon=pcall(fn,unit)
+            local ok,name,_,icon,_,_,_,seventh,eighth=pcall(fn,unit)
             if ok then
                 if Compat.Secret(name) or type(name)~="string" then name="" end
                 if Compat.Secret(icon) or type(icon)~="number" or icon~=icon or icon<=0 or icon%1~=0 then icon=nil end
-                if name~="" or icon then return name,icon end
+                local shield
+                if wantShield then
+                    local flag
+                    if i==1 then flag=eighth else flag=seventh end
+                    if not Compat.Secret(flag) and type(flag)=="boolean" then shield=flag end
+                end
+                if name~="" or icon or shield~=nil then return name,icon,shield end
             end
         end
     end
@@ -93,7 +99,8 @@ function Compat.State(unit,needs)
     if not restricted then
         local name=(not needs or needs.name) and Compat.Public(UnitName,unit)
         local level=(not needs or needs.level) and Compat.Public(UnitLevel,unit)
-        local target=Compat.Public(UnitIsUnit,unit,"target")
+        local target
+        if not needs or needs.target then target=Compat.Public(UnitIsUnit,unit,"target") end
         if type(name)=="string" then state.name=name end
         if type(level)=="number" then state.level=level end
         if type(target)=="boolean" then state.target=target end
@@ -110,7 +117,7 @@ function Compat.State(unit,needs)
         local classification=Compat.Public(UnitClassification,unit)
         if classification=="normal" or classification=="elite" or classification=="rare" or classification=="rareelite" or classification=="worldboss" then state.classification=classification end
     end
-    local raid=Compat.Public(GetRaidTargetIndex,unit)
+    local raid=(not needs or needs.raid) and Compat.Public(GetRaidTargetIndex,unit)
     if type(raid)=="number" and raid>=1 and raid<=8 and raid%1==0 then state.raidMarker=raid end
     if type(state.level)~="number" then state.level="" elseif state.level==-1 then state.level="??" end
     if not needs or needs.health then
@@ -121,15 +128,25 @@ function Compat.State(unit,needs)
         end
     end
     if not needs or needs.cast then
-        state.castName,state.castIcon=Compat.CastInfo(unit)
-        state.casting=state.castName~="" or state.castIcon~=nil
+        state.castName,state.castIcon,state.castShield=Compat.CastInfo(unit,not needs or needs.shield)
+        state.casting=state.castName~="" or state.castIcon~=nil or state.castShield~=nil
     end
     return state
+end
+local function validEnum(value)
+    return type(value)=="number" and value>=0 and value<math.huge and value%1==0
 end
 function Compat.Cast(bar,unit)
     -- Modern duration objects go directly into the timer widget; no timing maths.
     if not bar.SetTimerDuration then return false end
-    local duration=Compat.Public(UnitCastingDuration,unit) or Compat.Public(UnitChannelDuration,unit)
+    local duration=Compat.Public(UnitCastingDuration,unit)
+    local channel=false
+    if not duration then duration=Compat.Public(UnitChannelDuration,unit); channel=true end
     if not duration then return false end
+    local interpolation=Compat.Field(Compat.Field(Enum,"StatusBarInterpolation"),"Immediate")
+    local direction=Compat.Field(Compat.Field(Enum,"StatusBarTimerDirection"),channel and "RemainingTime" or "ElapsedTime")
+    if validEnum(interpolation) and validEnum(direction) then return pcall(bar.SetTimerDuration,bar,duration,interpolation,direction) end
+    -- The documented default is elapsed time: safe for casts, wrong for channels.
+    if channel then return false end
     return pcall(bar.SetTimerDuration,bar,duration)
 end

@@ -1,6 +1,6 @@
-# Offene Punkte — 2026-10-09, Version 0.7.0
+# Offene Punkte — 2026-10-09, Version 0.8.0
 
-212 lokale Tests bestehen. Hier läuft kein WoW-Client: Das belegt lokale Logik,
+228 lokale Tests bestehen. Hier läuft kein WoW-Client: Das belegt lokale Logik,
 keine realen Combat-Freigaben, Texturpixel, FPS oder fehlerfreie Ingame-Nutzung.
 Die jüngsten Korrekturen sind im Client noch nicht nachgetestet.
 
@@ -9,6 +9,7 @@ Die jüngsten Korrekturen sind im Client noch nicht nachgetestet.
 | Befund | Ergebnis |
 | --- | --- |
 | Dragonflight-Cast-Hintergrund konnte ohne sichtbaren Castbalken stehen bleiben; Casttext konnte trotz verweigerter Timer-Weitergabe sichtbar sein | In 0.6.2 korrigiert; zwei zuerst scheiternde Regressionstests prüfen Vorschau/Live, fehlende Duration, abgelehnte Weitergabe, deaktivierte Bars und Elementreihenfolge |
+| Channels verwendeten dieselbe Standardrichtung wie Casts; reine Healthlayouts wurden bei Ziel-/Raid-/Spielerlevel-Events unnötig komplett aktualisiert | In 0.8.0 mit zwei zuerst scheiternden Mockfällen korrigiert; echte Channel-Pixelwirkung ungeprüft |
 | README im installierten Addon nannte 0.2.0 und behauptete zusätzliche, opt-in Overlays | In 0.6.2 korrigiert; Paketinhalt geprüft |
 
 Die früher gemeldeten SetFont-/Inspector-Fehler sowie die fehlende Live-Anwendung haben
@@ -30,8 +31,9 @@ noch nicht gemeldet. Die offenen Punkte unten sind keine pauschale Liste bestät
   Poolwechsel im Forever-Client prüfen. Fehlender Atlas/Secret-Icon blendet die Komponente aus.
   [Addonvergleich und neue Komponenten](ADDON_COMPARISON.md).
 - **Casts/Channels:** Start, Delay, Stop, Interrupt und Channel-Ende müssen im Client geprüft
-  werden. Channels verwenden bisher die dokumentierte Standard-Timerrichtung; Abgleich
-  von ElapsedTime/RemainingTime steht aus. Die dokumentierten Duration-Rückgaben allein beweisen nicht, wann ein tatsächlicher
+  werden. ElapsedTime/RemainingTime wird ab 0.8.0 über öffentliche Enums gewählt; deren
+  tatsächliche Verfügbarkeit und Channel-Wirkung sind ungeprüft. Ohne Enums bleibt die Channelbar verborgen.
+  Der optionale Schildmarker benötigt öffentlichen Unterbrechbarkeitsstatus und verfügbaren Atlas. Die dokumentierten Duration-Rückgaben allein beweisen nicht, wann ein tatsächlicher
   Client kein nutzbares Objekt mehr liefert; es gibt keine eigene geheime Timing-Arithmetik.
 - **Daten und Last:** SavedVariables nach kaltem Neustart prüfen. Das Kit berichtet einen
   Beta-Ladefehler, hier nicht am Client bestätigt. Externen Share-Code behalten. CPU/FPS und
@@ -66,8 +68,8 @@ konnten hier weiterhin nicht heruntergeladen oder geprüft werden.
 ## Noch nicht implementiert
 
 - Maskierte runde/gebogene Health-Füllungen; derzeit sind Health-/Castbars rechteckige StatusBars.
-- Questmarker, Cast-Spark und Interrupt-Shield; Class-/Casticons sind ab 0.7.0 als optionale
-  Komponenten implementiert, noch nicht im Forever-Client abgenommen.
+- Questmarker und Cast-Spark. Class-/Casticons (0.7.0) und Interrupt-Shield (0.8.0) sind als
+  optionale Komponenten implementiert, noch nicht im Forever-Client abgenommen.
 - Freie Ankergruppen und Animationen; zusätzliche Details sollen konkrete Original-Nameplates abbilden.
 - Vollständige deutsche Übersetzung; Teile des Editors und der Diagnose sind weiterhin Englisch.
 - Eigene exakte Threat-/Aura-Auswertung: nicht implementiert, Client-/Secret-Grenzen müssen berücksichtigt werden.

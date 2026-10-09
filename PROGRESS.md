@@ -1,10 +1,21 @@
-# Forever Nameplates — Entwicklungsstand 0.7.0
+# Forever Nameplates — Entwicklungsstand 0.8.0
 
 Stand: 2026-10-09. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
 **Forever Nameplates** ersetzt; technisch lautet der Addon-Ordner `ForeverNameplates`.
 
 ## Implementiert
+
+- 0.8.0: Zusätzlich NeatPlates untersucht und gepinnt; Cast-/Channel-Richtung und
+  Unterbrechbarkeit aus dessen getrennten Pfaden mit Forever-Signaturen abgeglichen.
+- 0.8.0: Optionale Interrupt-shield-Komponente mit nativer Atlasressource; öffentliche
+  boolesche Unterbrechbarkeit, aktueller Cast-/Channel-Status und sichtbare Castbar maßgeblich.
+  Zwei zusätzliche Interruptibility-Events aktualisieren den Marker ohne Health-Event.
+- 0.8.0: Channel-Duration mit RemainingTime, Cast mit ElapsedTime und Immediate-Interpolation;
+  nur öffentliche Laufzeit-Enums. Fehlende Enums blenden die Channelbar aus. Keine Zeit-Arithmetik.
+- 0.8.0: Globale Ziel-/Raidmarker-/Spielerlevel-Updates prüfen Layoutbedarf und verwenden
+  Snapshot der relevanten Bindungen. 40 reine Healthplates überspringen im Mock 300
+  irrelevante globale Events / 12.000 vorherige Render-Updates; Health-Updates bleiben aktiv.
 
 - 0.7.0: [Plater, KuiNameplates und Threat Plates verglichen](docs/ADDON_COMPARISON.md),
   Upstreams gepinnt; keine fremden Dateien/Grafiken/Dependencies übernommen.
@@ -106,7 +117,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **212 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **228 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -142,7 +153,10 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
   deaktivierte Castbar und eigenständiger Casttext ohne Bar.
 - 24 zusätzliche Fälle für optionale Icons, Cast-/Channel-Metadaten, Secret-Werte,
   Textur-/Atlas-Fehler, Pool-/Combat-Reuse, Editor/Sharing und bedarfsgerechte API-Abfragen.
-- Version 0.7.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 16 neue Fälle: Channel-Richtung, fehlende/Secret-Enums, Cast-/Channel-Flagpositionen,
+  Schild-Events und Fehler, Editor/FN2, relevante Regeln und Snapshot bei Bindungsänderung.
+  Zwei zuerst scheiternde Fälle reproduzierten falsche Richtung und unnötige globale Updates.
+- Version 0.8.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
 - 50 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.

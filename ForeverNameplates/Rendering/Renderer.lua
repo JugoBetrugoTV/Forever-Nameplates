@@ -26,6 +26,7 @@ local function iconPart(parent)
     return {frame=f,icon=t}
 end
 Renderer.Register("classIcon",iconPart); Renderer.Register("castIcon",iconPart)
+Renderer.Register("castShield",iconPart)
 Renderer.Register("raid",function(parent)
     local f=frame(parent); local t=texture(f); t:SetAllPoints(f)
     t:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
@@ -82,10 +83,14 @@ function Renderer.Apply(view,layout)
         table.insert(view.pool[part.kind],part)
     end
     view.parts={}; view.layout=valid; view.needs={}
+    view.needs.target=valid.rules.overrides.target.enabled or valid.rules.overrides.nonTarget.enabled
     local hasCast,castBackground=false,false
     for _,e in ipairs(valid.elements) do
         if e.enabled and e.kind=="text" then view.needs[e.source]=true end
         if e.enabled and e.kind~="cast" and e.source=="cast" then view.needs.cast=true end
+        if e.enabled and (e.kind=="target" or e.source=="target") then view.needs.target=true end
+        if e.enabled and e.kind=="raid" then view.needs.raid=true end
+        if e.enabled and e.kind=="castShield" then view.needs.cast=true; view.needs.shield=true end
         if e.kind=="cast" then hasCast=true end
         if e.enabled and e.asset=="wow_df_cast_background" then castBackground=true end
         local pool=view.pool[e.kind] or {}
@@ -194,6 +199,12 @@ function Renderer.Update(view,state,unit)
             if show and part.kind=="classIcon" and state.isPlayer==true and
                 not NS.Compat.Secret(state.class) and type(state.class)=="string" and NS.Rules.classLabels[state.class] then
                 local atlas="classicon-"..string.lower(state.class)
+                local info=C_Texture and NS.Compat.Public(C_Texture.GetAtlasInfo,atlas)
+                if type(info)=="table" and part.icon.SetAtlas then
+                    usable=pcall(part.icon.SetAtlas,part.icon,atlas,false,nil,true)
+                end
+            elseif show and part.kind=="castShield" and not NS.Compat.Secret(state.castShield) and state.castShield==true then
+                local atlas="nameplates-InterruptShield"
                 local info=C_Texture and NS.Compat.Public(C_Texture.GetAtlasInfo,atlas)
                 if type(info)=="table" and part.icon.SetAtlas then
                     usable=pcall(part.icon.SetAtlas,part.icon,atlas,false,nil,true)

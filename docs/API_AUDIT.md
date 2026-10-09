@@ -1,13 +1,63 @@
 # Forever API-Audit — 2026-10-09
 
+## Channels, Interrupt shield und globale Updates ab 0.8.0
+
+Zusätzlich wurde [NeatPlates](https://github.com/Luxocracy/NeatPlates/tree/250535d347011e9970292a7781633b10bdf28018)
+untersucht. Separate Cast-/Channel-Richtung und Unterbrechbarkeitswechsel sind auch bei
+Plater/KuiNameplates/Threat Plates sichtbar; deren direkte Zeit-/Classic-Arithmetik und
+Secret-Alpha-Pfade wurden nicht übernommen. Zwei zuerst scheiternde Mockfälle belegten
+unsere vorherige Channel-Standardrichtung und unnötige Updates irrelevanter Layouts.
+
+`SetTimerDuration` dokumentiert in Forever `interpolation` und `direction`, Standard
+Immediate / ElapsedTime. Der Adapter verwendet `Enum.StatusBarInterpolation.Immediate`
+und für Channels `Enum.StatusBarTimerDirection.RemainingTime`, für Casts `ElapsedTime`.
+Enumtabellen/-werte werden öffentlich gelesen und auf nichtnegative endliche Ganzzahlen geprüft;
+keine Enumzahlen im Addon festgeschrieben. Duration-Objekte bleiben unverändert an das Widget
+weitergereicht; keine Start-/Endzeit-/Remaining-Arithmetik oder OnUpdate-Timer.
+
+**Offene Dokumentationslücke:** Die Forever-Signatur nennt die Enumtypen, liefert in den
+geprüften generierten Dateien aber keine Werte/Verfügbarkeitsdefinitionen. Die Namen sind
+in allgemeinem `SimpleStatusBarConstantsDocumentation.lua` belegt (FrameXML-Commit
+`09b9db7948abc9b9648dedaab51eb0cf3ee67b31`); Forever-Laufzeit und Pixelwirkung sind ungeprüft.
+Fehlen öffentliche Enums, bleibt der normale Cast in der dokumentierten Standardrichtung,
+die Channelbar wird verborgen, damit keine als korrekt behauptete Gegenrichtung erscheint.
+Ein verweigerter Timeraufruf bleibt verborgen; keine alternativen Zeitberechnungen.
+
+`castShield` erfasst nur bei entsprechendem Layoutbedarf `notInterruptible`: achter Wert von
+`UnitCastingInfo`, siebter Wert von `UnitChannelInfo`, jeweils nilable bool laut Forever.
+Öffentliches `true` aktiviert den optionalen Marker; false/nil/geheim/ungültig bleibt verborgen.
+Es gibt keinen Cache und keine Ableitung aus Eventnamen. Die dokumentierten Events
+`UNIT_SPELLCAST_INTERRUPTIBLE` und `UNIT_SPELLCAST_NOT_INTERRUPTIBLE` lösen eine erneute
+Abfrage aus und werden mit `pcall` registriert; `Tools/audit_api.py` prüft ihre Dokumentation.
+
+Der Atlas `nameplates-InterruptShield` ist in Dragonflight 10.2.7 FrameXML (Commit
+`6b65c2922baca3db5a28fb39b69c95cef1047bec`, `Blizzard_NamePlates.xml`, BorderShield 10×12)
+und in der allgemeinen Mainline-Referenz belegt. Die Komponente startet mit 10×12,
+editierbarer Position und normaler Profil-Alpha; das ist kein vollständiger Original-Layoutmatch.
+Öffentliche Atlasverfügbarkeit und zulässiger SetAtlas-Aufruf bleiben Voraussetzungen.
+Wie Casticons folgt der Schild der sichtbaren Castbar; ohne Bar dem öffentlichen Castzustand.
+Missing Atlas oder geheimes Flag beendet nicht die funktionierende Health-Darstellung.
+
+Aktive Zielmarker/Target-Quellen und Target-/NonTarget-Regeln setzen den Zielbedarf;
+Raidmarker und Leveltext ihren jeweiligen Bedarf. Der Adapter lässt nicht benötigte
+Ziel-/Raidabfragen aus. `Engine.UpdateAll` erfasst einen Snapshot der betroffenen Tokens,
+bevor Updates Bindungen verändern; neu hinzukommende Tokens werden nicht nachträglich in
+denselben Batch aufgenommen. Kein Identitäts- oder Secretcache. 40 reine Healthplates:
+300 globale Events bewirken jetzt 0 statt 12.000 Render-Updates im Mock, Health-Events
+funktionieren weiter. Das belegt keine tatsächliche FPS-/CPU-Verbesserung.
+
+16 neue Fälle, insgesamt 228 Tests. Neues `castShield`-Kind benötigt 0.8.0 zum FN2-Import;
+Schema 2 / FN1 und bestehende Profile bleiben erhalten. Reale Combat/Taint-/Cast-Ende-/
+Channel-/Interrupt-Eventreihenfolge und native Ressourcen müssen im Client geprüft werden.
+
 ## Bedarfsgerechte Abfragen und optionale Icons ab 0.7.0
 
 [Verglichene Addons, Pins und Umsetzung](ADDON_COMPARISON.md). Keine fremden Dateien oder
 Spielgrafiken wurden übernommen. `UnitCastingInfo` und `UnitChannelInfo` werden nun zusätzlich
 von `Tools/audit_api.py` gegen die Forever-Referenz geprüft: insgesamt 50 Signaturen.
 Beide liefern `textureID` als dritten Wert (`fileID`). Der Adapter verwendet nur öffentliche
-positive ganzzahlige FileIDs und öffentliche Namen. Start-/Endzeiten, Spell-ID, Interruptstatus
-und CastGUID werden nicht ausgewertet. Fehlende/abgelehnte APIs sind optional; kein Lookup
+positive ganzzahlige FileIDs und öffentliche Namen. Start-/Endzeiten, Spell-ID und CastGUID
+werden nicht ausgewertet; Interruptstatus wird ab 0.8.0 nur für den optionalen Schild geprüft. Fehlende/abgelehnte APIs sind optional; kein Lookup
 oder Cache zur Wiederherstellung geheimer Metadaten. Ein öffentlicher Iconwert kann bei
 geheimem Namen angezeigt werden, der Text bleibt leer. Timer-Forwarding bleibt unverändert.
 
@@ -255,7 +305,7 @@ Drag-Skalierung und vier parallel angezeigte simulierte Units. `SimpleFrameAPI.S
 begrenzt Canvas und Sandbox-Karten; `SimpleButtonAPI.IsEnabled` sichert deaktivierte Menüeinträge.
 Beide Methoden sind in der Forever-Referenz dokumentiert und im Widget-Mock abgebildet.
 Freie Ankergruppen,
-Maskenformen, Questmarker, Cast-Spark/Interrupt-Shield, Threat,
+Maskenformen, Questmarker, Cast-Spark, Threat,
 vollständige Localization, Animationen und die restlichen Spezialseiten folgen separat.
 
 ## Regeln und Marker ab 0.3.0

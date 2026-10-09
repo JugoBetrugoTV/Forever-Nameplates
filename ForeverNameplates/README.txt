@@ -1,4 +1,4 @@
-Forever Nameplates 0.7.0 - development build
+Forever Nameplates 0.8.0 - development build
 
 Install this folder into _classic_beta_/Interface/AddOns/ForeverNameplates.
 Use /fnp or /forevernameplates to open the studio.
@@ -11,10 +11,13 @@ Forever Beta 1.60.1, Interface 16001 is the intended target. Protected/forbidden
 are skipped and first widget creation during combat is deferred until combat ends.
 Successful live application suppresses the permitted Blizzard UnitFrame; removal, off and
 rendering failure restore its last public alpha. Client visibility and public fades are respected.
-Add Class icon or Cast icon in Layout Studio via + Add component. Position and size are editable.
+Add Class icon, Cast icon or Interrupt shield in Layout Studio via + Add component. Position and size are editable.
 Optional icons use public client resources; missing/secret icons are hidden. Cast icons follow castbar visibility.
 Unused text/cast metadata queries are skipped without caching unit identity or secret health.
-Layouts containing these new icon components require version 0.7.0 to import; older layouts remain readable.
+Class/Cast icons require 0.7.0 to import; Interrupt shield requires 0.8.0. Older layouts remain readable.
+Interrupt shield shows only publicly confirmed non-interruptible casts/channels; secret status remains unknown.
+Channels use remaining-time direction; absent public direction enums hide the channelbar.
+Global target/raid/level events update only layouts that need them.
 Classic levels use public client difficulty colors and a native skull for unknown high levels.
 Missing skull textures fall back to ??; secret levels are omitted.
 Classic/Dragonflight source drafts use client resources; the old presets are placeholders.

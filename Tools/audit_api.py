@@ -33,8 +33,10 @@ for filename, names in required.items():
             raise SystemExit(f"Missing API signature: {name}")
         count += 1
 print(f"{count} required/researched signatures present; runtime permissions and in-game behavior remain unverified")
-if "### PLAYER_LEVEL_UP\n" not in (docs / "Units-Combat-PvP/Unit.md").read_text():
-    raise SystemExit("Missing documented event: PLAYER_LEVEL_UP")
+unit_docs=(docs / "Units-Combat-PvP/Unit.md").read_text()
+for event in ("PLAYER_LEVEL_UP", "UNIT_SPELLCAST_INTERRUPTIBLE", "UNIT_SPELLCAST_NOT_INTERRUPTIBLE"):
+    if f"### {event}\n" not in unit_docs:
+        raise SystemExit(f"Missing documented event: {event}")
 
 export = args.kit / "data/forever_api.json"
 if export.is_file():

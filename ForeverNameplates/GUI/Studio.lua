@@ -20,6 +20,7 @@ for i,state in ipairs(Studio.scenarios) do
     state.raidMarker=i==2 and 8 or nil
     -- Simulated public spell FileID, not a sampled cast or imported artwork.
     state.castIcon=state.casting and 136096 or nil
+    if state.casting then state.castShield=i==3 end
 end
 local extraScenarios={
     {name="Friendly NPC • Keeper",isPlayer=false,controlled=false,reaction=5,classification="normal"},
@@ -396,7 +397,7 @@ function Studio.CreateRules(page)
     W.Label(page,"Priority: unit category → elite / rare / boss → target / other.\n"..
         "Each enabled rule replaces visibility, opacity and scale; Inherit keeps the earlier color.\n"..
         "Rules control the applied plate. /fnp off restores Blizzard visuals.\n"..
-        "Add Raid marker, Class badge, Class icon or Cast icon in Layout Studio.",11,0,-412)
+        "Add Raid marker, Class icon, Cast icon or Interrupt shield in Layout Studio.",11,0,-412)
     W.Button(page,NS.L.undo,0,-514,100,function() attempt(Studio.session:Undo()); Studio.Refresh() end)
     W.Button(page,NS.L.redo,110,-514,100,function() attempt(Studio.session:Redo()); Studio.Refresh() end)
 end

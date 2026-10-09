@@ -3,7 +3,8 @@ local events=CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
 local unitEvents={"UNIT_FACTION","UNIT_CLASSIFICATION_CHANGED","UNIT_HEALTH","UNIT_MAXHEALTH","UNIT_NAME_UPDATE","UNIT_LEVEL","UNIT_SPELLCAST_START",
     "UNIT_SPELLCAST_STOP","UNIT_SPELLCAST_FAILED","UNIT_SPELLCAST_INTERRUPTED","UNIT_SPELLCAST_DELAYED",
-    "UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP","UNIT_SPELLCAST_CHANNEL_UPDATE"}
+    "UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP","UNIT_SPELLCAST_CHANNEL_UPDATE",
+    "UNIT_SPELLCAST_INTERRUPTIBLE","UNIT_SPELLCAST_NOT_INTERRUPTIBLE"}
 local function initialize()
     NS.Compat.Audit()
     local data,err=NS.DB.Initialize(ForeverNameplatesDB)
@@ -34,7 +35,9 @@ events:SetScript("OnEvent",function(_,event,unit)
         if NS.Studio.root then NS.Studio.EndDrag(false); NS.Studio.root:Hide() end
         if ColorPickerFrame and ColorPickerFrame:IsShown() then ColorPickerFrame:Hide() end
     elseif event=="PLAYER_REGEN_ENABLED" or event=="PLAYER_ENTERING_WORLD" then NS.Minimap.Init(); NS.Engine.Refresh()
-    elseif event=="PLAYER_TARGET_CHANGED" or event=="RAID_TARGET_UPDATE" or event=="PLAYER_LEVEL_UP" then for token in pairs(NS.Engine.units) do NS.Engine.Update(token) end
+    elseif event=="PLAYER_TARGET_CHANGED" then NS.Engine.UpdateAll("target")
+    elseif event=="RAID_TARGET_UPDATE" then NS.Engine.UpdateAll("raid")
+    elseif event=="PLAYER_LEVEL_UP" then NS.Engine.UpdateAll("level")
     else NS.Engine.Update(unit) end
 end)
 SLASH_FOREVERNAMEPLATES1="/fnp"

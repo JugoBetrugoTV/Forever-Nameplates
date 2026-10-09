@@ -228,6 +228,16 @@ function Engine.Update(unit)
     view.replaced=true; Engine.reasons[unit]=nil
 end
 
+function Engine.UpdateAll(dependency)
+    -- Updates can remove/rebind units. Snapshot before iterating, and skip
+    -- unrelated global events without caching any unit identity or secret data.
+    local tokens={}
+    for unit,view in pairs(Engine.units) do
+        if not dependency or not view.needs or view.needs[dependency] then tokens[#tokens+1]=unit end
+    end
+    for _,unit in ipairs(tokens) do Engine.Update(unit) end
+end
+
 function Engine.Refresh()
     if NS.InCombat() then Engine.dirty=true; return end
     Engine.dirty=false

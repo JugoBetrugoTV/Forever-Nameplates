@@ -60,11 +60,40 @@ Bei fehlendem Atlas bleibt das Icon verborgen. Cast/Channel-Eventreihenfolge und
 müssen im Spiel geprüft werden. Quellenstand, neue APIs und offene Tests stehen in
 [API_AUDIT.md](API_AUDIT.md) und [INGAME_TESTS.md](INGAME_TESTS.md).
 
+## Weiterer Vergleich und Umsetzung in 0.8.0
+
+[NeatPlates](https://github.com/Luxocracy/NeatPlates/tree/250535d347011e9970292a7781633b10bdf28018),
+Commit `250535d347011e9970292a7781633b10bdf28018`, Datum 2025-09-21. Gelesen:
+`NeatPlates/NeatPlatesCore.lua` (Cast-/Channel-Aufbau, Unterbrechbarkeit und Target-Events),
+`NeatPlatesHub/functions/Color.lua` und `functions/Alpha.lua`. Es trennt Vorwärts-/Rückwärts-
+Castpfade und bietet unterschiedliche Castzustandsdarstellung. Seine Classic-Annahme
+„notInterruptible = false“ und eigene Zeit-Arithmetik wurden nicht übernommen. Der zunächst
+geratene Hubbot-Repositoryname war nicht erreichbar; verwendet wurde Luxocracy/NeatPlates.
+
+Zusätzlich vertieft: Platers `SetTimerDuration` mit ElapsedTime/RemainingTime sowie
+Threat Plates/KuiNameplates Unterbrechbarkeit und Schildwechsel. Keine Quellkopien oder
+fremden Grafikdateien. Unsere Umsetzung bleibt auf die Forever-Signaturen begrenzt.
+
+- **Interrupt shield**: neue frei editierbare optionale Komponente im Add-Menü. Native
+  Atlasressource, nur öffentlich bestätigtes `notInterruptible`. Cast-/Channel-Returnpositionen
+  unterscheiden sich; zwei dokumentierte Events aktualisieren den Status.
+- **Channel-Richtung**: RemainingTime statt Standard ElapsedTime, mittels öffentlicher
+  Runtime-Enums. Fehlende Enums blenden die Channelbar aus; keine Ersatz-Zeitberechnung.
+- **Globale Updates nach Bedarf**: Ziel-/Raidmarker-/Level-Events laufen nur für entsprechende
+  Layouts/Regeln. Ein Snapshot verhindert veränderte Iteration durch Ablösen/Neubinden von Units.
+
+**228 lokale Tests**, davon 16 neue Fälle. Zwei zunächst scheiternde Regressionen belegten
+Channelrichtung und unnötige globale Render-Updates. Bei 40 Health-only-Plates überspringen
+300 irrelevante globale Events nun 12.000 vorherige Render-Updates; 40 anschließende Health-
+Updates funktionieren ohne Widget-Neuanlage. Das ist kein Ingame-FPS-Benchmark. Schildpixel,
+Enum-Verfügbarkeit, Combat/Taint und echte Eventreihenfolge bleiben zu prüfen. Für die
+Schildvorschau den vorhandenen **Boss**-Zustand wählen. Alle neun PNG-Aufträge bleiben erhalten.
+
 ## Zurückgestellt
 
-- Aura-, Threat-, Execute- und Interrupt-Logik nur nach belegter zulässiger Forever-API;
+- Aura-, Threat-, Execute- und automatische Interrupt-Logik nur nach belegter zulässiger Forever-API;
   keine kopierten Retail/Classic-Geheimwertberechnungen oder Combatlog-Rekonstruktion.
-- Timer-Richtung von Channels, Spark und Interrupt-Shield benötigen einen separaten
-  Forever-Abgleich. Bisher wird weiterhin die dokumentierte Standardrichtung des Widgets benutzt.
+- Cast-Spark und weitere Castzustands-Effekte benötigen einen separaten Forever-Abgleich.
+  Channel-Richtung und optionaler Interrupt-Shield sind ab 0.8.0 lokal implementiert, noch nicht im Client abgenommen.
 - Questmarker, Masken/gebogene Füllungen sowie die vier fehlenden Fremdspiel-Originaldesigns
   bleiben offen. Sie werden durch diese allgemeinen Komponenten nicht als erledigt markiert.
