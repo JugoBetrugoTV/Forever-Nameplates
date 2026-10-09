@@ -17,7 +17,7 @@ def test_genuine_legacy_fn1_import_and_savedvariables_migration(runtime):
         local old=NS.Copy(layout); old.version=1; old.rules=nil
         local saved={version=1,profiles={Default=old,Arena=NS.Copy(old)},active="Arena",characters={["Tester-TestRealm"]="Arena"},live=true}
         local data=assert(NS.DB.Initialize(saved))
-        assert(data.version==2 and data.profiles.Arena.version==2)
+        assert(data.version==3 and data.profiles.Arena.version==2)
         assert(data.active=="Arena" and data.characters["Tester-TestRealm"]=="Arena" and data.live)
         assert(saved.version==1 and saved.profiles.Arena.rules==nil)
         assert(NS.Share.Export(layout):sub(1,4)=="FN2:")
@@ -147,7 +147,7 @@ def test_rule_editor_autosave_history_invalid_combat_and_preview_scale(runtime):
     runtime.execute('''
         NS.Studio.Open(); NS.Studio.ShowPage("rules")
         local studio=NS.Studio; local ui=studio.ruleUI
-        assert(studio.pages.rules:IsShown() and #studio.scenarios==13)
+        assert(studio.pages.rules:IsShown() and #studio.scenarios==14)
         assert(studio.ChangeRules({healthColor="class"})); assert(NS.DB.Current().rules.healthColor=="class")
         assert(studio.ChangeRules({enabled=true,scale=1.5,alpha=.5},"enemyPlayers"))
         assert(ui.view.root.scale==.65*1.5 and ui.view.root.alpha==.5)

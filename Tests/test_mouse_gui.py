@@ -176,8 +176,9 @@ def test_failed_construction_does_not_retain_numeric_callbacks(runtime):
     runtime.execute('''
         local s=NS.Studio; local build=s.CreateDiagnostics; local count=#NS.W.numbers
         s.CreateDiagnostics=function(page) build(page); error("failed build") end
-        s.Open(); assert(not s.ready and #NS.W.numbers==count)
-        s.CreateDiagnostics=build; s.Open(); assert(s.ready and #NS.W.numbers==count+10)
+        s.Open(); assert(s.ready and #NS.W.numbers==count+7)
+        assert(not s.ShowPage("diagnostics") and #NS.W.numbers==count+7)
+        s.CreateDiagnostics=build; assert(s.ShowPage("diagnostics") and #NS.W.numbers==count+8)
     ''')
 
 

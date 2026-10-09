@@ -39,5 +39,5 @@ Do not substitute generated-looking placeholders for completed art or copy game 
 
 For a version bump keep both TOCs, Core/Namespace.lua, user docs and PROGRESS.md consistent.
 Tools/package.py derives the ZIP version from the TOC. Update the in-game checklist when a
-feature needs client validation. SavedVariables and FN1/FN2 share-code schemas are versioned;
+feature needs client validation. SavedVariables and FN1/FN2/FN3 share-code schemas are versioned;
 preserve compatibility and validation when changing them.

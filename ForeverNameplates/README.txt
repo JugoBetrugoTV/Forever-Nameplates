@@ -1,4 +1,4 @@
-Forever Nameplates 0.9.0 - development build
+Forever Nameplates 0.10.0 - development build
 
 Install this folder into _classic_beta_/Interface/AddOns/ForeverNameplates.
 Use /fnp or /forevernameplates to open the studio.
@@ -9,6 +9,16 @@ Numeric settings use sliders, +/-, and mouse wheel. Slider movement previews loc
 release saves one undo step. Click away to commit typed numbers/text; Escape cancels.
 Right-click overlapping elements to select a layer. Font styles and native textures are selectable.
 Component visibility conditions, minimap visibility/angle and Create copy are available in the GUI.
+Use the header search to find settings and click a result to open/highlight its control.
+Hover controls for help and numeric bounds. Anchors / auras / casts has mouse controls,
+a live local preview and Undo/Redo. Add Aura / debuff icons using + Add component.
+Relative anchors keep components at a referenced bar edge; Snap zeros their offsets.
+Aura rows support client buff/debuff/own filters and sorting, up to 12 icons, columns,
+size, spacing, public spell-ID lists and client cooldown swipes. Missing/restricted data hides icons.
+Cast state colors and a native spark are optional. The spark follows the fill texture.
+Health, cast and aura events update relevant parts; additional GUI pages build on first visit.
+New features require 0.10.0 and FN3 codes. Older layouts still export FN2; FN1/FN2 import remains supported.
+SavedVariables migrate to version 3; older addons reject the newer database.
 GUI skins persist. Profile names, custom text and share codes still require text entry.
 
 This build has been checked in a Lua 5.1 widget simulator, NOT in a running game client.

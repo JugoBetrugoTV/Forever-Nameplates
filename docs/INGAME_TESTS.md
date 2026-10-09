@@ -4,6 +4,25 @@ Für jedes Ergebnis Client-Version/Build, Charakter, Gebiet, Addon-Liste und Feh
 notieren. Zuerst ohne weitere Nameplate-Addons testen, danach mit konkurrierenden Addons.
 Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 
+## Neue Funktionen in 0.10.0
+
+- [ ] Suchfeld: deutsche/englische Begriffe, Großbuchstaben/Umlaute, Pagination; Treffer öffnet richtige Seite und markiert Control.
+- [ ] Tooltips auf Reglern/Buttons zeigen Hilfe, Wertebereich und Sperrhinweis; Markierung verschwindet.
+- [ ] Galerie/Regeln/Profile/Diagnose/Sandbox/Komponenten/Suche erst beim Besuch gebaut; erneutes Öffnen ohne doppelte Controls, außerhalb Kampf.
+- [ ] Icon mit RIGHT-Bezug an Healthbar verankern, Snap klicken; bei Barbreite/Position bleibt der Abstand erhalten. Alle neun Punkte, Ankerketten, Zoom/Drag/Resize prüfen.
+- [ ] Bezug wechseln/ablösen erhält Position; Bezug löschen löst abhängige Elemente; Locks/Undo/Redo und Zyklusablehnung prüfen.
+- [ ] Aura-Komponente hinzufügen: Buff/Debuff, eigene Auren, Sortierung/Richtung; tatsächliche AuraData-Felder und Enum-Verfügbarkeit notieren.
+- [ ] HARMFUL|PLAYER und HELPFUL|PLAYER testen; Secret-/leere Metadaten verbergen betroffene Icons, Healthbar bleibt sichtbar.
+- [ ] Limit/Spalten/Größe/Abstand, Include/Exclude-Spell-IDs und Stackcounts prüfen; unbekannte IDs bei Listen ausgelassen.
+- [ ] Cooldownswipe mittels Duration-Objekt, Ablauf/Entfernung, Profilwechsel und Combat-Pool-Reuse: keine alten Icons/Counts/Cooldowns.
+- [ ] Komponentenseiten-Regler zeigen Vorschau während Drag; Loslassen speichert einmal, Kontextwechsel/Escape/Schließen/Kampf verwerfen unvollständige Drags.
+- [ ] Normale Casts, Channels, öffentlich nicht unterbrechbare Casts mit drei Farben; unbekannter Interruptstatus nutzt Normal/Channel.
+- [ ] Spark folgt Fill-Kante bei Horizontal/Vertikal/Reverse; Stop/Interrupt/Profilwechsel und fehlende Textur/Anker ohne stehende Sparks.
+- [ ] Castgebundene Aura-/Icon-/Textkomponenten bleiben bei UNIT_AURA/UNIT_HEALTH korrekt bedingt sichtbar.
+- [ ] Health-/Cast-/Aura-Teilupdates, Name-/Identitätswechsel und Fallback prüfen: kein erneutes Unterdrücken von Blizzard nach Healthfehler.
+- [ ] FN1/FN2 importieren, neue Features als FN3 exportieren/importieren; SavedVariables 2→3 bei /reload und kaltem Neustart.
+- [ ] 40+ Plates: echte CPU/FPS/Öffnungsdauer und Taint erfassen; lokale Widgetzahlen sind kein Performancebeweis.
+
 ## Laden und Studio
 
 - [ ] Beide TOCs werden auf Interface 16001 erkannt; keine fehlenden Dateien/Libraries.

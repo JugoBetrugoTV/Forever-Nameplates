@@ -34,6 +34,14 @@ for _,state in ipairs(extraScenarios) do
     if state.name~="Restricted • Unknown" then state.target=false end
     Studio.scenarios[#Studio.scenarios+1]=state
 end
+Studio.scenarios[#Studio.scenarios+1]={name="Channel • Runeweaver",health=76,healthText="76%",level=60,target=false,
+    casting=true,castName="Arcane Channel",progress=64,channel=true,castShield=false,castIcon=136096,
+    isPlayer=false,controlled=false,reaction=3,classification="normal"}
+for _,state in ipairs(Studio.scenarios) do
+    state.auras={{filter="HARMFUL",own=true,spell=116,name="Frost",expiration=5,icon=135846},
+        {filter="HARMFUL",own=false,spell=172,name="Curse",expiration=20,icon=136118,count=3},
+        {filter="HELPFUL",own=true,spell=1459,name="Intellect",expiration=60,icon=135932}}
+end
 local function attempt(ok,err) if not ok and err then NS.Print(err) end; return ok end
 function Studio.LoadSession()
     W.CancelNumbers()
@@ -48,6 +56,7 @@ function Studio.Select(id)
     W.CancelNumbers()
     Studio.EndDrag(false)
     Studio.session.selected=id; Studio.RefreshInspector(); Studio.RefreshHandles()
+    if Studio.componentUI then Studio.RefreshComponents() end
 end
 function Studio.PreviewNumber(key,value,category)
     if not Studio.ready then return end
@@ -68,8 +77,10 @@ function Studio.PickOverlapping(anchor)
     local x,y=GetCursorPosition(); local scale=Studio.view.root:GetEffectiveScale()
     x,y=x/scale-cx,y/scale-cy
     local hits={}
+    local positions=NS.Features.Positions(Studio.session.layout)
     for i,e in ipairs(Studio.session.layout.elements) do
-        if e.enabled and math.abs(x-e.x)<=math.max(10,e.width)/2 and math.abs(y-e.y)<=math.max(10,e.height)/2 and
+        local p=positions[e.id]
+        if e.enabled and math.abs(x-p.x)<=math.max(10,e.width)/2 and math.abs(y-p.y)<=math.max(10,e.height)/2 and
             (e.kind~="artwork" or Studio.ArtworkReady(e)) then
             hits[#hits+1]={value=e.id,label=e.id.." ["..e.kind.."]"..(e.locked and " / locked" or ""),layer=e.layer,index=i}
         end
@@ -89,6 +100,7 @@ function Studio.RefreshInspector()
     if not e or not Studio.inspector then return end
     Studio.inspector.title:SetText(e.id.."  /  "..e.kind)
     for key,edit in pairs(Studio.inspector.fields) do edit:SetText(tostring(e[key])); edit:SetEnabled(not e.locked) end
+    if e.kind=="auras" then Studio.inspector.fields.width:SetEnabled(false); Studio.inspector.fields.height:SetEnabled(false) end
     Studio.inspector.visible:SetValue(e.enabled); Studio.inspector.locked:SetValue(e.locked)
     Studio.inspector.vertical:SetValue(e.vertical); Studio.inspector.reverse:SetValue(e.reverse)
     Studio.inspector.source:SetValue(e.source)
@@ -111,9 +123,10 @@ function Studio.RefreshInspector()
     Studio.elementPicker:SetValue(e.id)
     local art=Studio.session:Element("artFrame")
     Studio.useFrameArt:SetEnabled(art~=nil and art.kind=="artwork" and NS.Media.files[art.asset]~=nil)
-    Studio.resizeHandle:SetShown(e.enabled and not e.locked and (e.kind~="artwork" or Studio.ArtworkReady(e)))
+    Studio.resizeHandle:SetShown(e.enabled and not e.locked and e.kind~="auras" and (e.kind~="artwork" or Studio.ArtworkReady(e)))
     Studio.resizeHandle:ClearAllPoints()
-    Studio.resizeHandle:SetPoint("CENTER",Studio.view.root,"CENTER",e.x+e.width/2,e.y-e.height/2)
+    local position=NS.Features.Positions(Studio.session.layout)[e.id]
+    Studio.resizeHandle:SetPoint("CENTER",Studio.view.root,"CENTER",position.x+e.width/2,position.y-e.height/2)
 end
 function Studio.Change(patch)
     local ok,err=Studio.session:Update(Studio.session.selected,patch)
@@ -134,8 +147,9 @@ function Studio.EndDrag(commit)
 end
 function Studio.StartDrag(handle,mode)
     local item=mode=="resize" and Studio.session:Element() or handle.element
-    if NS.InCombat() or not item or item.locked then return end
+    if NS.InCombat() or not item or item.locked or (mode=="resize" and item.kind=="auras") then return end
     Studio.Select(item.id)
+    item=Studio.session:Element(item.id)
     local x,y=GetCursorPosition()
     Studio.drag={id=item.id,x=item.x,y=item.y,width=item.width,height=item.height,cursorX=x,cursorY=y,mode=mode}
     Studio.canvas:SetScript("OnUpdate",function()
@@ -145,24 +159,24 @@ function Studio.StartDrag(handle,mode)
         local px,py,w,h=item.x+dx,item.y+dy,item.width,item.height
         if mode=="resize" then
             w=math.min(512,math.max(1,item.width+dx)); h=math.min(512,math.max(1,item.height-dy))
-            px=item.x+(w-item.width)/2; py=item.y-(h-item.height)/2
+            local own=item.anchor and NS.Features.points[item.anchor.point] or {0,0}
+            px=item.x+(.5+own[1])*(w-item.width); py=item.y-(.5-own[2])*(h-item.height)
         end
-        local selection=mode=="resize" and Studio.handles[select(2,Studio.session:Element())] or handle
-        selection:ClearAllPoints(); selection:SetPoint("CENTER",Studio.view.root,"CENTER",px,py)
-        selection:SetSize(math.max(10,w),math.max(10,h))
-        Studio.resizeHandle:ClearAllPoints(); Studio.resizeHandle:SetPoint("CENTER",Studio.view.root,"CENTER",px+w/2,py-h/2)
-        for _,part in ipairs(Studio.view.parts) do
-            if part.element.id==item.id then
-                part.frame:ClearAllPoints(); part.frame:SetPoint("CENTER",Studio.view.root,"CENTER",px,py)
-                R.Resize(part,w,h)
-            end
+        local layout=NS.Copy(Studio.session.layout); local _,index=Studio.session:Element(item.id)
+        local e=layout.elements[index]; e.x=px; e.y=py; e.width=w; e.height=h
+        if R.Apply(Studio.view,layout) then
+            R.Update(Studio.view,Studio.scenarios[Studio.scenario]); Studio.RefreshHandles(layout)
+            local p=NS.Features.Positions(layout)[e.id]
+            Studio.resizeHandle:ClearAllPoints(); Studio.resizeHandle:SetPoint("CENTER",Studio.view.root,"CENTER",p.x+w/2,p.y-h/2)
         end
     end)
 end
-function Studio.RefreshHandles()
+function Studio.RefreshHandles(layout)
     if not Studio.ready or not Studio.canvas then return end
+    layout=layout or Studio.session.layout
+    local positions=NS.Features.Positions(layout)
     for _,h in ipairs(Studio.handles) do h:Hide(); h.element=nil end
-    for i,e in ipairs(Studio.session.layout.elements) do
+    for i,e in ipairs(layout.elements) do
         local h=Studio.handles[i]
         if not h then
             h=CreateFrame("Button",nil,Studio.view.root); h:RegisterForDrag("LeftButton")
@@ -177,7 +191,8 @@ function Studio.RefreshHandles()
             Studio.handles[i]=h
         end
         h.element=e; h:SetSize(math.max(10,e.width),math.max(10,e.height))
-        h:ClearAllPoints(); h:SetPoint("CENTER",Studio.view.root,"CENTER",e.x,e.y)
+        local p=positions[e.id]
+        h:ClearAllPoints(); h:SetPoint("CENTER",Studio.view.root,"CENTER",p.x,p.y)
         h:SetFrameLevel(Studio.view.root:GetFrameLevel()+25+e.layer)
         h.mark:SetShown(e.id==Studio.session.selected); h:SetShown(e.enabled and (e.kind~="artwork" or Studio.ArtworkReady(e)))
     end
@@ -217,10 +232,12 @@ function Studio.Refresh()
     Studio.gameNameplatePicker:SetValue(sourceChoice)
     if Studio.page=="sandbox" then Studio.RefreshSandbox() end
     if Studio.page=="rules" then Studio.RefreshRules() end
+    if Studio.page=="components" then Studio.RefreshComponents() end
 end
 function Studio.ShowPage(name)
     if not Studio.ready then return end
     if NS.InCombat() then NS.Print(NS.L.combat); return end
+    if not Studio.EnsurePage(name) then return false end
     W.CancelNumbers()
     Studio.EndDrag(false); W.ClosePopups()
     for key,page in pairs(Studio.pages) do page:SetShown(key==name) end
@@ -230,9 +247,36 @@ function Studio.ShowPage(name)
     if name=="diagnostics" then Studio.RefreshDiagnostics() end
     if name=="sandbox" then Studio.RefreshSandbox() end
     if name=="rules" then Studio.RefreshRules() end
+    if name=="components" then Studio.RefreshComponents() end
+    if name=="search" then Studio.RefreshSearch() end
+    return true
 end
 local function makePage(root)
     local p=CreateFrame("Frame",nil,root); p:SetSize(872,566); p:SetPoint("TOPLEFT",182,-76); return p
+end
+function Studio.EnsurePage(name)
+    if not Studio.pages[name] or NS.InCombat() then return false end
+    if Studio.built[name] then return true end
+    local builders={gallery="CreateGallery",studio="CreateEditor",sandbox="CreateSandbox",rules="CreateRules",
+        profiles="CreateProfiles",diagnostics="CreateDiagnostics",components="CreateComponents",search="CreateSearch"}
+    local previous={}; for key,value in pairs(Studio) do previous[key]=value end
+    local fonts,surfaces,numbers=#W.fonts,#W.surfaces,#W.numbers
+    local page=Studio.pages[name]
+    local ok,err=pcall(function() Studio[builders[name]](page); NS.Settings.Bind(name) end)
+    if not ok then
+        page:Hide()
+        for key in pairs(Studio) do Studio[key]=nil end
+        for key,value in pairs(previous) do Studio[key]=value end
+        Studio.pages[name]=makePage(Studio.root); Studio.pages[name]:Hide()
+        for i=#W.fonts,fonts+1,-1 do W.fonts[i]=nil end
+        for i=#W.surfaces,surfaces+1,-1 do W.surfaces[i]=nil end
+        for i=#W.numbers,numbers+1,-1 do W.numbers[i]=nil end
+        NS.Log("Page construction failed: "..name)
+        if not NS.Compat.Secret(err) and type(err)=="string" then NS.Log(err) end
+        NS.Print(W.Tr("Page could not open; select it again to retry.","Seite konnte nicht öffnen; zum Wiederholen erneut auswählen."))
+        return false
+    end
+    Studio.built[name]=true; return true
 end
 function Studio.CreateGallery(page)
     W.Label(page,NS.L.gallery,22,0,0)
@@ -254,6 +298,7 @@ function Studio.CreateGallery(page)
     end
 end
 function Studio.CreateEditor(page)
+    Studio.componentButton=W.Button(page,W.Tr("Anchors / auras / casts","Anker / Auren / Casts"),610,-42,258,function() Studio.ShowPage("components") end)
     W.Label(page,NS.L.studio,22,0,0)
     Studio.addButton=W.Button(page,"+ Add component",0,-42,154,function(self)
         local choices={}
@@ -388,6 +433,7 @@ function Studio.CreateEditor(page)
     Studio.inspector.text=W.Edit(inspector,130,-442,116,"",function(value) Studio.Change({text=value}) end,true)
 end
 function Studio.CreateSandbox(page)
+    Studio.sandboxViews={}
     W.Label(page,NS.L.sandbox,22,0,0)
     W.Label(page,"Compare four simulated units using your active layout. Gameplay is unaffected.",11,0,-34)
     for i=1,4 do
@@ -426,7 +472,7 @@ function Studio.CreateRules(page)
     W.Label(page,"Default health color",12,0,-70)
     ui.globalMode=W.Dropdown(page,0,-94,260,modes,function(v) return Studio.ChangeRules({healthColor=v}) end)
     for i,key in ipairs({"friendlyColor","neutralColor","hostileColor"}) do
-        W.Button(page,key,0,-136-(i-1)*38,260,function()
+        ui[key]=W.Button(page,key,0,-136-(i-1)*38,260,function()
             local session=Studio.session
             W.Color(session.layout.rules[key],function(color)
                 if Studio.session==session then Studio.ChangeRules({[key]=color}) end
@@ -446,7 +492,7 @@ function Studio.CreateRules(page)
     local categoryModes={{value="inherit",label="Inherit earlier color"},{value="fixed",label="Fixed color"}}
     for _,mode in ipairs(modes) do categoryModes[#categoryModes+1]=mode end
     ui.colorMode=W.Dropdown(page,302,-278,270,categoryModes,function(v) return Studio.ChangeRules({colorMode=v},ui.category) end)
-    W.Button(page,"Fixed color / opacity",302,-316,270,function()
+    ui.fixedColor=W.Button(page,"Fixed color / opacity",302,-316,270,function()
         local session,category=Studio.session,ui.category
         W.Color(session.layout.rules.overrides[category].color,function(color)
             if Studio.session==session then Studio.ChangeRules({color=color},category) end
@@ -603,14 +649,17 @@ local function createStudio()
         for i,v in ipairs(options) do if W.skin==v then W.Skin(options[i%3+1]); Studio.Refresh(); break end end
     end)
     Studio.status=W.Label(root,"",10,490,-648)
-    Studio.pages={}
-    for _,name in ipairs({"gallery","studio","sandbox","rules","profiles","diagnostics"}) do Studio.pages[name]=makePage(root) end
-    Studio.CreateGallery(Studio.pages.gallery); Studio.CreateEditor(Studio.pages.studio)
-    Studio.CreateSandbox(Studio.pages.sandbox); Studio.CreateRules(Studio.pages.rules); Studio.CreateProfiles(Studio.pages.profiles); Studio.CreateDiagnostics(Studio.pages.diagnostics)
-    for i,name in ipairs({"gallery","studio","sandbox","rules","profiles","diagnostics"}) do
-        W.Button(root,NS.L[name],20,-90-(i-1)*38,146,function() Studio.ShowPage(name) end)
+    Studio.pages={}; Studio.built={}
+    for _,name in ipairs({"gallery","studio","components","sandbox","rules","profiles","diagnostics","search"}) do Studio.pages[name]=makePage(root); Studio.pages[name]:Hide() end
+    Studio.CreateEditor(Studio.pages.studio); Studio.built.studio=true; NS.Settings.Bind("studio")
+    for i,name in ipairs({"gallery","studio","components","sandbox","rules","profiles","diagnostics","search"}) do
+        local button=W.Button(root,NS.L[name],20,-90-(i-1)*38,146,function() Studio.ShowPage(name) end)
+        W.Help(button,NS.L[name],W.Tr("Open this settings page.","Diese Einstellungsseite öffnen."))
     end
-    W.Label(root,"FNP  "..NS.version.."\n\nOriginal layouts\nLive preview\nLocal profiles\n\nArtwork pending",10,28,-324,{.6,.6,.62,1})
+    Studio.headerSearch=W.Edit(root,490,-20,170,"",Studio.SearchCommand)
+    W.Help(Studio.headerSearch,NS.L.search,W.Tr("Search in English or German; press Enter or click Search.","Auf Deutsch oder Englisch suchen; Enter oder Suche klicken."))
+    W.Button(root,NS.L.search,668,-20,150,function() Studio.SearchCommand(Studio.headerSearch:GetText()) end)
+    W.Label(root,"FNP  "..NS.version.."\n\nOriginal layouts\nLive preview\nLocal profiles",10,28,-422,{.6,.6,.62,1})
 end
 function Studio.Open()
     if NS.InCombat() then NS.Print(NS.L.combat); return end

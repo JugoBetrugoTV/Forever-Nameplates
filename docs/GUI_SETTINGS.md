@@ -1,13 +1,16 @@
-# Einstellungen per Maus — Version 0.9.0
+# Einstellungen per Maus — Version 0.10.0
 
 Vor 0.9.0 waren mehrere vorhandene Funktionen nicht im Inspector auswählbar; Zahlen
-benötigten Enter. Jetzt haben alle zehn Zahlenoptionen Mausregler, Plus/Minus und Mausrad.
+benötigten Enter. Seit 0.10.0 haben alle 16 Zahlenoptionen Mausregler, Plus/Minus und Mausrad.
+Die Kopfzeile sucht Einstellungen auf Deutsch und Englisch; ein Klick öffnet die passende
+Seite und markiert das Control. Tooltips erklären Wirkung, Wertebereich und Sperren.
+Zusatzseiten werden erst beim ersten Besuch gebaut und anschließend wiederverwendet.
 Eine Übersicht der tatsächlich implementierten Funktionen:
 
 | Funktion | Stelle im Studio | Bedienung |
 | --- | --- | --- |
 | Layout/Originalentwurf wählen | Galerie / Layout Studio → Game nameplates | Auswahl klicken; fehlende Quellen/Assets bleiben deaktiviert |
-| Komponenten hinzufügen | Layout Studio → + Add component | Health/Cast/Text/Panel/Target/Ornament/Artwork/Raid/Class/Class icon/Cast icon/Interrupt shield wählen; zweite Menüseite beachten |
+| Komponenten hinzufügen | Layout Studio → + Add component | Health/Cast/Text/Panel/Target/Ornament/Artwork/Raid/Class/Class icon/Cast icon/Interrupt shield/Aura row wählen; zweite Menüseite beachten |
 | Elemente wählen | Canvas / Element-Dropdown / Select previous/next | Linksklick, Dropdown; Rechtsklick zeigt die überlappenden Ebenen |
 | X/Y, Breite/Höhe | Inspector | Ziehen auf Canvas/Eckgriff oder Schieberegler, +/−, Mausrad |
 | Ebene, Schriftgröße, Deckkraft | Inspector | Schieberegler, +/−, Mausrad; Schriftgröße nur für Text/Klassenkürzel |
@@ -21,13 +24,17 @@ Eine Übersicht der tatsächlich implementierten Funktionen:
 | Balkentextur/Artwork | Inspector → Asset-Auswahl | Plain/native Fill oder importierte Fill-Textur; Artwork: vorhandene native/importierte Grafiken |
 | Ausrichten/Raster/Zoom | Layout Studio → Align element / Grid / −/+ | Auswahl und Buttons; Raster ein/aus, exakte Healthbar-/Mittelpunkt-Ausrichtung |
 | Copy/Paste/Delete/Reset/Undo/Redo | Layout Studio / Regeln | Buttons; Regeln teilen die Session-History |
-| Testzustände | Layout Studio / Design Sandbox / Regeln | Dropdowns mit 13 simulierten Zuständen; vier unabhängige Sandbox-Plates |
+| Testzustände | Layout Studio / Design Sandbox / Regeln | Dropdowns mit 14 simulierten Zuständen; vier unabhängige Sandbox-Plates |
 | Reaktions-/Klassenfarben | Unit Rules | Healthfarbmodus wählen; Reaktionsfarben per ColorPicker |
 | Unit-Kategorien, Target/NonTarget | Unit Rules | Kategorie wählen; Enabled/Visible/Color mode/Fixed color klicken; Alpha/Scale per Mausregler |
 | Profile/Kopien/Charakterbindung | Profile & Share | Profil-Dropdown, Create copy, Rename, Character profile, bestätigtes Delete/Reset |
 | Share-Code | Profile & Share | Export/Import klicken; Text kopieren/einfügen |
 | Live-Anwendung | Apply in game / Diagnostics → Live | Anwenden oder ein-/ausschalten; Status erklärt Fallbacks |
 | Minimap-Icon | Diagnostics / Icon auf Minimap | Sichtbarkeit/Winkel per Controls; Icon direkt am Rand ziehen |
+| Relative Anker | Anker / Auren / Casts → linke Spalte | Bezug, eigener/bezüglicher Punkt wählen; Snap setzt X/Y-Abstände auf null, Bezugwechsel erhält Position |
+| Aura-/Debuff-Reihen | Komponenten-Katalog → Aura / debuff icons; Anker / Auren / Casts → Mitte | Buff/Debuff, eigene Auren, Client-Sortierung/Richtung, Cooldown, Limit/Spalten/Größe/Abstand und ID-Listen |
+| Castzustandsfarben / Spark | Anker / Auren / Casts → rechte Spalte | Castbar wählen, Farbpalette/Spark aktivieren; Farben per ColorPicker, Spark-Breite/-Deckkraft per Mausregler |
+| Einstellungssuche / Hilfen | Suchfeld in Kopfzeile / Suche-Seite | Stichwort tippen, Treffer klicken; Tooltips beim Überfahren |
 | GUI-Skin | Kopfzeile → GUI skin | Drei Skins durchklicken; Auswahl wird im Account gespeichert |
 
 Reglerbewegungen zeigen eine **lokale Vorschau**. Beim Loslassen wird die Änderung gespeichert
@@ -35,7 +42,7 @@ und erscheint als ein Undo-Schritt. Unvollständige Drags werden bei Kontextwech
 oder Kampf verworfen. Tippen bleibt für genaue Zahlen möglich; Klick auf ein anderes Feld,
 Button oder Element übernimmt Zahlen/eigenen Text ohne Enter. Escape verwirft die Eingabe.
 Profilnamen erzeugen erst mit Create copy oder Enter eine Kopie, damit Rename/Import keine
-unbeabsichtigte Kopie erstellen. Profilnamen, eigener Text und Share-Codes bleiben Texteingaben.
+unbeabsichtigte Kopie erstellen. Profilnamen, eigener Text, Suchbegriffe, Spell-ID-Listen und Share-Codes bleiben Texteingaben.
 
 Assets werden außerhalb des Spiels über ArtDrop und den Importer bereitgestellt. Der Client
 kann hier keine Betriebssystemdateien per Drag-and-Drop importieren; nach Import ist /reload
@@ -44,15 +51,18 @@ Reaktion-/Levelstile können absichtlich die normale Textfarbe ersetzen; Icons f
 öffentlichen Klassen-/Cast-/Raidzustand auch bei gesetztem Visible. Sichtbar bedeutet aktiviert,
 nicht unabhängig vom tatsächlichen Spielzustand eingeblendet.
 
+Aura-Reihen leiten Breite/Höhe aus Icons und Spalten ab; ihre Größe wird auf der neuen
+Komponentenseite eingestellt. X/Y bleiben im Inspector und sind bei verankerten Elementen
+Abstände. Eine lokale Vorschau auf der Komponentenseite zeigt Änderungen schon während
+des Slider-Drags. [Schrittweise Bedienung und Laufzeitgrenzen](PLATER_FEATURES.md).
+
 ## Was noch nicht implementiert ist
 
-Aus dem Addonvergleich sind **Aura-/Debuff-Filter und sortierbare Iconreihen**, **Questmarker**
-und **Cast-Spark/Zustandseffekte** die nächsten Kandidaten. Dafür gibt es noch keine aktiven
-GUI-Einstellungen. Sie brauchen zuerst einen eigenen Forever-API-Abgleich. Threat-/Execute-
-Automatik hängt zusätzlich von öffentlich nutzbaren Daten ab; geheime Werte werden nicht
+Questmarker, freie Animationen und maskierte/gebogene Balken fehlen weiter.
+Threat-/Execute-Automatik hängt zusätzlich von öffentlich nutzbaren Daten ab; geheime Werte werden nicht
 rekonstruiert. Importierbare Fremdspiel-Originalgrafiken, echte Fonts und bestätigte 1:1-
 Clientvergleiche bleiben ebenfalls offen. [Quellenvergleich](ADDON_COMPARISON.md).
 
-255 lokale Tests prüfen Code und Widget-Callbacks. Die tatsächliche Mausbedienung im
+329 lokale Tests prüfen Code und Widget-Callbacks. Die tatsächliche Mausbedienung im
 Forever-Client, Combat/Taint, Farben/Pixels und SavedVariables-Neustart müssen noch anhand
 der [Ingame-Checkliste](INGAME_TESTS.md) geprüft werden.

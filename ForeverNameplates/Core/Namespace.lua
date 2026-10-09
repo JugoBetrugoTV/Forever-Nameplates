@@ -1,6 +1,6 @@
 local addonName, NS = ...
 NS.name = "Forever Nameplates"
-NS.version = "0.9.0"
+NS.version = "0.10.0"
 NS.folder = addonName
 NS.logs = {}
 NS.listeners = {}

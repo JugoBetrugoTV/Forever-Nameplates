@@ -110,11 +110,22 @@ bedingte Sichtbarkeit und Minimap-Controls. Keine DF/Ace-Bibliothek oder Upstrea
 [GUI_SETTINGS.md](GUI_SETTINGS.md) mit ihrem Bedienort aufgeführt. Noch nicht implementierte
 Features erhalten keine funktionslosen Schalter.
 
+## Umsetzung der fünf Plater-Empfehlungen in 0.10.0
+
+Einstellungssuche/Hilfe, relative Anker, Aura-Reihen, Castzustandsfarben/Spark,
+gezielte Unit-Updates und lazy Seiten sind jetzt lokal implementiert. Alle Controls der
+neuen Funktionen stehen unter **Anker / Auren / Casts**; Suche öffnet die passende Seite.
+[Bedienung und API-Grenzen](PLATER_FEATURES.md). Im identischen Widget-Mock erzeugt das
+erste Öffnen 550 statt 1498 Objekte; 40 Health-Events einer vorbereiteten Plate fragen keine
+Cast-/Aura-Daten ab und bearbeiten keine statischen Panels. Das belegt gezieltere Arbeit,
+keine reale FPS- oder Öffnungszeitverbesserung. 329 lokale Tests bestehen.
+
 ## Zurückgestellt
 
-- Aura-, Threat-, Execute- und automatische Interrupt-Logik nur nach belegter zulässiger Forever-API;
+- Zusätzliche Aura-Prioritäten, Threat-, Execute- und automatische Interrupt-Logik nur nach belegter zulässiger Forever-API;
   keine kopierten Retail/Classic-Geheimwertberechnungen oder Combatlog-Rekonstruktion.
-- Cast-Spark und weitere Castzustands-Effekte benötigen einen separaten Forever-Abgleich.
-  Channel-Richtung und optionaler Interrupt-Shield sind ab 0.8.0 lokal implementiert, noch nicht im Client abgenommen.
+- Zusätzliche Castanimationen/-Effekte brauchen einen eigenen Abgleich. Cast-Spark und
+  Zustandsfarben sind ab 0.10.0 lokal implementiert; Client-Anker/Farben bleiben ungeprüft.
+  Channel-Richtung und optionaler Interrupt-Shield sind ebenfalls noch nicht im Client abgenommen.
 - Questmarker, Masken/gebogene Füllungen sowie die vier fehlenden Fremdspiel-Originaldesigns
   bleiben offen. Sie werden durch diese allgemeinen Komponenten nicht als erledigt markiert.

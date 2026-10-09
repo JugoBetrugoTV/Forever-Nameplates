@@ -21,10 +21,59 @@ local function split(value, delimiter)
     end
     return result
 end
+local extensions={
+    {key="anchor",fields={{"ref","s"},{"point","s"},{"relativePoint","s"}}},
+    {key="aura",fields={{"filter","s"},{"sort","s"},{"direction","s"},{"limit","n"},{"columns","n"},{"size","n"},{"gap","n"},
+        {"own","b"},{"cooldown","b"},{"listMode","s"},{"spells","s"}}},
+    {key="castStyle",fields={{"enabled","b"},{"normal","c"},{"channel","c"},{"shield","c"},{"spark","b"},
+        {"sparkColor","c"},{"sparkWidth","n"},{"sparkAlpha","n"}}},
+}
+local function encodeExtensions(e)
+    local groups={}
+    for _,extension in ipairs(extensions) do
+        local values={}; local config=e[extension.key]
+        if config then
+            for _,field in ipairs(extension.fields) do
+                local value=config[field[1]]; local kind=field[2]
+                if kind=="c" then for j=1,4 do values[#values+1]=string.format("%.6f",value[j]) end
+                elseif kind=="s" then values[#values+1]=hex(value)
+                elseif kind=="b" then values[#values+1]=value and "1" or "0"
+                else values[#values+1]=string.format("%.6f",value) end
+            end
+        end
+        groups[#groups+1]=table.concat(values,",")
+    end
+    return hex(table.concat(groups,"\t"))
+end
+local function decodeExtensions(value,e)
+    local groups=split(unhex(value),"\t")
+    if #groups~=#extensions then error("Invalid extension groups") end
+    for i,extension in ipairs(extensions) do
+        if groups[i]~="" then
+            local values=split(groups[i],","); local config,offset={},1
+            for _,field in ipairs(extension.fields) do
+                local kind=field[2]; local value=values[offset]
+                if not value then error("Missing extension value") end
+                if kind=="c" then
+                    value={}; for j=1,4 do value[j]=tonumber(values[offset+j-1]) end; offset=offset+3
+                elseif kind=="s" then value=unhex(value)
+                elseif kind=="b" then
+                    if value~="0" and value~="1" then error("Invalid extension boolean") end
+                    value=value=="1"
+                else value=tonumber(value) end
+                config[field[1]]=value; offset=offset+1
+            end
+            if offset~=#values+1 then error("Invalid extension field count") end
+            e[extension.key]=config
+        end
+    end
+end
 function Share.Export(layout)
     local valid, err=NS.Model.Validate(layout)
     if not valid then return nil,err end
-    local lines={"2",hex(valid.name)}
+    local version=2
+    for _,e in ipairs(valid.elements) do if e.anchor or e.aura or e.castStyle then version=3 end end
+    local lines={tostring(version),hex(valid.name)}
     local row={hex(valid.rules.healthColor)}
     for _,key in ipairs({"friendlyColor","hostileColor","neutralColor"}) do
         for i=1,4 do row[#row+1]=string.format("%.6f",valid.rules[key][i]) end
@@ -46,6 +95,7 @@ function Share.Export(layout)
             row[#row+1]=value
         end
         for i=1,4 do row[#row+1]=string.format("%.6f",e.color[i]) end
+        if version==3 then row[#row+1]=encodeExtensions(e) end
         lines[#lines+1]=table.concat(row,";")
     end
     local raw=table.concat(lines,"\n")
@@ -56,12 +106,12 @@ function Share.Export(layout)
         local compressed=Deflate:CompressDeflate(raw:sub(i,i+159),{level=5})
         blocks[#blocks+1]=Deflate:EncodeForPrint(compressed)
     end
-    local code="FN2:"..table.concat(blocks,".")
+    local code="FN"..version..":"..table.concat(blocks,".")
     if #code>48000 then return nil,"Share code too large" end
     return code
 end
 local function decode(code)
-    if type(code)~="string" or #code>48000 or (code:sub(1,4)~="FN1:" and code:sub(1,4)~="FN2:") then error("Invalid share header or size") end
+    if type(code)~="string" or #code>48000 or not code:match("^FN[123]:") then error("Invalid share header or size") end
     local blocks=split(code:sub(5),".")
     local raw,total={},0
     if #blocks>205 then error("Too many compressed blocks") end
@@ -75,11 +125,11 @@ local function decode(code)
         raw[#raw+1]=text
     end
     local lines=split(table.concat(raw),"\n")
-    local version=code:sub(1,4)=="FN1:" and 1 or 2
+    local version=tonumber(code:sub(3,3))
     local first=version==1 and 3 or 16
     if lines[1]~=tostring(version) or #lines<first or #lines>first+63 then error("Invalid layout envelope") end
-    local layout={version=version,name=unhex(lines[2]),elements={}}
-    if version==2 then
+    local layout={version=version==1 and 1 or 2,name=unhex(lines[2]),elements={}}
+    if version>=2 then
         local row=split(lines[3],";")
         if #row~=13 then error("Invalid color configuration") end
         layout.rules=NS.Rules.Defaults(); layout.rules.healthColor=unhex(row[1])
@@ -96,7 +146,7 @@ local function decode(code)
     end
     for i=first,#lines do
         local row=split(lines[i],";")
-        if #row~=#fields+4 then error("Invalid field count") end
+        if #row~=#fields+4+(version==3 and 1 or 0) then error("Invalid field count") end
         local e={color={}}
         for j,key in ipairs(fields) do
             if bools[key] then
@@ -106,6 +156,7 @@ local function decode(code)
             else e[key]=unhex(row[j]) end
         end
         for j=1,4 do e.color[j]=tonumber(row[#fields+j]) end
+        if version==3 then decodeExtensions(row[#row],e) end
         layout.elements[#layout.elements+1]=e
     end
     local valid,err=NS.Model.Validate(layout)

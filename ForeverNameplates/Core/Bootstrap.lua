@@ -1,7 +1,7 @@
 local addonName,NS=...
 local events=CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
-local unitEvents={"UNIT_FACTION","UNIT_CLASSIFICATION_CHANGED","UNIT_HEALTH","UNIT_MAXHEALTH","UNIT_NAME_UPDATE","UNIT_LEVEL","UNIT_SPELLCAST_START",
+local unitEvents={"UNIT_FACTION","UNIT_CLASSIFICATION_CHANGED","UNIT_HEALTH","UNIT_MAXHEALTH","UNIT_AURA","UNIT_NAME_UPDATE","UNIT_LEVEL","UNIT_SPELLCAST_START",
     "UNIT_SPELLCAST_STOP","UNIT_SPELLCAST_FAILED","UNIT_SPELLCAST_INTERRUPTED","UNIT_SPELLCAST_DELAYED",
     "UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP","UNIT_SPELLCAST_CHANNEL_UPDATE",
     "UNIT_SPELLCAST_INTERRUPTIBLE","UNIT_SPELLCAST_NOT_INTERRUPTIBLE"}
@@ -38,7 +38,15 @@ events:SetScript("OnEvent",function(_,event,unit)
     elseif event=="PLAYER_TARGET_CHANGED" then NS.Engine.UpdateAll("target")
     elseif event=="RAID_TARGET_UPDATE" then NS.Engine.UpdateAll("raid")
     elseif event=="PLAYER_LEVEL_UP" then NS.Engine.UpdateAll("level")
-    else NS.Engine.Update(unit) end
+    else
+        local dependency
+        if event=="UNIT_HEALTH" or event=="UNIT_MAXHEALTH" then dependency="health"
+        elseif event=="UNIT_AURA" then dependency="auras"
+        elseif event=="UNIT_NAME_UPDATE" then dependency="name"
+        elseif event=="UNIT_LEVEL" then dependency="level"
+        elseif event:find("UNIT_SPELLCAST_",1,true)==1 then dependency="cast" end
+        NS.Engine.Update(unit,dependency)
+    end
 end)
 SLASH_FOREVERNAMEPLATES1="/fnp"
 SLASH_FOREVERNAMEPLATES2="/forevernameplates"

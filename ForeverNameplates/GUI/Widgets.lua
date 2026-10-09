@@ -1,6 +1,19 @@
 local _, NS = ...
 local W={skin="Dark RPG",surfaces={},fonts={}}
 NS.W=W
+function W.Tr(english,german) return GetLocale()=="deDE" and german or english end
+function W.Help(control,title,message)
+    control:SetScript("OnEnter",function(self)
+        if not GameTooltip then return end
+        GameTooltip:SetOwner(self,"ANCHOR_RIGHT"); GameTooltip:SetText(title)
+        GameTooltip:AddLine(message,1,1,1,true)
+        if self.IsEnabled and not self:IsEnabled() then
+            GameTooltip:AddLine(W.Tr("Unlock the element or select a matching component.","Element entsperren oder passenden Komponententyp auswählen."),1,.7,.3,true)
+        end
+        GameTooltip:Show()
+    end)
+    control:SetScript("OnLeave",function() if GameTooltip then GameTooltip:Hide() end end)
+end
 W.skins={
     ["Dark RPG"]={bg={.045,.051,.067,1},panel={.075,.083,.105,1},accent={.78,.63,.37,1},text={.9,.89,.85,1}},
     ["Light Fantasy"]={bg={.78,.74,.64,1},panel={.86,.82,.72,1},accent={.37,.24,.12,1},text={.15,.13,.10,1}},
@@ -84,6 +97,7 @@ function W.CancelNumbers()
 end
 function W.Number(parent,x,y,width,value,low,high,step,callback,preview)
     local f=W.Edit(parent,x+20,y,width-40,value,callback,true)
+    f.bounds=tostring(low).." – "..tostring(high)
     f:SetTextInsets(3,3,3,3)
     local slider=CreateFrame("Slider",nil,f); f.slider=slider
     slider:SetSize(width,7); slider:SetPoint("TOPLEFT",-20,-27)

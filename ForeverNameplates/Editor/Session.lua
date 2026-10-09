@@ -28,8 +28,34 @@ function Session:Update(id,patch)
     if not e then return nil,"No element selected" end
     if e.locked and patch.locked~=false then return nil,"Element is locked" end
     local nextLayout=NS.Copy(self.layout)
-    for key,value in pairs(patch) do nextLayout.elements[index][key]=NS.Copy(value) end
+    for key,value in pairs(patch) do
+        if key=="anchor" and value==false then nextLayout.elements[index][key]=nil
+        else nextLayout.elements[index][key]=NS.Copy(value) end
+    end
     return self:Commit(nextLayout)
+end
+function Session:SetAnchor(ref,point,relativePoint,snap)
+    local e=self:Element(); if not e then return nil,"No selection" end
+    local positions=NS.Features.Positions(self.layout); local position=positions[e.id]
+    if ref=="" then return self:Update(e.id,{anchor=false,x=position.x,y=position.y}) end
+    local target=self:Element(ref)
+    if not target or not NS.Features.points[point] or not NS.Features.points[relativePoint] then return nil,"Invalid anchor target" end
+    local own,relative=NS.Features.points[point],NS.Features.points[relativePoint]
+    local p=positions[ref]
+    return self:Update(e.id,{anchor={ref=ref,point=point,relativePoint=relativePoint},
+        x=snap and 0 or position.x-p.x-relative[1]*target.width+own[1]*e.width,
+        y=snap and 0 or position.y-p.y-relative[2]*target.height+own[2]*e.height})
+end
+function Session:UpdateFeature(key,patch,id)
+    if key~="aura" and key~="castStyle" then return nil,"Unknown feature" end
+    local e=self:Element(id); if not e then return nil,"No selection" end
+    local config=NS.Copy(e[key] or (key=="aura" and NS.Features.AuraDefaults() or NS.Features.CastDefaults()))
+    for field,value in pairs(patch) do config[field]=NS.Copy(value) end
+    local ok,err=NS.Features.ValidateElement({kind=e.kind,[key]=config})
+    if not ok then return nil,err end
+    local change={[key]=config}
+    if key=="aura" then change.width,change.height=NS.Features.AuraSize(config) end
+    return self:Update(e.id,change)
 end
 function Session:UpdateRules(patch,category)
     local layout=NS.Copy(self.layout)
@@ -90,14 +116,21 @@ function Session:Resize(id,width,height,keepTopLeft)
         height=math.max(1,math.floor(height/self.snap+.5)*self.snap)
     end
     local patch={width=width,height=height}
-    if keepTopLeft then patch.x=e.x+(width-e.width)/2; patch.y=e.y-(height-e.height)/2 end
+    if keepTopLeft then
+        local own=e.anchor and NS.Features.points[e.anchor.point] or {0,0}
+        patch.x=e.x+(.5+own[1])*(width-e.width); patch.y=e.y-(.5-own[2])*(height-e.height)
+    end
     return self:Update(id,patch)
 end
 function Session:Align(id,mode,referenceId)
     local e=self:Element(id)
     if not e then return nil,"No element selected" end
     local ref
-    if referenceId then ref=self:Element(referenceId) else ref={x=0,y=0,width=0,height=0} end
+    local positions=NS.Features.Positions(self.layout)
+    if referenceId then
+        local target=self:Element(referenceId)
+        if target then ref={x=positions[target.id].x,y=positions[target.id].y,width=target.width,height=target.height} end
+    else ref={x=0,y=0,width=0,height=0} end
     if not ref then return nil,"Unknown alignment reference" end
     local patch={}
     if mode=="centerX" then patch.x=ref.x
@@ -107,6 +140,10 @@ function Session:Align(id,mode,referenceId)
     elseif mode=="top" then patch.y=ref.y+ref.height/2-e.height/2
     elseif mode=="bottom" then patch.y=ref.y-ref.height/2+e.height/2
     else return nil,"Unknown alignment mode" end
+    if e.anchor then
+        if patch.x then patch.x=e.x+patch.x-positions[e.id].x end
+        if patch.y then patch.y=e.y+patch.y-positions[e.id].y end
+    end
     -- Alignment is exact; a snap step must not move an aligned edge away again.
     return self:Update(id,patch)
 end
@@ -138,7 +175,14 @@ function Session:Delete()
     local e,index=self:Element()
     if not e or e.locked then return nil,"No editable selection" end
     if #self.layout.elements==1 then return nil,"Keep at least one element in the layout" end
+    local positions=NS.Features.Positions(self.layout)
     local layout=NS.Copy(self.layout); table.remove(layout.elements,index)
+    for _,element in ipairs(layout.elements) do
+        if element.anchor and element.anchor.ref==e.id then
+            if element.locked then return nil,"Unlock anchored dependents before deleting their reference" end
+            element.anchor=nil; element.x=positions[element.id].x; element.y=positions[element.id].y
+        end
+    end
     local ok,err=self:Commit(layout)
     if ok then self.selected=layout.elements[1].id end
     return ok,err

@@ -12,7 +12,10 @@ local function bar(parent)
     f:SetStatusBarTexture(white); f:SetMinMaxValues(0,100); f:SetValue(100)
     return {frame=f,bar=f}
 end
-Renderer.Register("health",bar); Renderer.Register("cast",bar)
+Renderer.Register("health",bar)
+Renderer.Register("cast",function(parent)
+    local part=bar(parent); part.spark=part.frame:CreateTexture(nil,"OVERLAY"); part.spark:Hide(); return part
+end)
 local function textPart(parent)
     local f=frame(parent); local text=f:CreateFontString(nil,"OVERLAY")
     -- Allocate the optional native level marker once so text-pool reorderings
@@ -82,7 +85,7 @@ function Renderer.Apply(view,layout)
         part.frame:Hide(); view.pool[part.kind]=view.pool[part.kind] or {}
         table.insert(view.pool[part.kind],part)
     end
-    view.parts={}; view.layout=valid; view.needs={}
+    view.parts={}; view.layout=valid; view.needs={}; view.castVisible=nil
     view.needs.target=valid.rules.overrides.target.enabled or valid.rules.overrides.nonTarget.enabled
     local hasCast,castBackground=false,false
     for _,e in ipairs(valid.elements) do
@@ -91,6 +94,11 @@ function Renderer.Apply(view,layout)
         if e.enabled and (e.kind=="target" or e.source=="target") then view.needs.target=true end
         if e.enabled and e.kind=="raid" then view.needs.raid=true end
         if e.enabled and e.kind=="castShield" then view.needs.cast=true; view.needs.shield=true end
+        if e.enabled and e.kind=="cast" then
+            view.needs.castBar=true
+            if e.castStyle and e.castStyle.enabled then view.needs.cast=true; view.needs.shield=true end
+        end
+        if e.enabled and e.kind=="auras" then view.needs.auras=true end
         if e.kind=="cast" then hasCast=true end
         if e.enabled and e.asset=="wow_df_cast_background" then castBackground=true end
         local pool=view.pool[e.kind] or {}
@@ -139,6 +147,22 @@ function Renderer.Apply(view,layout)
             end
         end
         draw(part,e)
+        if part.auraSlots then NS.Auras.Layout(part,e) end
+        if part.spark then
+            part.spark:Hide(); part.sparkReady=false
+            local style=e.castStyle
+            if style and style.spark then
+                local ok,success=pcall(part.spark.SetTexture,part.spark,"Interface\\CastingBar\\UI-CastingBar-Spark")
+                part.sparkReady=ok and not NS.Compat.Secret(success) and success==true
+                part.spark:SetVertexColor(unpack(style.sparkColor)); part.spark:SetAlpha(style.sparkAlpha)
+                part.spark:SetSize(e.vertical and e.width+6 or style.sparkWidth,e.vertical and style.sparkWidth or e.height+6)
+                part.spark:ClearAllPoints()
+                local fill=NS.Compat.Public(part.bar.GetStatusBarTexture,part.bar)
+                local edge=e.vertical and (e.reverse and "BOTTOM" or "TOP") or (e.reverse and "LEFT" or "RIGHT")
+                if fill then part.sparkReady=part.sparkReady and pcall(part.spark.SetPoint,part.spark,"CENTER",fill,edge,0,0)
+                else part.sparkReady=false end
+            end
+        end
         if part.raid then part.raid:SetVertexColor(unpack(e.color)) end
         if part.image then
             part.image:SetVertexColor(unpack(e.color))
@@ -165,9 +189,28 @@ function Renderer.Apply(view,layout)
         view.parts[#view.parts+1]=part
     end
     if castBackground and not hasCast then view.needs.cast=true end
+    local byId={}; for _,part in ipairs(view.parts) do byId[part.element.id]=part.frame end
+    for _,part in ipairs(view.parts) do
+        local e=part.element
+        if e.anchor then
+            part.frame:ClearAllPoints(); part.frame:SetPoint(e.anchor.point,byId[e.anchor.ref],e.anchor.relativePoint,e.x,e.y)
+        end
+    end
     return true
 end
-function Renderer.Update(view,state,unit)
+function Renderer.PrimaryMatches(e,dependency)
+    if not dependency then return true end
+    if dependency=="health" then return e.kind=="health" or (e.kind=="text" and e.source=="health") end
+    if dependency=="cast" then return e.kind=="cast" or e.source=="cast" or e.asset=="wow_df_cast_background" end
+    if dependency=="auras" then return e.kind=="auras" end
+    return e.kind=="text" and e.source==dependency
+end
+function Renderer.Matches(e,dependency)
+    -- Displayed identity is refreshed, never retained across a secrecy change.
+    return Renderer.PrimaryMatches(e,dependency) or e.kind=="class" or e.kind=="classIcon" or
+        (e.kind=="text" and (e.source=="name" or e.source=="level" or e.source=="class" or e.source=="classification"))
+end
+function Renderer.Update(view,state,unit,dependency)
     local effect=NS.Rules.Resolve(view.layout.rules,state)
     view.effect=effect
     view.root:SetScale((view.previewScale or 1)*effect.scale); view.root:SetAlpha(effect.alpha)
@@ -177,6 +220,7 @@ function Renderer.Update(view,state,unit)
     local hasCast,castShown=false,false
     for _,part in ipairs(view.parts) do
         local e=part.element
+        if Renderer.Matches(e,dependency) then
         local show=e.enabled
         if part.image then show=show and part.imageReady end
         if e.enabled and part.kind=="health" and not part.barReady then ready=false end
@@ -193,6 +237,7 @@ function Renderer.Update(view,state,unit)
             show=show and state.isPlayer==true and NS.Rules.classLabels[state.class]~=nil
             part.text:SetTextColor(unpack(NS.Rules.classColors[state.class] or e.color))
         end
+        if part.auraSlots then show=show and NS.Auras.Update(part,e,state,unit) end
         if part.icon then
             local usable=false
             part.icon:Hide()
@@ -225,10 +270,19 @@ function Renderer.Update(view,state,unit)
                 if unit then
                     if show and not NS.Compat.Health(part.bar,unit) then show=false; ready=false end
                 else part.bar:SetMinMaxValues(0,100); part.bar:SetValue(state.health or 75) end
-            elseif unit then show=show and NS.Compat.Cast(part.bar,unit)
+            elseif unit then
+                if show then local ok,channel=NS.Compat.Cast(part.bar,unit); show=ok; part.channel=channel end
             else
                 part.bar:SetMinMaxValues(0,100); part.bar:SetValue(state.progress or 55)
                 show=show and state.casting
+                part.channel=state.channel==true
+            end
+            if part.kind=="cast" then
+                local style=e.castStyle
+                local color=e.color
+                if style and style.enabled then color=state.castShield==true and style.shield or part.channel and style.channel or style.normal end
+                part.bar:SetStatusBarColor(unpack(color))
+                part.spark:SetShown(show==true and part.sparkReady==true)
             end
         end
         if part.text then
@@ -266,15 +320,20 @@ function Renderer.Update(view,state,unit)
         part.shown=show==true
         part.frame:SetShown(part.shown)
         if part.kind=="cast" then hasCast=true; castShown=castShown or part.shown end
+        end
     end
     -- Resolve attachments after all bars, independent of element order. Native
     -- cast backgrounds in existing saved layouts still have source="static".
     local showCast=castShown or (not hasCast and state.casting==true)
+    if not dependency or dependency=="cast" then view.castVisible=showCast
+    else showCast=view.castVisible==true end
     for _,part in ipairs(view.parts) do
         local e=part.element
-        if e.kind~="cast" and (e.source=="cast" or e.asset=="wow_df_cast_background") then
+        if e.kind~="cast" and (e.source=="cast" or e.asset=="wow_df_cast_background") and
+            (not dependency or dependency=="cast" or Renderer.Matches(e,dependency)) then
             part.frame:SetShown(part.shown and showCast)
         end
     end
-    return ready
+    if not dependency or dependency=="health" then view.healthReady=ready end
+    return ready and view.healthReady~=false
 end

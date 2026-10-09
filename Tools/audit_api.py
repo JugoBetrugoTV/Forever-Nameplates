@@ -10,13 +10,15 @@ parser.add_argument("--kit", type=Path, default=root.parent / "research/forever-
 args = parser.parse_args()
 docs = args.reference / "docs/api"
 required = {
+    "Spells-Auras-Talents/C_UnitAuras.md": ["C_UnitAuras.GetUnitAuras", "C_UnitAuras.GetAuraDuration"],
+    "Spells-Auras-Talents/FrameAPICooldown.md": ["FrameAPICooldown.Clear", "FrameAPICooldown.SetDrawEdge", "FrameAPICooldown.SetDrawSwipe", "FrameAPICooldown.SetCooldownFromDurationObject"],
     "Guild-Social-Chat/RaidMarkers.md": ["RaidMarkers.GetRaidTargetIndex"],
     "UI-Widgets-Frames/C_Texture.md": ["C_Texture.GetAtlasInfo"],
     "System-Config/C_Secrets.md": ["C_Secrets.ShouldUnitIdentityBeSecret"],
     "UI-Systems-Input/C_NamePlate.md": ["C_NamePlate.GetNamePlateForUnit", "C_NamePlate.GetNamePlates"],
     "AddOns-Scripting/C_Timer.md": ["C_Timer.After"],
     "UI-Widgets-Frames/SimpleFrameScriptObjectAPI.md": ["SimpleFrameScriptObjectAPI.IsForbidden"],
-    "UI-Widgets-Frames/SimpleStatusBarAPI.md": ["SimpleStatusBarAPI.SetValue", "SimpleStatusBarAPI.SetMinMaxValues", "SimpleStatusBarAPI.SetTimerDuration", "SimpleStatusBarAPI.SetOrientation", "SimpleStatusBarAPI.SetReverseFill", "SimpleStatusBarAPI.SetStatusBarTexture"],
+    "UI-Widgets-Frames/SimpleStatusBarAPI.md": ["SimpleStatusBarAPI.SetValue", "SimpleStatusBarAPI.SetMinMaxValues", "SimpleStatusBarAPI.SetTimerDuration", "SimpleStatusBarAPI.SetOrientation", "SimpleStatusBarAPI.SetReverseFill", "SimpleStatusBarAPI.SetStatusBarTexture", "SimpleStatusBarAPI.GetStatusBarTexture"],
     "UI-Widgets-Frames/SimpleTextureBaseAPI.md": ["SimpleTextureBaseAPI.SetRotation", "SimpleTextureBaseAPI.SetTexture", "SimpleTextureBaseAPI.SetTexCoord", "SimpleTextureBaseAPI.SetBlendMode", "SimpleTextureBaseAPI.SetAtlas"],
     "UI-Widgets-Frames/SimpleFrameAPI.md": ["SimpleFrameAPI.CreateMaskTexture", "SimpleFrameAPI.RegisterEvent", "SimpleFrameAPI.SetClipsChildren", "SimpleFrameAPI.GetAlpha", "SimpleFrameAPI.SetAlpha", "SimpleFrameAPI.IsShown", "SimpleFrameAPI.Show", "SimpleFrameAPI.Hide", "SimpleFrameAPI.SetShown"],
     "UI-Widgets-Frames/SimpleButtonAPI.md": ["SimpleButtonAPI.IsEnabled", "SimpleButtonAPI.RegisterForClicks", "SimpleButtonAPI.SetHighlightTexture"],
@@ -34,6 +36,8 @@ for filename, names in required.items():
             raise SystemExit(f"Missing API signature: {name}")
         count += 1
 print(f"{count} required/researched signatures present; runtime permissions and in-game behavior remain unverified")
+if "### UNIT_AURA\n" not in (docs / "Spells-Auras-Talents/C_UnitAuras.md").read_text():
+    raise SystemExit("Missing documented event: UNIT_AURA")
 unit_docs=(docs / "Units-Combat-PvP/Unit.md").read_text()
 for event in ("PLAYER_LEVEL_UP", "UNIT_SPELLCAST_INTERRUPTIBLE", "UNIT_SPELLCAST_NOT_INTERRUPTIBLE"):
     if f"### {event}\n" not in unit_docs:

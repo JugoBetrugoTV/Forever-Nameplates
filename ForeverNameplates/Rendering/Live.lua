@@ -203,7 +203,7 @@ function Engine.Add(unit,attempt)
     Engine.Update(unit)
 end
 
-function Engine.Update(unit)
+function Engine.Update(unit,dependency)
     if C.Secret(unit) or type(unit)~="string" then return end
     local view=Engine.units[unit]
     if not view then return end
@@ -215,7 +215,19 @@ function Engine.Update(unit)
     if not visual or not view.visual or visual~=view.visual.frame or anchor~=view.anchor then
         Engine.Add(unit); return
     end
-    local ok,ready=pcall(function() return R.Update(view,C.State(unit,view.needs),unit) end)
+    if dependency then
+        local relevant=false
+        for _,part in ipairs(view.parts) do if part.element.enabled and R.PrimaryMatches(part.element,dependency) then relevant=true; break end end
+        if not relevant then return end
+    end
+    local needs=view.needs
+    if dependency then
+        -- Unit identity/rules stay fresh; unrelated text/cast metadata is omitted.
+        needs={target=view.needs.target,health=dependency=="health" and view.needs.health,
+            cast=dependency=="cast" and view.needs.cast,shield=dependency=="cast" and view.needs.shield,
+            name=view.needs.name,level=view.needs.level}
+    end
+    local ok,ready=pcall(function() return R.Update(view,C.State(unit,needs),unit,dependency) end)
     Engine.stats.updates=Engine.stats.updates+1
     if not ok or not ready then fallback(view,"Custom rendering unavailable; Blizzard restored"); return end
     -- Suppression starts only after a successful custom render. Hidden-by-rule is

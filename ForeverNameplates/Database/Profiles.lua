@@ -7,12 +7,12 @@ function DB.Editable()
     return true
 end
 function DB.Initialize(saved)
-    if type(saved) == "table" and type(saved.version) == "number" and saved.version > 2 then
+    if type(saved) == "table" and type(saved.version) == "number" and saved.version > 3 then
         NS.databaseBlocked = true
         return nil, "Newer SavedVariables version; data preserved."
     end
     NS.databaseBlocked=false
-    local data = {version=2, profiles={}, characters={}, active="Default", live=true,liveMode="replacement-v1",minimap={angle=225,hidden=false},guiSkin="Dark RPG"}
+    local data = {version=3, profiles={}, characters={}, active="Default", live=true,liveMode="replacement-v1",minimap={angle=225,hidden=false},guiSkin="Dark RPG"}
     local skins={["Dark RPG"]=true,["Light Fantasy"]=true,["Modern Studio"]=true}
     if type(saved)=="table" and type(saved.guiSkin)=="string" and skins[saved.guiSkin] then data.guiSkin=saved.guiSkin end
     if type(saved)=="table" and type(saved.minimap)=="table" then
@@ -24,7 +24,7 @@ function DB.Initialize(saved)
     if type(saved) == "table" and saved.version == 0 then
         local migrated = NS.Model.Validate(saved.layout)
         if migrated then data.profiles.Default = migrated end
-    elseif type(saved) == "table" and (saved.version == 1 or saved.version == 2) then
+    elseif type(saved) == "table" and (saved.version == 1 or saved.version == 2 or saved.version==3) then
         local n = 1
         data.profiles.Default=NS.Copy(NS.GameNameplates[1].layout)
         if type(saved.profiles) == "table" then

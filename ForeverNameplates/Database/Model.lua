@@ -1,7 +1,7 @@
 local _, NS = ...
 local Model = {version = 2, maxElements = 64}
 NS.Model = Model
-Model.kinds = {health=true, cast=true, text=true, panel=true, target=true, ornament=true, artwork=true,raid=true,class=true,classIcon=true,castIcon=true,castShield=true}
+Model.kinds = {health=true, cast=true, text=true, panel=true, target=true, ornament=true, artwork=true,raid=true,class=true,classIcon=true,castIcon=true,castShield=true,auras=true}
 Model.assets = {classic_frame=true,dragonflight_frame=true,guildwars_frame=true,galactic_frame=true,
     medieval_frame=true,fantasy_frame=true,minimal_frame=true,arena_frame=true,neon_frame=true,
     arcane_frame=true,horde_frame=true,celestial_frame=true,studio_header=true,wow_nameplate_fill=true,wow_classic_nameplate_border=true,wow_nameplate_selection=true,wow_df_cast_background=true,wow_nameplate_name=true,wow_classic_name=true,wow_nameplate_level=true,
@@ -10,7 +10,7 @@ Model.sources = {name=true, health=true, level=true, cast=true, static=true,clas
 Model.shapes = {rect=true, diamond=true, rune=true, brackets=true, segments=true,outline=true}
 Model.fields = {id=true, kind=true, source=true, text=true, x=true, y=true, width=true,
     height=true, color=true, alpha=true, layer=true, enabled=true, locked=true,
-    fontSize=true, vertical=true, reverse=true, shape=true,asset=true}
+    fontSize=true, vertical=true, reverse=true, shape=true,asset=true,anchor=true,aura=true,castStyle=true}
 
 local function finite(value, low, high)
     return type(value) == "number" and value == value and value >= low and value <= high
@@ -42,6 +42,8 @@ function Model.Validate(layout)
         if type(e.id) ~= "string" or #e.id > 32 or not e.id:match("^[%w_%-]+$") or ids[e.id] then return nil, "Invalid or duplicate element ID" end
         ids[e.id] = true
         if not Model.kinds[e.kind] then return nil, "Unknown component" end
+        local featureOK,featureError=NS.Features.ValidateElement(e)
+        if not featureOK then return nil,featureError end
         for _, key in ipairs({"x", "y", "width", "height", "alpha", "layer", "fontSize"}) do
             local low, high = -512, 512
             if key == "width" or key == "height" then low, high = 1, 512 end
@@ -51,6 +53,10 @@ function Model.Validate(layout)
             if not finite(e[key], low, high) then return nil, "Invalid " .. key end
         end
         if e.layer % 1 ~= 0 then return nil, "Layer must be an integer" end
+        if e.aura then
+            local width,height=NS.Features.AuraSize(e.aura)
+            if e.width~=width or e.height~=height then return nil,"Aura dimensions follow icon size/columns/limit" end
+        end
         for _, key in ipairs({"enabled", "locked", "vertical", "reverse"}) do
             if type(e[key]) ~= "boolean" then return nil, "Invalid " .. key end
         end
@@ -68,6 +74,8 @@ function Model.Validate(layout)
         for i=1,4 do if not finite(e.color[i], 0, 1) then return nil, "Invalid color channel" end end
         result.elements[#result.elements+1] = NS.Copy(e)
     end
+    local positions,anchorError=NS.Features.Positions(result)
+    if not positions then return nil,anchorError end
     return result
 end
 

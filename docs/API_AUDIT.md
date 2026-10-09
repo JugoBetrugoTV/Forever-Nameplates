@@ -1,11 +1,69 @@
 # Forever API-Audit — 2026-10-09
 
+## Anker, Auren, Castzustände und gezielte GUI-/Unit-Updates ab 0.10.0
+
+Forever-Quellen weiterhin gepinnt auf `d8c9be3635e756fd90284e02b5a800c796b337a0`.
+Neu abgeglichen: `Spells-Auras-Talents/C_UnitAuras.md`, `FrameAPICooldown.md` und
+`UI-Widgets-Frames/SimpleStatusBarAPI.md`. Der Audit prüft 65 Signaturen und jetzt auch
+`UNIT_AURA`; die sprachserverfähigen Forever-Definitionen bleiben eingebunden.
+
+`C_UnitAuras.GetUnitAuras(unit, filter, maxCount, sortRule, sortDirection)` dokumentiert
+`AuraData[]` und Default Unsorted/Normal. Der Adapter fragt maximal 40 Einträge ab und
+zeigt höchstens zwölf Icons pro Komponente. HELPFUL/HARMFUL und optional PLAYER werden
+an den Client übergeben; Sortierung wird mit öffentlichen Laufzeit-Enums angefordert.
+Keine Auswertung von live `expirationTime`, `duration`, `sourceUnit` oder Aura-Namen.
+Nur öffentliche positive Icon-FileIDs, Instance-IDs, Spell-IDs und Stackcounts werden
+normalisiert. Include/Exclude-Listen lassen unbekannte Spell-IDs aus. Ohne Sort-Enums
+bleibt eine explizit sortierte Reihe leer; Standardreihenfolge nutzt öffentliche Enums, falls vorhanden, sonst dokumentierte Defaults.
+
+**Dokumentationslücken, keine bestätigten Client-Abweichungen:** Der Forever-Export liefert
+weder AuraData-Felder noch die Aura-Sort-Enumwerte/-Definitionen. `icon`, `auraInstanceID`,
+`spellId`, `applications` und die Enum-Namen Unsorted/ExpirationOnly/NameOnly sowie
+Normal/Reverse sind in allgemeinem Mainline FrameXML (`09b9db7948abc9b9648dedaab51eb0cf3ee67b31`,
+`Blizzard_APIDocumentationGenerated/UnitAuraSharedDocumentation.lua`) belegt und bei Plater
+verwendet; sie sind keine Zusage für Forever. Der Export nennt AuraFilters, definiert
+aber die PLAYER-Kombination nicht vollständig. Die generierte Beispielzeile von GetUnitAuras
+lässt maxCount aus und verschiebt dadurch Argumente; wir verwenden die Signaturtabelle.
+Die Tabelle markiert sortRule/sortDirection als nicht nilable, nennt aber Defaults;
+ob explizites nil diese Defaults im Forever-Build nutzt, muss getestet werden. Ausnahmen
+oder Secret-Rückgaben blenden die Reihe aus und lassen die Healthbar weiterlaufen.
+
+`C_UnitAuras.GetAuraDuration(unit, instanceID)` wird für öffentliche IDs direkt an
+`Cooldown:SetCooldownFromDurationObject(duration, true)` weitergegeben. Das Objekt wird
+weder gespeichert noch ausgelesen. Clear/SetDrawEdge/SetDrawSwipe sind dokumentiert;
+fehlende/verweigerte Duration-Weitergabe versteckt nur den Cooldown. Simulierte GUI-Auren
+nutzen ausschließlich fest definierte öffentliche Samples; deren Sortierung dient der Vorschau.
+Sie sind kein Ersatz für echte clientseitige Aura-Metadaten oder Laufzeitzugriff.
+
+Der Cast-Spark verwendet `Interface\CastingBar\UI-CastingBar-Spark`, belegt in allgemeinem
+FrameXML `Blizzard_NamePlateCastingBar.lua`. Er wird direkt an die Textur aus dokumentiertem
+`GetStatusBarTexture()` geankert (RIGHT/LEFT/TOP/BOTTOM nach Richtung/Orientierung).
+Keine Health-/Castprozentrechnung, Abfrage der live Texturbreite oder OnUpdate-Zeitrechnung.
+Texture-/Ankerfehler verstecken den Spark. Zustandsfarben lesen den aktuellen öffentlich
+bestätigten Interruptstatus und den Cast-/Channel-Pfad; unbekannter Status nutzt Normal/Channel.
+Anker berechnen nur gespeicherte Benutzergeometrie, nie Unitdaten. Zyklen/fehlende Referenzen
+werden vor Rendering/DB/Import zurückgewiesen; native SetPoint-Verbindungen bleiben individuell.
+
+Health/MaxHealth-, Cast-, Aura-, Name- und Level-Events wählen passende Komponenten.
+Angezeigte öffentliche Identität/Regeln werden weiter frisch gelesen; es gibt keinen
+geheimen Health-/Identitätscache. Öffentliche Render-Erfolgs-/Sichtbarkeitsflags verhindern,
+dass ein fremdes Teilupdate nach einem Healthfehler erneut Blizzard unterdrückt oder
+castgebundene Auren ohne sichtbare Castbar zeigt. Statische Dekorationen bleiben bei
+irrelevanten Events unangetastet. Globale Target/Raid/Level-Filter aus 0.8.0 bleiben erhalten.
+
+Nur der Layout-Editor entsteht beim ersten Öffnen; sieben Zusatzseiten bauen beim Besuch,
+werden danach wiederverwendet und verwerfen fehlerhafte Seiten samt Control-Registrierungen.
+Im identischen Lua-Widget-Mock: 550 statt 1498 Objekte beim ersten Öffnen. 329 lokale Tests;
+kein Nachweis realer Öffnungszeit/FPS/Combat-Permissions. FN3 speichert optionale Anker-/Aura-/
+Caststil-Daten. Alte Layouts exportieren FN2, FN1/FN2-Import bleibt erhalten. SavedVariables
+migrieren auf 3 und schützen neue Daten beim Downgrade; Layoutmodell bleibt 2.
+
 ## Maussteuerung ab 0.9.0
 
 Forever `SimpleSliderAPI` dokumentiert SetValue (mit treatAsMouseEvent), SetMinMaxValues,
 SetOrientation, SetValueStep, SetObeyStepOnDrag, SetThumbTexture und SetEnabled;
 `SimpleScriptRegionAPI.EnableMouseWheel` ist ebenfalls im Clientexport vorhanden.
-`Tools/audit_api.py` prüft jetzt 58 Signaturen. Primitive Slider-Texturen kommen aus dem
+Die damalige Erweiterung prüfte 58 Signaturen; ab 0.10.0 sind es 65. Primitive Slider-Texturen kommen aus dem
 GUI-Code, keine fremden Libraries/Grafiken. Mauskoordinaten und numerische Einstellungen
 sind lokale Benutzerdaten; keine neuen Unit-/Secret-/Combat-APIs werden benötigt.
 
@@ -299,7 +357,7 @@ werden aufgefangen und als Diagnose gezählt, nicht durch alternative verbotene 
 | Identitätsrestriktion | `C_Secrets.ShouldUnitIdentityBeSecret(unit)` dokumentiert | Bei öffentlichem `true` keine Name-/Level-/Klassen-/Reaktions-/Zielabfragen; ansonsten jede Rückgabe einzeln prüfen |
 | Raidmarker | `GetRaidTargetIndex(target)` und `RAID_TARGET_UPDATE` dokumentiert | Index 1–8; lokales Client-Texturatlas über exportierten UI-Helper `SetRaidTargetIconTexture`; Marker fehlt bei geheimer Rückgabe |
 | Regelaktualisierung | `UNIT_FACTION`, `UNIT_CLASSIFICATION_CHANGED`, Target-/Raid-Events dokumentiert | Ereignisbasierte Farbe/Sichtbarkeit/Skalierung nur am eigenen ungeschützten Overlay |
-| Threat/Auras | Exakte Werte und Aura-Zugriffe können gesperrt sein | Keine eigene Threat-Rechnung oder Aura-/Quest-Erkennung implementiert |
+| Threat/Auras | Exakte Werte und Aura-Zugriffe können gesperrt sein | Clientseitige Aura-Filter/-Sortierung und Widget-Duration ab 0.10.0; keine eigene geheime Zeit-/Threat-Rechnung oder Quest-Erkennung |
 | SavedVariables | Kit meldet Schreiben ohne Laden bei Client-Neustart | Reguläre SavedVariables plus manueller Share-Code-Backup; kein ausführbarer Daten-Bridge-Code |
 
 ## Derzeitige Grenzen
@@ -322,9 +380,9 @@ Die GUI unterstützt Layout-Elemente relativ zur gemeinsamen Plate-Mitte, exakte
 Drag-Skalierung und vier parallel angezeigte simulierte Units. `SimpleFrameAPI.SetClipsChildren`
 begrenzt Canvas und Sandbox-Karten; `SimpleButtonAPI.IsEnabled` sichert deaktivierte Menüeinträge.
 Beide Methoden sind in der Forever-Referenz dokumentiert und im Widget-Mock abgebildet.
-Freie Ankergruppen,
-Maskenformen, Questmarker, Cast-Spark, Threat,
-vollständige Localization, Animationen und die restlichen Spezialseiten folgen separat.
+Relative Einzelanker, Aura-/Castseite und Spark sind ab 0.10.0 implementiert.
+Gruppen-/Mehrfachauswahl, Maskenformen, Questmarker, Threat,
+vollständige Localization und freie Animationen folgen separat.
 
 ## Regeln und Marker ab 0.3.0
 

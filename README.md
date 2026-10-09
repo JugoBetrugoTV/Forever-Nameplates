@@ -1,7 +1,14 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.9.0**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.10.0**, kein fertig poliertes Release.
+
+**0.10.0** ergänzt die fünf Verbesserungen aus dem Plater-Vergleich: Einstellungssuche
+mit Hilfetexten, relative Anker, Aura-/Debuff-Reihen mit Clientfiltern und Sortierung,
+Castzustandsfarben und Spark sowie gezielte Unit-Updates und Seitenaufbau beim Öffnen.
+Unter **Anker / Auren / Casts** lassen sich die neuen Optionen per Maus einstellen;
+Regler haben eine lokale Vorschau und Undo. Über das Suchfeld oben einen Begriff eingeben
+und den Treffer klicken. [Bedienung, Grenzen und neue Austauschcodes](docs/PLATER_FEATURES.md).
 
 **0.9.0** macht die vorhandenen Einstellungen per Maus bedienbar: Zahlen haben Schieberegler,
 Plus/Minus und Mausrad; Regler zeigen eine lokale Vorschau und speichern beim Loslassen einen
@@ -12,7 +19,7 @@ Der GUI-Skin wird gespeichert. Namen, eigener Text und Share-Codes bleiben Texte
 [Welche Funktion wo einstellbar ist und was noch fehlt](docs/GUI_SETTINGS.md).
 
 Zum direkten Quellvergleich wurde [Plater in ReferenceAddons](ReferenceAddons/README.md)
-heruntergeladen und gepinnt. [Konkrete Unterschiede und nächste Verbesserungen](ReferenceAddons/PLATER_REVIEW.md).
+heruntergeladen und gepinnt. [Quellvergleich und umgesetzte Verbesserungen](ReferenceAddons/PLATER_REVIEW.md).
 
 Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
 den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
@@ -84,7 +91,7 @@ statische Artwork/Ornamente; sie gleicht alte freie Profile nicht automatisch vo
 
 ## Was dieser Stand enthält
 
-- Eigene Studio-Oberfläche: Preset-Galerie, Layout-Editor, Mehrfachvorschau, Einheiten-Regeln, Profile und Diagnose.
+- Eigene Studio-Oberfläche: Preset-Galerie, Layout-Editor, Mehrfachvorschau, Einheiten-Regeln, Profile, Diagnose, Komponenten-Einstellungen und Suche.
 - Zwei quellengestützte WoW-Nameplate-Layouts, ein FFXIV-Referenzentwurf mit erforderlichem Artwork
   und zwölf weiter editierbare Legacy-Platzhalter.
 - Importierte HP-/Cast-Fülltexturen mit eigenem Asset-Auswahlfeld, public-bool-Rückgabeprüfung
@@ -98,12 +105,12 @@ statische Artwork/Ornamente; sie gleicht alte freie Profile nicht automatisch vo
   Ornamentik und integrierbare Artwork-Ebene; horizontale und vertikale Balken.
 - Account- und Charakterprofile, Duplikate, Umbenennung, bestätigtes Löschen/Zurücksetzen,
   Auswahl über paginierte Dropdowns und validierte komprimierte Share-Codes.
-- Vier gleichzeitig sichtbare Sandbox-Plates mit 13 separat wählbaren simulierten Zuständen.
+- Vier gleichzeitig sichtbare Sandbox-Plates mit 14 separat wählbaren simulierten Zuständen.
 - Wechselbare GUI-Skins passen Hintergrund- und Textfarben an; ColorPicker bleiben bei Profilwechsel getrennt.
 - Klassen- und Reaktionsfarben sowie 12 Unit-Regelkategorien mit Sichtbarkeit, Alpha und Skalierung.
 - Verschiebbare Raidmarker über die vorhandene Client-Textur und farbige Klassenkürzel;
   Level und Klassifikation als Textquellen.
-- Migration alter Profile auf Schema 2; neue FN2-Exports und weiter nutzbare FN1-Imports.
+- SavedVariables-Migration auf Schema 3; Layoutmodell 2 mit optionalen Erweiterungen. FN3 für neue Funktionen, FN1/FN2 bleiben importierbar.
 - Ereignisbasierte Live-Anwendung mit Frame-Pooling, Blizzard-Wiederherstellung und Secret-Value-Prüfung.
 - Asset-Import mit Dateiname-, Auflösungs-, Alpha- und Balkenöffnungsprüfung, TGA-Konvertierung
   und Manifest. Originalgrafiken werden vom Nutzer separat geliefert.
@@ -140,7 +147,7 @@ Die Oberfläche schließt im Kampf. Nameplates müssen in den Spieleinstellungen
 **Restore pending / Hide pending** zählen momentan nicht zulässige Wiederherstellungen;
 sie werden außerhalb des Kampfes erneut geprüft. Ohne sichtbare Units ist Applied=0 normal.
 Falls weiterhin nur Blizzard erscheint: Status bei sichtbarer Unit melden, andere Nameplate-Addons
-zum Vergleich deaktivieren und prüfen, ob Version **0.9.0** tatsächlich geladen wurde.
+zum Vergleich deaktivieren und prüfen, ob Version **0.10.0** tatsächlich geladen wurde.
 
 Im Studio öffnet **+ Add component** den Elementkatalog. Versteckte/gesperrte Elemente
 lassen sich im Element-Dropdown auswählen. Der goldene Eckgriff verändert die Größe bei
@@ -161,10 +168,13 @@ Im Komponenten-Katalog stehen **Raid marker**, **Class badge**, **Class icon**, 
 zur Verfügung. Klassenkürzel und grafische Klassenicons sind getrennte Komponenten. Icons
 verwenden Ressourcen des Clients, benötigen keine importierten PNGs und ändern Originalvorlagen
 nicht automatisch. Bei fehlendem Klassenatlas bleibt das Icon verborgen.
-Neue Share-Codes beginnen mit `FN2:` und benötigen mindestens Version 0.3.0 für den Import.
+Layouts ohne neue Erweiterungen verwenden weiterhin `FN2:` und benötigen mindestens Version 0.3.0 für den Import.
 Alte `FN1:`-Codes bleiben importierbar. Neue native WoW-Layouts mit ihren Asset-IDs
 und Outline benötigen mindestens 0.4.0 zum Import. Layouts mit `classIcon`/`castIcon`
-benötigen mindestens 0.7.0; `castShield` benötigt 0.8.0. Ältere Layouts bleiben lesbar. Profile und Layouts werden auf Datenversion 2 migriert.
+benötigen mindestens 0.7.0; `castShield` benötigt 0.8.0. Ältere Layouts bleiben lesbar. Relative Anker, Aura-Reihen oder Caststile erzeugen `FN3:`-Codes
+und benötigen **0.10.0** zum Import. SavedVariables werden auf Version 3 migriert;
+das Layoutmodell bleibt Version 2 mit optionalen Feldern. Alte Addon-Versionen verweigern
+diese neuere Datenbank, statt neue Einstellungen zu überschreiben.
 
 Auf der Profilseite schützt eine Rückfrage vor Löschen und vollständigem Zurücksetzen.
 `Default` ist nicht löschbar. Charaktere eines gelöschten Profils werden auf `Default` umgestellt.

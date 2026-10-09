@@ -1,4 +1,4 @@
-# Forever Nameplates — Entwicklungsstand 0.9.0
+# Forever Nameplates — Entwicklungsstand 0.10.0
 
 Stand: 2026-10-09. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
@@ -9,8 +9,26 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Vergleichsarbeit: Plater vollständig unter `ReferenceAddons/Plater` heruntergeladen,
   als Git-Submodule auf `bcc65131c3f5886fb53a36b3e7858d6c4bfe4f5d` gepinnt. Suche/Hilfe,
   lazy GUI-Aufbau, Anker, Auren, Cast-/Questdarstellung und Unit-Updates gegenüber 0.9.0
-  untersucht. [Befunde und Prioritäten](ReferenceAddons/PLATER_REVIEW.md); keine neue
-  Laufzeitfunktion und keine Plater-Dateien im installierbaren ZIP.
+  untersucht. [Befunde und Umsetzung](ReferenceAddons/PLATER_REVIEW.md); keine Plater-Dateien im installierbaren ZIP.
+
+- 0.10.0: Deutsche/englische Einstellungssuche mit Seitenwechsel, Control-Markierung und
+  Tooltips einschließlich Wertebereich und Hinweis auf Sperren/Zustandsabhängigkeiten.
+- 0.10.0: Validierte relative Anker mit neun Punkten, Offset-Erhalt beim Bezugwechsel,
+  Nullabstand per Button, Zyklus-/Referenzprüfung und positionsbewahrendem Ablösen/Löschen.
+- 0.10.0: Aura-Komponente mit maximal zwölf Icons, Buff/Debuff/eigene Filter, clientseitiger
+  Sortierung, Spell-ID-Listen, Größe/Spalten/Abstand und direkt weitergereichten Cooldowns.
+  Eigene API- und Secret-Guards; unbekannte IDs werden bei expliziten Listen ausgelassen.
+- 0.10.0: Optionale Cast-/Channel-/Nicht-unterbrechbar-Farben und nativer Spark am Rand
+  der StatusBar-Fülltextur. Keine geheime Prozent-/Zeitrechnung oder eigener Casttimer.
+- 0.10.0: Unit-Events aktualisieren passende Komponenten; angezeigte öffentliche Identität
+  und Regeln bleiben frisch. Fehlgeschlagene Health-Weitergabe kann nicht durch Aura-/Cast-
+  Updates erneut Blizzard unterdrücken. Castgebundene Aura-Reihen behalten ihre Bedingung.
+- 0.10.0: Sieben Zusatzseiten erst beim Besuch gebaut und wiederverwendet; Fehler bei
+  Aufbau/Hilfebindung werden verworfen und sind wiederholbar. Erster GUI-Aufbau im selben
+  Widget-Mock: 550 statt 1498 Objekte, keine vier Sandbox-Views vor deren Öffnen.
+- 0.10.0: Neue Komponenten-Seite mit Mausreglern, lokaler Vorschau und gemeinsamem Undo;
+  alter Inspector bleibt für Positionen zuständig. SavedVariables 3, optionales FN3,
+  unveränderte FN1/FN2-Imports. [Bedienung und Grenzen](docs/PLATER_FEATURES.md).
 
 - 0.9.0: Alle zehn Zahlenoptionen mit Schieberegler, Plus/Minus und Mausrad; lokale
   Slider-Vorschau, Speichern beim Loslassen und ein Undo-Schritt pro Drag. Kontextwechsel,
@@ -132,7 +150,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **255 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **329 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -174,8 +192,13 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - 27 neue GUI-Fälle: sieben Zahlenfelder, Grenzen/Mausrad/Undo, lokale Drag-Vorschau,
   atomisches Speichern/Abbruch, Focus/Klick/Enter/Escape, Locks, Regeln, Overlap-Auswahl,
   Font-/Target-Auswahl, Minimap/Profile/Skin und vollständige Bereinigung nach Aufbaufehler.
-- Version 0.9.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
-- 58 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- 76 Feature-Testfälle: Ankerketten/Resize/Align/Löschen/Locks, FN3 und malformed
+  Erweiterungen, Aura-Filter/Secret-Metadaten/Duration-Weitergabe, Castfarben/Spark-Ränder/
+  Fehler, gezielte Events, Health-Fallback, Combat-Pool-Reuse, lazy Fehler-Retry, Suche/Hilfe
+  und Komponenten-Slider-Vorschau mit Commit/Undo/Abbruch. Zwei ältere eager-GUI-Fälle
+  durch sieben lazy-Seiten-Prüfungen ersetzt.
+- Version 0.10.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 65 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.

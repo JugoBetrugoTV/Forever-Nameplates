@@ -9,6 +9,8 @@ local messages = {
     rules = {"Unit Rules", "Einheiten-Regeln"},
     profiles = {"Profiles & Sharing", "Profile & Austausch"},
     diagnostics = {"Diagnostics", "Diagnose"},
+    components = {"Anchors / Auras / Casts", "Anker / Auren / Casts"},
+    search = {"Search", "Suche"},
     combat = {"Editing paused during combat.", "Bearbeitung im Kampf pausiert."},
     apply = {"Apply layout", "Layout anwenden"},
     undo = {"Undo", "Rückgängig"}, redo = {"Redo", "Wiederholen"},

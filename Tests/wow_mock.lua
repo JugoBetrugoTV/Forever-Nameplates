@@ -44,7 +44,10 @@ function F:SetFont(path,size,flags)
     assert(type(path)=="string" and type(size)=="number" and type(flags)=="string", "SetFont requires fontFile, height, flags")
     self.font={path,size,flags}; return true
 end
-function F:SetText(value) self.text=tostring(value or "") end
+function F:SetText(value)
+    self.text=tostring(value or "")
+    if self.scripts.OnTextChanged then self.scripts.OnTextChanged(self,false) end
+end
 function F:GetText() return self.text or "" end
 function F:SetTextColor(...) self.textColor={...} end
 function F:SetJustifyH(value) self.justify=value end
@@ -67,6 +70,16 @@ function F:SetColorTexture(...) self.color={...} end
 function F:SetVertexColor(...) self.vertexColor={...} end
 function F:SetRotation(v) self.rotation=v end
 function F:SetStatusBarTexture(path) self.statusTexture=path; return true end
+function F:GetStatusBarTexture()
+    if not self.fillTexture then self.fillTexture=self:CreateTexture(nil,"ARTWORK") end
+    return self.fillTexture
+end
+function F:SetDrawEdge(v) self.drawEdge=v end
+function F:SetDrawSwipe(v) self.drawSwipe=v end
+function F:SetCooldownFromDurationObject(v,clear)
+    assert(v~=nil); self.cooldownDuration=v; self.clearIfZero=clear
+end
+function F:Clear() self.cooldownDuration=nil end
 function F:SetStatusBarColor(...) self.statusColor={...} end
 function F:SetMinMaxValues(low,high) self.min=low; self.max=high end
 function F:SetValue(v,mouse)

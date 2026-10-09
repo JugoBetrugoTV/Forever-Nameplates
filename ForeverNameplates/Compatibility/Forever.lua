@@ -87,7 +87,7 @@ function Compat.CastInfo(unit,wantShield)
                     if i==1 then flag=eighth else flag=seventh end
                     if not Compat.Secret(flag) and type(flag)=="boolean" then shield=flag end
                 end
-                if name~="" or icon or shield~=nil then return name,icon,shield end
+                if name~="" or icon or shield~=nil then return name,icon,shield,i==2 end
             end
         end
     end
@@ -128,7 +128,7 @@ function Compat.State(unit,needs)
         end
     end
     if not needs or needs.cast then
-        state.castName,state.castIcon,state.castShield=Compat.CastInfo(unit,not needs or needs.shield)
+        state.castName,state.castIcon,state.castShield,state.channel=Compat.CastInfo(unit,not needs or needs.shield)
         state.casting=state.castName~="" or state.castIcon~=nil or state.castShield~=nil
     end
     return state
@@ -145,8 +145,10 @@ function Compat.Cast(bar,unit)
     if not duration then return false end
     local interpolation=Compat.Field(Compat.Field(Enum,"StatusBarInterpolation"),"Immediate")
     local direction=Compat.Field(Compat.Field(Enum,"StatusBarTimerDirection"),channel and "RemainingTime" or "ElapsedTime")
-    if validEnum(interpolation) and validEnum(direction) then return pcall(bar.SetTimerDuration,bar,duration,interpolation,direction) end
+    if validEnum(interpolation) and validEnum(direction) then
+        local ok=pcall(bar.SetTimerDuration,bar,duration,interpolation,direction); return ok,channel
+    end
     -- The documented default is elapsed time: safe for casts, wrong for channels.
     if channel then return false end
-    return pcall(bar.SetTimerDuration,bar,duration)
+    local ok=pcall(bar.SetTimerDuration,bar,duration); return ok,false
 end

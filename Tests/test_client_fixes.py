@@ -8,6 +8,7 @@ def test_strict_font_signature_and_complete_editor(runtime):
         SlashCmdList.FOREVERNAMEPLATES("")
         local s=NS.Studio
         assert(s.ready and s.root:IsShown() and s.inspector.visible and s.inspector.text)
+        s.ShowPage("profiles")
         assert(s.inspector.fields.x.font[3]=="" and s.shareBox.font[3]=="")
         s.ShowPage("gallery"); s.galleryCards[2].scripts.OnClick(s.galleryCards[2])
         assert(s.page=="studio" and s.inspector.visible.value==s.session:Element().enabled)
@@ -15,7 +16,7 @@ def test_strict_font_signature_and_complete_editor(runtime):
     ''')
 
 
-@pytest.mark.parametrize("page", ["CreateEditor", "CreateProfiles", "CreateDiagnostics"])
+@pytest.mark.parametrize("page", ["CreateEditor"])
 def test_failed_editor_is_discarded_and_can_retry(runtime, page):
     runtime.globals().failed_page=page
     runtime.execute('''
@@ -31,7 +32,7 @@ def test_failed_editor_is_discarded_and_can_retry(runtime, page):
         s.RefreshInspector(); s.Refresh(); s.ShowPage("studio")
         s[failed_page]=build; s.Open()
         assert(s.ready and s.inspector.visible and s.root:IsShown() and s.root~=failed)
-        assert(#s.sandboxViews==4)
+        assert(#s.sandboxViews==0); s.ShowPage("sandbox"); assert(#s.sandboxViews==4)
         assert(#UISpecialFrames==1)
         s.root:Hide(); s.Open(); assert(#UISpecialFrames==1)
     ''')
