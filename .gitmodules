@@ -1,0 +1,3 @@
+[submodule "ReferenceAddons/Plater"]
+	path = ReferenceAddons/Plater
+	url = https://github.com/Tercioo/Plater-Nameplates.git

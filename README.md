@@ -11,6 +11,9 @@ Texturen, bedingte Sichtbarkeit, Minimap-Sichtbarkeit/-Winkel und Profilkopien h
 Der GUI-Skin wird gespeichert. Namen, eigener Text und Share-Codes bleiben Texteingaben.
 [Welche Funktion wo einstellbar ist und was noch fehlt](docs/GUI_SETTINGS.md).
 
+Zum direkten Quellvergleich wurde [Plater in ReferenceAddons](ReferenceAddons/README.md)
+heruntergeladen und gepinnt. [Konkrete Unterschiede und nächste Verbesserungen](ReferenceAddons/PLATER_REVIEW.md).
+
 Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
 den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
 um seine Position zu speichern. `/fnp minimap` blendet ihn aus oder wieder ein. Im Kampf sind

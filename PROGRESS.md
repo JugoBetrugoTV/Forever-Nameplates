@@ -6,6 +6,12 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Implementiert
 
+- Vergleichsarbeit: Plater vollständig unter `ReferenceAddons/Plater` heruntergeladen,
+  als Git-Submodule auf `bcc65131c3f5886fb53a36b3e7858d6c4bfe4f5d` gepinnt. Suche/Hilfe,
+  lazy GUI-Aufbau, Anker, Auren, Cast-/Questdarstellung und Unit-Updates gegenüber 0.9.0
+  untersucht. [Befunde und Prioritäten](ReferenceAddons/PLATER_REVIEW.md); keine neue
+  Laufzeitfunktion und keine Plater-Dateien im installierbaren ZIP.
+
 - 0.9.0: Alle zehn Zahlenoptionen mit Schieberegler, Plus/Minus und Mausrad; lokale
   Slider-Vorschau, Speichern beim Loslassen und ein Undo-Schritt pro Drag. Kontextwechsel,
   Schließen und Kampf verwerfen unvollständige Drags. Locks sperren zugehörige Controls.

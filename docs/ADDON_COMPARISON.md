@@ -5,6 +5,12 @@ Komponenten ergänzen. Gelesen wurden die folgenden tatsächlichen Git-Checkouts
 Quelldateien, Bibliotheken, Profile oder Grafiken daraus wurden ins Addon übernommen.
 Diese Upstreams beweisen keine Kompatibilität mit WoW Forever 1.60.1.
 
+Auf Nutzerwunsch liegt jetzt zusätzlich ein vollständiger gepinnter Plater-Checkout im
+Projektordner [ReferenceAddons/Plater](../ReferenceAddons/Plater) (Git-Submodule, gleicher
+Commit wie unten). Der [vertiefte Vergleich](../ReferenceAddons/PLATER_REVIEW.md) untersucht
+Suche/Hilfe, Seitenaufbau, relative Anker, Auren, Cast-/Questdarstellung und Unit-Updates.
+Das installierbare Forever-Addon enthält weiterhin keine Plater-Dateien.
+
 | Addon / gepinnter Stand | Gelesene Stellen | Relevanter Befund |
 | --- | --- | --- |
 | [Plater](https://github.com/Tercioo/Plater-Nameplates/tree/bcc65131c3f5886fb53a36b3e7858d6c4bfe4f5d) | `Plater.lua`: `OnUpdateHealth`, `OnUpdateHealthMax`, `OnHealthChange`, Cast-Icon-Anlage; `options/Plater_O_CastBar.lua` | Health-/MaxHealth-Pfade und Healthtext sind getrennte Aufgaben; Casticons sind separat konfigurierbare Teile der Plate |

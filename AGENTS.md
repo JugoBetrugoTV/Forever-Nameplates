@@ -8,6 +8,11 @@ and push normally; never force-push or discard someone else's changes.
 Each cloud task is already isolated. Use this checkout; do not create a Git worktree unless
 the user asks. Inspect and preserve existing changes before editing.
 
+ReferenceAddons/Plater is a pinned comparison submodule outside the runtime addon.
+For source comparisons, initialize it with `git submodule update --init ReferenceAddons/Plater`
+if needed. Keep its pinned commit and upstream files unchanged unless updating the reference
+is explicitly requested. Normal tests/packaging do not require the submodule.
+
 Target WoW Forever Beta 1.60.1, Interface 16001, using its modern client-specific API.
 Read README.md, PROGRESS.md and docs/API_AUDIT.md. No game client is installed here.
 Never claim an in-game result from the Lua mock; distinguish API documentation, mock tests
