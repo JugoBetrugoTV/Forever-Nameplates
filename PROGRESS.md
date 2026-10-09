@@ -1,10 +1,19 @@
-# Forever Nameplates — Entwicklungsstand 0.8.0
+# Forever Nameplates — Entwicklungsstand 0.9.0
 
 Stand: 2026-10-09. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
 **Forever Nameplates** ersetzt; technisch lautet der Addon-Ordner `ForeverNameplates`.
 
 ## Implementiert
+
+- 0.9.0: Alle zehn Zahlenoptionen mit Schieberegler, Plus/Minus und Mausrad; lokale
+  Slider-Vorschau, Speichern beim Loslassen und ein Undo-Schritt pro Drag. Kontextwechsel,
+  Schließen und Kampf verwerfen unvollständige Drags. Locks sperren zugehörige Controls.
+- 0.9.0: Klickübernahme von Zahlen/Text vor Auswahlwechsel, Escape-Abbruch ohne Doppel-Commit;
+  Rechtsklick-Auswahl überlappender Elemente mit UI-Scale/Zoom und Schutz vor leeren Handles.
+- 0.9.0: Native Schriftstile/Artwork und bedingte Komponenten-Sichtbarkeit im Inspector;
+  Minimap-Sichtbarkeit/-Winkel, Create-copy-Button und gespeicherter GUI-Skin. Schema 2 und
+  FN1/FN2 bleiben erhalten. GUI-Abdeckung und nächste Addonideen separat dokumentiert.
 
 - 0.8.0: Zusätzlich NeatPlates untersucht und gepinnt; Cast-/Channel-Richtung und
   Unterbrechbarkeit aus dessen getrennten Pfaden mit Forever-Signaturen abgeglichen.
@@ -117,7 +126,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **228 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **255 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -156,8 +165,11 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - 16 neue Fälle: Channel-Richtung, fehlende/Secret-Enums, Cast-/Channel-Flagpositionen,
   Schild-Events und Fehler, Editor/FN2, relevante Regeln und Snapshot bei Bindungsänderung.
   Zwei zuerst scheiternde Fälle reproduzierten falsche Richtung und unnötige globale Updates.
-- Version 0.8.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
-- 50 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- 27 neue GUI-Fälle: sieben Zahlenfelder, Grenzen/Mausrad/Undo, lokale Drag-Vorschau,
+  atomisches Speichern/Abbruch, Focus/Klick/Enter/Escape, Locks, Regeln, Overlap-Auswahl,
+  Font-/Target-Auswahl, Minimap/Profile/Skin und vollständige Bereinigung nach Aufbaufehler.
+- Version 0.9.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 58 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.

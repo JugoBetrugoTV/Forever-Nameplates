@@ -1,6 +1,6 @@
-# Offene Punkte — 2026-10-09, Version 0.8.0
+# Offene Punkte — 2026-10-09, Version 0.9.0
 
-228 lokale Tests bestehen. Hier läuft kein WoW-Client: Das belegt lokale Logik,
+255 lokale Tests bestehen. Hier läuft kein WoW-Client: Das belegt lokale Logik,
 keine realen Combat-Freigaben, Texturpixel, FPS oder fehlerfreie Ingame-Nutzung.
 Die jüngsten Korrekturen sind im Client noch nicht nachgetestet.
 
@@ -8,6 +8,7 @@ Die jüngsten Korrekturen sind im Client noch nicht nachgetestet.
 
 | Befund | Ergebnis |
 | --- | --- |
+| Zahlen nur per Enter, kein Schriftstil-/Minimap-Control und Überlappungen verdecken darunterliegende Auswahl | 0.9.0 ergänzt Mausregler, Focus-/Klickübernahme, fehlende Controls und Rechtsklick-Auswahl; 27 GUI-Testfälle, tatsächliche Client-Mausevents bleiben zu prüfen |
 | Dragonflight-Cast-Hintergrund konnte ohne sichtbaren Castbalken stehen bleiben; Casttext konnte trotz verweigerter Timer-Weitergabe sichtbar sein | In 0.6.2 korrigiert; zwei zuerst scheiternde Regressionstests prüfen Vorschau/Live, fehlende Duration, abgelehnte Weitergabe, deaktivierte Bars und Elementreihenfolge |
 | Channels verwendeten dieselbe Standardrichtung wie Casts; reine Healthlayouts wurden bei Ziel-/Raid-/Spielerlevel-Events unnötig komplett aktualisiert | In 0.8.0 mit zwei zuerst scheiternden Mockfällen korrigiert; echte Channel-Pixelwirkung ungeprüft |
 | README im installierten Addon nannte 0.2.0 und behauptete zusätzliche, opt-in Overlays | In 0.6.2 korrigiert; Paketinhalt geprüft |

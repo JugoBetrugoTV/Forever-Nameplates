@@ -12,7 +12,9 @@ function DB.Initialize(saved)
         return nil, "Newer SavedVariables version; data preserved."
     end
     NS.databaseBlocked=false
-    local data = {version=2, profiles={}, characters={}, active="Default", live=true,liveMode="replacement-v1",minimap={angle=225,hidden=false}}
+    local data = {version=2, profiles={}, characters={}, active="Default", live=true,liveMode="replacement-v1",minimap={angle=225,hidden=false},guiSkin="Dark RPG"}
+    local skins={["Dark RPG"]=true,["Light Fantasy"]=true,["Modern Studio"]=true}
+    if type(saved)=="table" and type(saved.guiSkin)=="string" and skins[saved.guiSkin] then data.guiSkin=saved.guiSkin end
     if type(saved)=="table" and type(saved.minimap)=="table" then
         local angle=saved.minimap.angle
         if type(angle)=="number" and angle==angle and angle~=math.huge and angle~=-math.huge then data.minimap.angle=angle%360 end

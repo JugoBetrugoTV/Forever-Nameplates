@@ -89,6 +89,21 @@ Updates funktionieren ohne Widget-Neuanlage. Das ist kein Ingame-FPS-Benchmark. 
 Enum-Verfügbarkeit, Combat/Taint und echte Eventreihenfolge bleiben zu prüfen. Für die
 Schildvorschau den vorhandenen **Boss**-Zustand wählen. Alle neun PNG-Aufträge bleiben erhalten.
 
+## GUI-Vergleich und Umsetzung in 0.9.0
+
+Plater `options/Plater_O_CastBar.lua` verwendet Range-Controls mit min/max/step (u. a. 0.01)
+statt Enter-pflichtiger Zahlenfelder. Zusätzlich gelesen: KuiNameplates
+`Kui_Nameplates_Core/config.lua`, `configChangedAuras` mit Sortierung, Icongröße, eigenen/
+fremden und freundlichen/feindlichen Auren. Das begründet eine mögliche Aura-Filterseite;
+es beweist nicht, dass dieselben Daten in Forever öffentlich verfügbar sind.
+
+Jetzt umgesetzt: Mausregler/Stepper/Mausrad für vorhandene Zahlen, ein History-Schritt pro
+Slider-Drag, sichere Focus-/Klickübernahme, Overlap-Auswahl, Schriftstile/native Texturen,
+bedingte Sichtbarkeit und Minimap-Controls. Keine DF/Ace-Bibliothek oder Upstream-Quellkopie.
+27 neue Fälle, **255 Tests** insgesamt. Alle bestehenden GUI-Funktionen sind in
+[GUI_SETTINGS.md](GUI_SETTINGS.md) mit ihrem Bedienort aufgeführt. Noch nicht implementierte
+Features erhalten keine funktionslosen Schalter.
+
 ## Zurückgestellt
 
 - Aura-, Threat-, Execute- und automatische Interrupt-Logik nur nach belegter zulässiger Forever-API;

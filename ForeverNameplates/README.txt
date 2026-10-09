@@ -1,10 +1,15 @@
-Forever Nameplates 0.8.0 - development build
+Forever Nameplates 0.9.0 - development build
 
 Install this folder into _classic_beta_/Interface/AddOns/ForeverNameplates.
 Use /fnp or /forevernameplates to open the studio.
 After updating, use /reload, then /fnp apply outside combat to apply your current layout.
 Live application is enabled on first upgrade from the old preview mode; later opt-outs persist.
 Use /fnp off to restore Blizzard visuals, or /fnp status to inspect application/fallback reasons.
+Numeric settings use sliders, +/-, and mouse wheel. Slider movement previews locally;
+release saves one undo step. Click away to commit typed numbers/text; Escape cancels.
+Right-click overlapping elements to select a layer. Font styles and native textures are selectable.
+Component visibility conditions, minimap visibility/angle and Create copy are available in the GUI.
+GUI skins persist. Profile names, custom text and share codes still require text entry.
 
 This build has been checked in a Lua 5.1 widget simulator, NOT in a running game client.
 Forever Beta 1.60.1, Interface 16001 is the intended target. Protected/forbidden nameplates

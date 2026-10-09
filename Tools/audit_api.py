@@ -21,7 +21,8 @@ required = {
     "UI-Widgets-Frames/SimpleFrameAPI.md": ["SimpleFrameAPI.CreateMaskTexture", "SimpleFrameAPI.RegisterEvent", "SimpleFrameAPI.SetClipsChildren", "SimpleFrameAPI.GetAlpha", "SimpleFrameAPI.SetAlpha", "SimpleFrameAPI.IsShown", "SimpleFrameAPI.Show", "SimpleFrameAPI.Hide", "SimpleFrameAPI.SetShown"],
     "UI-Widgets-Frames/SimpleButtonAPI.md": ["SimpleButtonAPI.IsEnabled", "SimpleButtonAPI.RegisterForClicks", "SimpleButtonAPI.SetHighlightTexture"],
     "UI-Widgets-Frames/SimpleEditBoxAPI.md": ["SimpleEditBoxAPI.SetFont"],
-    "UI-Widgets-Frames/SimpleScriptRegionAPI.md": ["SimpleScriptRegionAPI.GetCenter", "SimpleScriptRegionAPI.GetWidth", "SimpleScriptRegionAPI.IsProtected"],
+    "UI-Widgets-Frames/SimpleSliderAPI.md": ["SimpleSliderAPI.SetValue", "SimpleSliderAPI.SetMinMaxValues", "SimpleSliderAPI.SetOrientation", "SimpleSliderAPI.SetValueStep", "SimpleSliderAPI.SetObeyStepOnDrag", "SimpleSliderAPI.SetThumbTexture", "SimpleSliderAPI.SetEnabled"],
+    "UI-Widgets-Frames/SimpleScriptRegionAPI.md": ["SimpleScriptRegionAPI.GetCenter", "SimpleScriptRegionAPI.GetWidth", "SimpleScriptRegionAPI.IsProtected", "SimpleScriptRegionAPI.EnableMouseWheel"],
     "UI-Widgets-Frames/SimpleFontStringAPI.md": ["SimpleFontStringAPI.SetText", "SimpleFontStringAPI.SetFont", "SimpleFontStringAPI.SetShadowColor", "SimpleFontStringAPI.SetShadowOffset"],
     "Units-Combat-PvP/Unit.md": ["Unit.UnitHealth", "Unit.UnitHealthMax", "Unit.UnitLevel", "Unit.UnitCastingInfo", "Unit.UnitChannelInfo", "Unit.UnitCastingDuration", "Unit.UnitChannelDuration", "Unit.UnitClassBase", "Unit.UnitClassification", "Unit.UnitReaction", "Unit.UnitIsPlayer", "Unit.UnitPlayerControlled"],
 }

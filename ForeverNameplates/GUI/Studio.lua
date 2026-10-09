@@ -36,13 +36,46 @@ for _,state in ipairs(extraScenarios) do
 end
 local function attempt(ok,err) if not ok and err then NS.Print(err) end; return ok end
 function Studio.LoadSession()
+    W.CancelNumbers()
     Studio.session=NS.Session.New(NS.DB.Current(),NS.DB.Save)
 end
 function Studio.Status(text)
     if Studio.status then Studio.status:SetText(text or (NS.DB.CurrentName().."  /  "..Studio.session.layout.name.."  /  "..math.floor(Studio.zoom*100).."%")) end
 end
 function Studio.Select(id)
+    if NS.InCombat() or not Studio.session:Element(id) then return end
+    W.ClearFocus(false)
+    W.CancelNumbers()
+    Studio.EndDrag(false)
     Studio.session.selected=id; Studio.RefreshInspector(); Studio.RefreshHandles()
+end
+function Studio.PreviewNumber(key,value,category)
+    if not Studio.ready then return end
+    local layout=Studio.session.layout
+    if value~=nil then
+        layout=NS.Copy(layout)
+        if category then layout.rules.overrides[category][key]=value
+        else local _,index=Studio.session:Element(); layout.elements[index][key]=value end
+    end
+    R.Apply(Studio.view,layout); R.Update(Studio.view,Studio.scenarios[Studio.scenario])
+    if Studio.ruleUI and Studio.page=="rules" then
+        R.Apply(Studio.ruleUI.view,layout); R.Update(Studio.ruleUI.view,Studio.scenarios[Studio.ruleUI.scenario])
+    end
+end
+function Studio.PickOverlapping(anchor)
+    if NS.InCombat() then return end
+    local cx,cy=Studio.view.root:GetCenter(); if not cx or not cy then return end
+    local x,y=GetCursorPosition(); local scale=Studio.view.root:GetEffectiveScale()
+    x,y=x/scale-cx,y/scale-cy
+    local hits={}
+    for i,e in ipairs(Studio.session.layout.elements) do
+        if e.enabled and math.abs(x-e.x)<=math.max(10,e.width)/2 and math.abs(y-e.y)<=math.max(10,e.height)/2 and
+            (e.kind~="artwork" or Studio.ArtworkReady(e)) then
+            hits[#hits+1]={value=e.id,label=e.id.." ["..e.kind.."]"..(e.locked and " / locked" or ""),layer=e.layer,index=i}
+        end
+    end
+    table.sort(hits,function(a,b) return a.layer==b.layer and a.index>b.index or a.layer>b.layer end)
+    W.Menu(anchor,hits,Studio.Select)
 end
 function Studio.ArtworkReady(element)
     for _,part in ipairs(Studio.view and Studio.view.parts or {}) do
@@ -55,22 +88,26 @@ function Studio.RefreshInspector()
     local e=Studio.session:Element()
     if not e or not Studio.inspector then return end
     Studio.inspector.title:SetText(e.id.."  /  "..e.kind)
-    for key,edit in pairs(Studio.inspector.fields) do edit:SetText(tostring(e[key])) end
+    for key,edit in pairs(Studio.inspector.fields) do edit:SetText(tostring(e[key])); edit:SetEnabled(not e.locked) end
     Studio.inspector.visible:SetValue(e.enabled); Studio.inspector.locked:SetValue(e.locked)
     Studio.inspector.vertical:SetValue(e.vertical); Studio.inspector.reverse:SetValue(e.reverse)
     Studio.inspector.source:SetValue(e.source)
     Studio.inspector.shape:SetValue(e.shape)
-    Studio.inspector.source:SetEnabled(e.kind=="text")
-    Studio.inspector.shape:SetEnabled(e.kind=="ornament" or e.kind=="panel" or e.kind=="target")
-    Studio.inspector.vertical:SetEnabled(e.kind=="health" or e.kind=="cast")
-    Studio.inspector.reverse:SetEnabled(e.kind=="health" or e.kind=="cast")
-    Studio.inspector.fields.fontSize:SetEnabled(e.kind=="text" or e.kind=="class")
-    Studio.inspector.text:SetText(e.text); Studio.inspector.text:SetEnabled(e.kind=="text")
-    local textured=e.kind=="artwork" or e.kind=="health" or e.kind=="cast"
+    Studio.inspector.visible:SetEnabled(not e.locked)
+    Studio.inspector.color:SetEnabled(not e.locked)
+    Studio.inspector.delete:SetEnabled(not e.locked and #Studio.session.layout.elements>1)
+    Studio.inspector.reset:SetEnabled(not e.locked)
+    Studio.inspector.source:SetEnabled(not e.locked and e.kind~="classIcon" and e.kind~="castIcon" and e.kind~="castShield")
+    Studio.inspector.shape:SetEnabled(not e.locked and (e.kind=="ornament" or e.kind=="panel" or e.kind=="target"))
+    Studio.inspector.vertical:SetEnabled(not e.locked and (e.kind=="health" or e.kind=="cast"))
+    Studio.inspector.reverse:SetEnabled(not e.locked and (e.kind=="health" or e.kind=="cast"))
+    Studio.inspector.fields.fontSize:SetEnabled(not e.locked and (e.kind=="text" or e.kind=="class"))
+    Studio.inspector.text:SetText(e.text); Studio.inspector.text:SetEnabled(e.kind=="text" and not e.locked)
+    local textured=e.kind=="artwork" or e.kind=="health" or e.kind=="cast" or e.kind=="text" or e.kind=="class"
     Studio.inspector.asset:SetShown(textured)
     Studio.inspector.shape:SetShown(not textured)
     Studio.inspector.asset:SetValue(e.asset)
-    Studio.inspector.asset:SetEnabled(#NS.Catalog.Assets(e.kind)>0 or e.kind=="health" or e.kind=="cast")
+    Studio.inspector.asset:SetEnabled(textured and not e.locked)
     Studio.elementPicker:SetValue(e.id)
     local art=Studio.session:Element("artFrame")
     Studio.useFrameArt:SetEnabled(art~=nil and art.kind=="artwork" and NS.Media.files[art.asset]~=nil)
@@ -130,7 +167,11 @@ function Studio.RefreshHandles()
         if not h then
             h=CreateFrame("Button",nil,Studio.view.root); h:RegisterForDrag("LeftButton")
             local mark=h:CreateTexture(nil,"OVERLAY"); mark:SetAllPoints(h); mark:SetColorTexture(.9,.7,.3,.2); h.mark=mark
-            h:SetScript("OnClick",function(self) Studio.Select(self.element.id) end)
+            h:RegisterForClicks("LeftButtonUp","RightButtonUp")
+            h:SetScript("OnClick",function(self,button)
+                if not self.element then return end
+                if button=="RightButton" then Studio.PickOverlapping(self) else Studio.Select(self.element.id) end
+            end)
             h:SetScript("OnDragStart",function(self) Studio.StartDrag(self,"move") end)
             h:SetScript("OnDragStop",function() Studio.EndDrag(true) end)
             Studio.handles[i]=h
@@ -163,6 +204,7 @@ function Studio.RefreshSandbox()
 end
 function Studio.Refresh()
     if not Studio.ready or not Studio.session then return end
+    W.CancelNumbers()
     Studio.view.previewScale=Studio.zoom
     R.Apply(Studio.view,Studio.session.layout)
     R.Update(Studio.view,Studio.scenarios[Studio.scenario])
@@ -179,6 +221,7 @@ end
 function Studio.ShowPage(name)
     if not Studio.ready then return end
     if NS.InCombat() then NS.Print(NS.L.combat); return end
+    W.CancelNumbers()
     Studio.EndDrag(false); W.ClosePopups()
     for key,page in pairs(Studio.pages) do page:SetShown(key==name) end
     Studio.page=name
@@ -256,7 +299,7 @@ function Studio.CreateEditor(page)
         local choices={}; for i,state in ipairs(Studio.scenarios) do choices[#choices+1]={value=i,label=state.name} end; return choices
     end,function(value) Studio.scenario=value; Studio.Refresh() end)
     Studio.previewPicker:SetValue(Studio.scenario)
-    W.Label(page,"Drag to move. Drag the gold corner to resize. Changes save automatically.",10,0,-508)
+    W.Label(page,"Drag to move / resize. Right-click overlaps to select. Sliders, +/− and wheel edit numbers.",10,0,-508)
     Studio.useFrameArt=W.Button(page,"Use imported frame; remove preset ornaments",0,-536,360,function()
         if attempt(Studio.session:UseFrameArtwork()) then Studio.Refresh() end
     end)
@@ -287,14 +330,16 @@ function Studio.CreateEditor(page)
         Studio.Select(list[(i or 1)%#list+1].id)
     end)
     local keys={"x","y","width","height","layer","fontSize","alpha"}
+    local limits={x={-512,512,1},y={-512,512,1},width={1,512,1},height={1,512,1},layer={1,20,1},fontSize={6,32,1},alpha={0,1,.01}}
     for i,key in ipairs(keys) do
         local column=(i-1)%2; local row=math.floor((i-1)/2)
-        W.Label(inspector,key,10,12+column*118,-78-row*46)
-        Studio.inspector.fields[key]=W.Edit(inspector,12+column*118,-92-row*46,106,"",function(value)
-            local n=tonumber(value); if n then Studio.Change({[key]=n}) else NS.Print("Enter a number"); Studio.RefreshInspector() end
-        end)
+        W.Label(inspector,key,10,12+column*118,-74-row*50)
+        local range=limits[key]
+        Studio.inspector.fields[key]=W.Number(inspector,12+column*118,-88-row*50,106,"",range[1],range[2],range[3],function(value)
+            local n=tonumber(value); if n then return Studio.Change({[key]=n}) else NS.Print("Enter a number"); Studio.RefreshInspector() end
+        end,function(value) Studio.PreviewNumber(key,value) end)
     end
-    W.Button(inspector,"Color / opacity",130,-230,116,function()
+    Studio.inspector.color=W.Button(inspector,"Color / opacity",130,-238,116,function()
         local session=Studio.session; local e=session:Element(); local id=e.id
         W.Color(e.color,function(color)
             if Studio.session~=session then return end
@@ -305,23 +350,42 @@ function Studio.CreateEditor(page)
     Studio.inspector.locked=W.Toggle(inspector,"Locked",130,-274,116,false,function(v) Studio.Change({locked=v}) end)
     Studio.inspector.vertical=W.Toggle(inspector,"Vertical",12,-306,110,false,function(v) Studio.Change({vertical=v}) end)
     Studio.inspector.reverse=W.Toggle(inspector,"Reverse",130,-306,116,false,function(v) Studio.Change({reverse=v}) end)
-    Studio.inspector.source=W.Dropdown(inspector,12,-338,234,{{value="name",label="Unit name"},{value="health",label="Health text"},
-        {value="level",label="Level"},{value="classification",label="Classification"},{value="class",label="Class abbreviation"},{value="cast",label="Cast text"},{value="static",label="Custom text"}},function(value) return Studio.Change({source=value}) end)
+    Studio.inspector.source=W.Dropdown(inspector,12,-338,234,function()
+        local e=Studio.session:Element()
+        if e.kind=="text" then return {{value="name",label="Unit name"},{value="health",label="Health text"},
+            {value="level",label="Level"},{value="classification",label="Classification"},{value="class",label="Class abbreviation"},
+            {value="cast",label="Cast text"},{value="static",label="Custom text"},{value="target",label="Custom text on target"}} end
+        local choices={{value="static",label="Always / component default"},{value="target",label="Only on target"},{value="cast",label="During casting"}}
+        if e.source~="static" and e.source~="target" and e.source~="cast" then choices[#choices+1]={value=e.source,label="Component default ("..e.source..")"} end
+        return choices
+    end,function(value) return Studio.Change({source=value}) end)
     Studio.inspector.shape=W.Dropdown(inspector,12,-370,234,{{value="rect",label="Rectangle"},{value="diamond",label="Diamond"},
         {value="outline",label="Outline"},{value="rune",label="Rune"},{value="brackets",label="Brackets"},{value="segments",label="Segments"}},function(value) return Studio.Change({shape=value}) end)
     Studio.inspector.asset=W.Dropdown(inspector,12,-370,234,function()
         local e=Studio.session:Element(); local kind=e and e.kind
         local choices={}
-        if kind=="health" or kind=="cast" then choices[1]={value="",label="Plain fill"} end
-        if e and NS.NativeMedia[e.asset] and NS.NativeMedia[e.asset].path then choices[#choices+1]={value=e.asset,label=e.asset} end
-        for _,id in ipairs(NS.Catalog.Assets(kind)) do choices[#choices+1]={value=id,label=id} end
+        local text=kind=="text" or kind=="class"; local bars=kind=="health" or kind=="cast"
+        choices[1]={value="",label=text and "Default font / outline" or bars and "Plain fill" or "No artwork"}
+        local nativeIds={}
+        for id,native in pairs(NS.NativeMedia) do
+            if (text and native.font) or (bars and id=="wow_nameplate_fill") or
+                (kind=="artwork" and (native.path or native.atlas)) or (e and e.asset==id) then nativeIds[#nativeIds+1]=id end
+        end
+        table.sort(nativeIds)
+        if not text then for _,id in ipairs(NS.Catalog.Assets(kind)) do choices[#choices+1]={value=id,label=id} end end
+        local labels={wow_nameplate_name="WoW: name / shadow",wow_classic_name="WoW: Classic name / reaction color",
+            wow_nameplate_level="WoW: level / difficulty / skull",ffxiv_name_label="FFXIV: name / fallback font",
+            ffxiv_level_label="FFXIV: level / Lv / fallback font",wow_nameplate_fill="WoW: bar fill",
+            wow_classic_nameplate_border="WoW: Classic border",wow_nameplate_selection="WoW: selection glow",
+            wow_df_cast_background="WoW: cast background"}
+        for _,id in ipairs(nativeIds) do choices[#choices+1]={value=id,label=labels[id] or id} end
         return choices
     end,function(value) return Studio.Change({asset=value}) end)
     W.Button(inspector,"Copy",12,-406,70,function() Studio.session:Copy() end)
     W.Button(inspector,"Paste",90,-406,70,function() attempt(Studio.session:Paste()); Studio.Refresh() end)
-    W.Button(inspector,"Delete",168,-406,78,function() attempt(Studio.session:Delete()); Studio.Refresh() end)
-    W.Button(inspector,"Reset element",12,-442,110,function() attempt(Studio.session:ResetElement()); Studio.Refresh() end)
-    Studio.inspector.text=W.Edit(inspector,130,-442,116,"",function(value) Studio.Change({text=value}) end)
+    Studio.inspector.delete=W.Button(inspector,"Delete",168,-406,78,function() attempt(Studio.session:Delete()); Studio.Refresh() end)
+    Studio.inspector.reset=W.Button(inspector,"Reset element",12,-442,110,function() attempt(Studio.session:ResetElement()); Studio.Refresh() end)
+    Studio.inspector.text=W.Edit(inspector,130,-442,116,"",function(value) Studio.Change({text=value}) end,true)
 end
 function Studio.CreateSandbox(page)
     W.Label(page,NS.L.sandbox,22,0,0)
@@ -371,12 +435,14 @@ function Studio.CreateRules(page)
     end
     W.Label(page,"Category override",12,302,-70)
     local choices={}; for _,category in ipairs(NS.Rules.categories) do choices[#choices+1]={value=category.id,label=category.label} end
-    ui.categoryPicker=W.Dropdown(page,302,-94,270,choices,function(v) ui.category=v; Studio.RefreshRules() end)
+    ui.categoryPicker=W.Dropdown(page,302,-94,270,choices,function(v) W.CancelNumbers(); ui.category=v; Studio.RefreshRules() end)
     ui.enabled=W.Toggle(page,"Enable this rule",302,-136,270,false,function(v) return Studio.ChangeRules({enabled=v},ui.category) end)
     ui.visible=W.Toggle(page,"Show matching overlay",302,-174,270,true,function(v) return Studio.ChangeRules({visible=v},ui.category) end)
     W.Label(page,"Opacity 0–1",11,302,-216); W.Label(page,"Scale 0.5–2",11,442,-216)
-    ui.alpha=W.Edit(page,302,-236,126,"1",function(v) Studio.ChangeRules({alpha=tonumber(v) or -1},ui.category) end)
-    ui.scale=W.Edit(page,442,-236,130,"1",function(v) Studio.ChangeRules({scale=tonumber(v) or -1},ui.category) end)
+    ui.alpha=W.Number(page,302,-236,126,"1",0,1,.01,function(v) return Studio.ChangeRules({alpha=tonumber(v) or -1},ui.category) end,
+        function(v) Studio.PreviewNumber("alpha",v,ui.category) end)
+    ui.scale=W.Number(page,442,-236,130,"1",.5,2,.01,function(v) return Studio.ChangeRules({scale=tonumber(v) or -1},ui.category) end,
+        function(v) Studio.PreviewNumber("scale",v,ui.category) end)
     local categoryModes={{value="inherit",label="Inherit earlier color"},{value="fixed",label="Fixed color"}}
     for _,mode in ipairs(modes) do categoryModes[#categoryModes+1]=mode end
     ui.colorMode=W.Dropdown(page,302,-278,270,categoryModes,function(v) return Studio.ChangeRules({colorMode=v},ui.category) end)
@@ -441,16 +507,18 @@ function Studio.CreateProfiles(page)
             if attempt(NS.DB.Save(preset.layout)) then Studio.LoadSession(); Studio.RefreshProfiles(); Studio.Refresh() end
         end)
     end)
-    W.Label(page,"Profile name — Enter to create a copy",11,250,-52)
-    Studio.profileName=W.Edit(page,250,-78,330,"",function(value)
+    W.Label(page,"Profile name",11,250,-52)
+    local function createProfile(value)
         if NS.InCombat() then NS.Print(NS.L.combat); return end
         if attempt(NS.DB.Create(value)) then Studio.LoadSession(); Studio.RefreshProfiles(); Studio.Refresh() end
-    end)
-    W.Button(page,"Select named profile",250,-116,192,function()
+    end
+    Studio.profileName=W.Edit(page,250,-78,330,"",createProfile)
+    Studio.createProfile=W.Button(page,"Create copy",250,-116,102,function() createProfile(Studio.profileName:GetText()) end)
+    W.Button(page,"Select",476,-116,104,function()
         if NS.InCombat() then return end
         if attempt(NS.DB.Select(Studio.profileName:GetText())) then Studio.LoadSession(); Studio.RefreshProfiles(); Studio.Refresh() end
     end)
-    W.Button(page,"Rename",452,-116,128,function()
+    W.Button(page,"Rename",360,-116,106,function()
         if NS.InCombat() then return end
         if attempt(NS.DB.Rename(Studio.profileName:GetText())) then Studio.LoadSession(); Studio.RefreshProfiles(); Studio.Refresh() end
     end)
@@ -487,6 +555,8 @@ function Studio.RefreshDiagnostics()
         "Health thresholds, curved health fill and exact threat math are unavailable.\n\n"..
         table.concat(NS.logs,"\n"))
     Studio.live:SetValue(NS.DB.data.live)
+    Studio.minimapVisible:SetValue(not NS.DB.data.minimap.hidden)
+    Studio.minimapAngle:SetText(tostring(NS.DB.data.minimap.angle))
 end
 function Studio.CreateDiagnostics(page)
     W.Label(page,NS.L.diagnostics,22,0,0)
@@ -494,6 +564,16 @@ function Studio.CreateDiagnostics(page)
         attempt(NS.Engine.SetEnabled(value)); Studio.RefreshDiagnostics()
     end)
     Studio.diagnosticText=W.Label(page,"",12,0,-98); Studio.diagnosticText:SetWidth(840)
+    Studio.minimapVisible=W.Toggle(page,"Minimap icon",220,-508,180,true,function()
+        NS.Minimap.Toggle(); Studio.RefreshDiagnostics()
+    end)
+    W.Label(page,"Minimap angle",10,424,-488)
+    Studio.minimapAngle=W.Number(page,424,-508,180,"0",0,360,1,function(value)
+        if NS.InCombat() then return end
+        local angle=tonumber(value)
+        if angle and angle==angle and angle>=0 and angle<=360 then NS.DB.data.minimap.angle=angle%360; NS.Minimap.Init() end
+        Studio.RefreshDiagnostics()
+    end)
     W.Button(page,"Refresh diagnostics",0,-508,192,Studio.RefreshDiagnostics)
 end
 local function createStudio()
@@ -506,7 +586,7 @@ local function createStudio()
     root:SetScale(math.min(1,(UIParent:GetWidth()-40)/1080,(UIParent:GetHeight()-40)/680))
     root:SetScript("OnDragStart",function(self) if not NS.InCombat() then self:StartMoving() end end)
     root:SetScript("OnDragStop",function(self) self:StopMovingOrSizing() end)
-    root:SetScript("OnHide",function() if Studio.ready then Studio.EndDrag(false) end; W.ClosePopups() end)
+    root:SetScript("OnHide",function() W.ClearFocus(true); W.CancelNumbers(); if Studio.ready then Studio.EndDrag(false) end; W.ClosePopups() end)
     if NS.Media.files.studio_header then
         local art=root:CreateTexture(nil,"ARTWORK"); art:SetSize(512,64); art:SetPoint("TOPLEFT",0,0)
         art:SetTexture("Interface\\AddOns\\"..NS.folder.."\\Media\\"..NS.Media.files.studio_header)
@@ -535,9 +615,10 @@ end
 function Studio.Open()
     if NS.InCombat() then NS.Print(NS.L.combat); return end
     if NS.databaseBlocked then NS.Print("Database version is newer; preserve it before downgrading."); return end
+    W.Skin(NS.DB.data.guiSkin)
     if not Studio.ready then
         local previous={}; for key,value in pairs(Studio) do previous[key]=value end
-        local fonts,surfaces=#W.fonts,#W.surfaces
+        local fonts,surfaces,numbers=#W.fonts,#W.surfaces,#W.numbers
         local ok,err=pcall(createStudio)
         if not ok then
             if Studio.root then Studio.root:Hide() end
@@ -546,6 +627,7 @@ function Studio.Open()
             -- Failed widgets are hidden with their root and must not be retained by skins.
             for i=#W.fonts,fonts+1,-1 do W.fonts[i]=nil end
             for i=#W.surfaces,surfaces+1,-1 do W.surfaces[i]=nil end
+            for i=#W.numbers,numbers+1,-1 do W.numbers[i]=nil end
             NS.Log("Studio construction failed; incomplete interface discarded.")
             if not NS.Compat.Secret(err) and type(err)=="string" then NS.Log(err); NS.Print(err) end
             NS.Print("Studio could not be built. Try /fnp again; check the installed addon version.")

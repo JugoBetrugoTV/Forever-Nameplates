@@ -1,5 +1,23 @@
 # Forever API-Audit — 2026-10-09
 
+## Maussteuerung ab 0.9.0
+
+Forever `SimpleSliderAPI` dokumentiert SetValue (mit treatAsMouseEvent), SetMinMaxValues,
+SetOrientation, SetValueStep, SetObeyStepOnDrag, SetThumbTexture und SetEnabled;
+`SimpleScriptRegionAPI.EnableMouseWheel` ist ebenfalls im Clientexport vorhanden.
+`Tools/audit_api.py` prüft jetzt 58 Signaturen. Primitive Slider-Texturen kommen aus dem
+GUI-Code, keine fremden Libraries/Grafiken. Mauskoordinaten und numerische Einstellungen
+sind lokale Benutzerdaten; keine neuen Unit-/Secret-/Combat-APIs werden benötigt.
+
+Regler synchronisieren programmgesteuerte Werte ohne Commit. Während eines Drags wird nur
+die lokale Vorschau verändert; Loslassen speichert einmal über die bestehende validierte
+Session/DB. Kontextwechsel/Schließen/Kampf verwerfen die Vorschau. Focus-Übernahme erfolgt
+vor Button-/Elementaktionen, damit getippte Werte dem bisherigen Element zugeordnet bleiben.
+Aufbaufehler entfernen auch registrierte Zahlen-Callbacks. 27 zusätzliche GUI-Fälle,
+insgesamt 255 lokale Tests. Reihenfolge nativer Slider-Mausevents, Release außerhalb des
+Tracks, Focuswechsel sowie Lesbarkeit/Bedienbarkeit kleiner Controls müssen im Client
+geprüft werden. Keine Ingame-Freigabe wird aus den Widget-Mocks abgeleitet.
+
 ## Channels, Interrupt shield und globale Updates ab 0.8.0
 
 Zusätzlich wurde [NeatPlates](https://github.com/Luxocracy/NeatPlates/tree/250535d347011e9970292a7781633b10bdf28018)

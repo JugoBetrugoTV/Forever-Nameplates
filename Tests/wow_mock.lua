@@ -31,6 +31,7 @@ function F:RegisterForClicks(...) self.clickButtons={...} end
 function F:SetHighlightTexture(path) self.highlightTexture=path end
 function F:GetCenter() return self.centerX or 0,self.centerY or 0 end
 function F:EnableMouse(v) self.mouse=v end
+function F:EnableMouseWheel(v) self.mouseWheel=v end
 function F:SetEnabled(v) self.enabled=v end
 function F:IsEnabled() return self.enabled end
 function F:SetClipsChildren(v) self.clipsChildren=v end
@@ -51,8 +52,13 @@ function F:SetTextInsets(...) self.insets={...} end
 function F:SetAutoFocus(v) self.autoFocus=v end
 function F:SetMultiLine(v) self.multiLine=v end
 function F:SetMaxLetters(v) self.maxLetters=v end
-function F:SetFocus() self.focus=true end
-function F:ClearFocus() self.focus=false end
+function F:SetFocus()
+    self.focus=true; if self.scripts.OnEditFocusGained then self.scripts.OnEditFocusGained(self) end
+end
+function F:ClearFocus()
+    local focused=self.focus; self.focus=false
+    if focused and self.scripts.OnEditFocusLost then self.scripts.OnEditFocusLost(self) end
+end
 function F:HighlightText() self.highlighted=true end
 function F:SetScrollChild(child) self.scrollChild=child end
 function F:SetTexCoord(...) self.texCoord={...} end
@@ -63,7 +69,13 @@ function F:SetRotation(v) self.rotation=v end
 function F:SetStatusBarTexture(path) self.statusTexture=path; return true end
 function F:SetStatusBarColor(...) self.statusColor={...} end
 function F:SetMinMaxValues(low,high) self.min=low; self.max=high end
-function F:SetValue(v) self.value=v end
+function F:SetValue(v,mouse)
+    local previous=self.value; self.value=v
+    if self.kind=="Slider" and previous~=v and self.scripts.OnValueChanged then self.scripts.OnValueChanged(self,v,mouse or false) end
+end
+function F:SetValueStep(v) self.valueStep=v end
+function F:SetObeyStepOnDrag(v) self.obeyStep=v end
+function F:SetThumbTexture(v) self.thumb=v end
 function F:SetOrientation(v) assert(v=="VERTICAL" or v=="HORIZONTAL"); self.orientation=v end
 function F:SetReverseFill(v) self.reverse=v end
 function F:SetTimerDuration(d) self.duration=d end

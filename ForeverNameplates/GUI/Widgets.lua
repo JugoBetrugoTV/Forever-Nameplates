@@ -14,6 +14,7 @@ end
 function W.Skin(name)
     if not W.skins[name] then return end
     W.skin=name
+    if NS.DB and NS.DB.data and not NS.databaseBlocked and not NS.InCombat() then NS.DB.data.guiSkin=name end
     for _,item in ipairs(W.surfaces) do item.texture:SetColorTexture(unpack(W.skins[name][item.token])) end
     for _,item in ipairs(W.fonts) do item.font:SetTextColor(unpack(W.skins[name][item.token])) end
 end
@@ -37,16 +38,117 @@ function W.Button(parent,text,x,y,width,callback)
     W.Paint(b,"panel")
     local label=W.Label(b,text,11,8,-7); b.label=label
     local hover=b:CreateTexture(nil,"HIGHLIGHT"); hover:SetAllPoints(b); hover:SetColorTexture(.8,.65,.38,.12)
-    b:SetScript("OnClick",function() if b:IsEnabled() and callback then callback(b) end end)
+    b:SetScript("OnClick",function()
+        if not b:IsEnabled() then return end
+        W.ClearFocus(false)
+        if callback then callback(b) end
+    end)
     return b
 end
-function W.Edit(parent,x,y,width,text,callback)
+function W.Edit(parent,x,y,width,text,callback,commitOnBlur)
     local f=CreateFrame("EditBox",nil,parent); f:SetSize(width,25); f:SetPoint("TOPLEFT",x,y)
     W.Paint(f,"bg"); f:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",11,"")
     f:SetTextColor(unpack(W.skins[W.skin].text)); W.fonts[#W.fonts+1]={font=f,token="text"}
     f:SetTextInsets(7,7,3,3); f:SetAutoFocus(false); f:SetMaxLetters(80); f:SetText(text or "")
-    f:SetScript("OnEscapePressed",function(self) self:ClearFocus() end)
-    f:SetScript("OnEnterPressed",function(self) self:ClearFocus(); if callback then callback(self:GetText()) end end)
+    local saved=f:GetText()
+    local function submit(self)
+        local value=self:GetText()
+        if value==saved then return end
+        saved=value
+        if callback then callback(value) end
+        saved=self:GetText()
+    end
+    function f:CancelEdit() self:SetText(saved); self:ClearFocus() end
+    f:SetScript("OnEditFocusGained",function(self)
+        if W.focusedEdit and W.focusedEdit~=self then W.ClearFocus(false) end
+        W.focusedEdit=self; saved=self:GetText()
+    end)
+    f:SetScript("OnEditFocusLost",function(self)
+        if W.focusedEdit==self then W.focusedEdit=nil end
+        if commitOnBlur then submit(self) end
+    end)
+    f:SetScript("OnEscapePressed",function(self) self:SetText(saved); self:ClearFocus() end)
+    f:SetScript("OnEnterPressed",function(self) submit(self); self:ClearFocus() end)
+    return f
+end
+function W.ClearFocus(cancel)
+    local edit=W.focusedEdit
+    if not edit then return end
+    if cancel then edit:CancelEdit() else edit:ClearFocus() end
+end
+-- Keep text entry for exact values; every numeric option also has mouse controls.
+-- Slider movement previews locally. Releasing creates one saved/undoable change.
+W.numbers={}
+function W.CancelNumbers()
+    for _,edit in ipairs(W.numbers) do edit:CancelDrag() end
+end
+function W.Number(parent,x,y,width,value,low,high,step,callback,preview)
+    local f=W.Edit(parent,x+20,y,width-40,value,callback,true)
+    f:SetTextInsets(3,3,3,3)
+    local slider=CreateFrame("Slider",nil,f); f.slider=slider
+    slider:SetSize(width,7); slider:SetPoint("TOPLEFT",-20,-27)
+    slider:SetOrientation("HORIZONTAL"); slider:SetMinMaxValues(low,high)
+    slider:SetValueStep(step); slider:SetObeyStepOnDrag(true); slider:EnableMouse(true)
+    W.Paint(slider,"panel")
+    local thumb=slider:CreateTexture(nil,"OVERLAY"); thumb:SetSize(8,12)
+    thumb:SetColorTexture(unpack(W.skins[W.skin].accent)); slider:SetThumbTexture(thumb)
+    W.surfaces[#W.surfaces+1]={texture=thumb,token="accent"}
+    local setText,setEnabled=f.SetText,f.SetEnabled
+    function f:SetText(text)
+        setText(self,text)
+        local number=tonumber(text)
+        if number and number==number and number>=low and number<=high then
+            self.syncing=true; slider:SetValue(number,false); self.syncing=false
+        end
+    end
+    local function normalized(number)
+        return math.max(low,math.min(high,math.floor(number/step+.5)*step))
+    end
+    local function display(number) return string.format(step<1 and "%.2f" or "%g",number):gsub("(%..-)0+$","%1"):gsub("%.$","") end
+    function f:CancelDrag()
+        if not self.dragging then return end
+        self.dragging=false; self:SetText(self.startText)
+        if preview then preview(nil) end
+    end
+    local function apply(number)
+        if not f:IsEnabled() or NS.InCombat() then f:CancelDrag(); return end
+        number=normalized(number)
+        local old=tonumber(f:GetText()); f:SetText(display(number))
+        if old~=number then callback(display(number)) end
+    end
+    f.minus=W.Button(f,"−",-20,0,20,function() apply((tonumber(f:GetText()) or low)-step) end)
+    f.plus=W.Button(f,"+",width-40,0,20,function() apply((tonumber(f:GetText()) or low)+step) end)
+    f.minus.label:ClearAllPoints(); f.minus.label:SetPoint("CENTER",0,0)
+    f.plus.label:ClearAllPoints(); f.plus.label:SetPoint("CENTER",0,0)
+    function f:SetEnabled(enabled)
+        if not enabled then self:CancelDrag() end
+        setEnabled(self,enabled); slider:SetEnabled(enabled)
+        self.minus:SetEnabled(enabled); self.plus:SetEnabled(enabled); self:SetAlpha(enabled and 1 or .4)
+    end
+    local function wheel(_,delta) apply((tonumber(f:GetText()) or low)+delta*step) end
+    f:EnableMouseWheel(true); slider:EnableMouseWheel(true)
+    f:SetScript("OnMouseWheel",wheel); slider:SetScript("OnMouseWheel",wheel)
+    slider:SetScript("OnMouseDown",function(_,button)
+        if button~="LeftButton" or not f:IsEnabled() or NS.InCombat() then return end
+        W.ClearFocus(false)
+        f.dragging=true; f.startText=f:GetText()
+    end)
+    slider:SetScript("OnValueChanged",function(_,number)
+        if f.syncing then return end
+        if not f:IsEnabled() or NS.InCombat() then f:CancelDrag(); return end
+        number=normalized(number)
+        if f.dragging then f:SetText(display(number)); if preview then preview(number) end
+        else apply(number) end
+    end)
+    slider:SetScript("OnMouseUp",function(_,button)
+        if button~="LeftButton" or not f.dragging then return end
+        local text=f:GetText(); local changed=tonumber(text)~=tonumber(f.startText)
+        f.dragging=false
+        if not NS.InCombat() and f:IsEnabled() and changed then callback(text)
+        elseif preview then preview(nil) end
+    end)
+    slider:SetScript("OnHide",function() f:CancelDrag() end)
+    f:SetText(value); W.numbers[#W.numbers+1]=f
     return f
 end
 function W.ClosePopups()

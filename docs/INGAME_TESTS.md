@@ -22,6 +22,13 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 
 ## Editor
 
+- [ ] Alle Zahlenfelder per Slider, +/− und Mausrad bedienen; Zahlen/Deckkraft bleiben innerhalb ihrer Grenzen.
+- [ ] Slider zeigt Vorschau, speichert erst beim Loslassen einen Undo-Schritt; Release auch außerhalb des Tracks prüfen.
+- [ ] Drag bei Seiten-/Elementwechsel, Schließen oder Kampf abbrechen: gespeicherte Werte unverändert.
+- [ ] Getippte Zahlen/Text durch Klick auf anderes Element/Button übernehmen; Enter nicht doppelt, Escape verwirft.
+- [ ] Rechtsklick auf Überlappung zeigt alle betroffenen Ebenen; Auswahl mit Zoom/UI-Scale und gesperrten Teilen prüfen.
+- [ ] Schriftstile/native Artwork-Auswahl, ziel-/castbedingte Sichtbarkeit, gesperrte Controls und Skin-Persistenz prüfen.
+- [ ] Diagnose: Minimap-Sichtbarkeit/-Winkel per Maus speichern; Profile: Create copy ohne Enter nutzbar.
 - [ ] Elementwahl auf Canvas und vorheriges/nächstes Element stimmen überein.
 - [ ] Drag-Verschiebung berücksichtigt UI-Scale und Editor-Zoom.
 - [ ] Eckgriff skaliert bei festem linken oberen Rand; Snap/Zoom und Abbruch korrekt.

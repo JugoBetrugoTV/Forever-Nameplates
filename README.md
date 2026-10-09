@@ -1,7 +1,15 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.8.0**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.9.0**, kein fertig poliertes Release.
+
+**0.9.0** macht die vorhandenen Einstellungen per Maus bedienbar: Zahlen haben Schieberegler,
+Plus/Minus und Mausrad; Regler zeigen eine lokale Vorschau und speichern beim Loslassen einen
+Undo-Schritt. Klicks übernehmen getippte Zahlen/Text vor dem Elementwechsel; Escape verwirft
+die Eingabe. Rechtsklick auf überlappende Elemente öffnet eine Auswahl. Schriftstile/native
+Texturen, bedingte Sichtbarkeit, Minimap-Sichtbarkeit/-Winkel und Profilkopien haben GUI-Controls.
+Der GUI-Skin wird gespeichert. Namen, eigener Text und Share-Codes bleiben Texteingaben.
+[Welche Funktion wo einstellbar ist und was noch fehlt](docs/GUI_SETTINGS.md).
 
 Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
 den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
@@ -129,7 +137,7 @@ Die Oberfläche schließt im Kampf. Nameplates müssen in den Spieleinstellungen
 **Restore pending / Hide pending** zählen momentan nicht zulässige Wiederherstellungen;
 sie werden außerhalb des Kampfes erneut geprüft. Ohne sichtbare Units ist Applied=0 normal.
 Falls weiterhin nur Blizzard erscheint: Status bei sichtbarer Unit melden, andere Nameplate-Addons
-zum Vergleich deaktivieren und prüfen, ob Version **0.8.0** tatsächlich geladen wurde.
+zum Vergleich deaktivieren und prüfen, ob Version **0.9.0** tatsächlich geladen wurde.
 
 Im Studio öffnet **+ Add component** den Elementkatalog. Versteckte/gesperrte Elemente
 lassen sich im Element-Dropdown auswählen. Der goldene Eckgriff verändert die Größe bei
