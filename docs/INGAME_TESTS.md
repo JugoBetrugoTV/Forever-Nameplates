@@ -65,12 +65,22 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 
 ## Live-Rendering und Einschränkungen
 
-- [ ] Update auf 0.6.0 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
+- [ ] Im Kampf: Token wechselt auf neue Basis; alte Plate verschwindet, Erstaufbau bleibt Blizzard bis Kampfende.
+- [ ] Recycelte bekannte Basis im Kampf übernimmt neue Unit ohne Text-/Alpha-Reste der alten Unit.
+- [ ] Blizzard-UnitFrame Show/Hide/SetShown: eigene Plate folgt sofort, Health-Update blendet keine versteckte Plate ein.
+- [ ] Öffentliche Blizzard-Fades und Regel-Alpha multiplizieren sich; bei Off bleibt letzte Blizzard-Alpha korrekt.
+- [ ] UnitFrame-Poolwechsel vor nächstem ADDED: neue Blizzard-Alpha wird nicht von alter View unterdrückt.
+- [ ] Nameplate301+ mit fehlenden/gesperrten öffentlichen Frame-Unit-Feldern wird nach Kampfende wieder erfasst.
+- [ ] Fehlender Healthbar-Aufbau erhält begrenzte Retries; Entfernung/Off verhindert spätes Wiederanheften.
+- [ ] Geheime IsShown-/Alpha-Ergebnisse und verweigerte Hooks erzeugen sauberen Fallback ohne Lua-/Taint-Fehler.
+
+- [ ] Update von ≤0.5.0 auf 0.6.1 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
+- [ ] Update von 0.6.0: ein gespeichertes Off bleibt abgeschaltet.
 - [ ] `/fnp apply` und Studio-Anwenden-Button ändern die sichtbare Plate direkt; Healthbar-Breite/X ändern und vergleichen.
 - [ ] `/fnp off` und erneutes `/reload` bleiben abgeschaltet; Apply aktiviert wieder.
 - [ ] Diagnose aktiviert nur auf der erwarteten Forever-Schnittstelle die Anwendung.
 - [ ] Eigene Plate sitzt an der Blizzard-Healthbar; nur eine Darstellung sichtbar, Klickfläche/Stacking weiter bedienbar.
-- [ ] `/fnp status`: Version 0.6.0, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
+- [ ] `/fnp status`: Version 0.6.1, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
 - [ ] Blizzard-Alpha-Updates bei Zielwechsel/Entfernung/Fading erzeugen keine doppelte Plate.
 - [ ] UnitFrame wird vor/nach eigenem ADDED-Handler erstellt: begrenzter Retry hängt korrekt an.
 - [ ] UnitFrame unabhängig von Basis recycelt: keine unsichtbare Folge-Unit oder alte eigene Plate.

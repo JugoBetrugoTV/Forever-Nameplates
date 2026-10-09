@@ -1,7 +1,7 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.6.0**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.6.1**, kein fertig poliertes Release.
 
 Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
 den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
@@ -15,6 +15,13 @@ wird ihre vorherige öffentliche Deckkraft wiederhergestellt. Klickfläche und S
 Das frühere zusätzliche, standardmäßig deaktivierte Overlay wird damit ersetzt.
 Neue Installationen und das erste Upgrade auf diesen Modus aktivieren die Anwendung;
 ein anschließendes ausdrückliches Abschalten bleibt gespeichert. Vorhandene Profile bleiben erhalten.
+
+**0.6.1** korrigiert weitere Live-Wechsel: Alte Anbindungen werden bei Frame-/Unit-Wechsel
+vor einer Kampf-Zurückstellung gelöst. Öffentliche Blizzard-Fades multiplizieren die
+Profil-Deckkraft; Show/Hide/SetShown des UnitFrame werden auf die eigene Plate übertragen,
+ohne vom Client ausgeblendete Plates wieder einzublenden. Zurückgestellte Units werden nach
+Kampfende unabhängig von öffentlichen Frame-Unit-Feldern erneut geprüft. Eine verspätet
+angelegte Healthbar erhält dieselben maximal drei Aufbau-Retries wie ein verspäteter UnitFrame.
 
 ## Designziel: ausschließlich Nameplates aus sieben Spielen
 
@@ -100,7 +107,7 @@ Die Oberfläche schließt im Kampf. Nameplates müssen in den Spieleinstellungen
 **Restore pending / Hide pending** zählen momentan nicht zulässige Wiederherstellungen;
 sie werden außerhalb des Kampfes erneut geprüft. Ohne sichtbare Units ist Applied=0 normal.
 Falls weiterhin nur Blizzard erscheint: Status bei sichtbarer Unit melden, andere Nameplate-Addons
-zum Vergleich deaktivieren und prüfen, ob Version **0.6.0** tatsächlich geladen wurde.
+zum Vergleich deaktivieren und prüfen, ob Version **0.6.1** tatsächlich geladen wurde.
 
 Im Studio öffnet **+ Add component** den Elementkatalog. Versteckte/gesperrte Elemente
 lassen sich im Element-Dropdown auswählen. Der goldene Eckgriff verändert die Größe bei

@@ -1,4 +1,33 @@
-# Forever API-Audit — 2026-10-08
+# Forever API-Audit — 2026-10-09
+
+## Live-Wechsel ab 0.6.1
+
+Codeprüfung und neun zunächst scheiternde lokale Regressionstests belegten zusätzliche Probleme
+in 0.6.0: Stale Views beim Token-/Basiswechsel vor Combat-Deferral, Updates am alten Frame,
+verlorene hohe Pending-Tokens ohne Frame-Unit-Felder, fehlender Healthbar-Aufbau-Retry,
+sowie fehlende Übertragung von Blizzard-Sichtbarkeit und Fade auf den Geschwister-Root.
+Das sind belegte lokale Logikfehler, keine neu gemessenen Clientfehler.
+
+`SimpleFrameAPI.IsShown`, `Show`, `Hide` und `SetShown` sind mit ihren bool-/void-Signaturen
+im gepinnten Forever-Export geprüft. Der Adapter setzt zusätzliche Secure-Posthooks auf
+Show/Hide/SetShown des zulässigen UnitFrame, ersetzt keine Methoden und liest nur öffentliche
+boolesche IsShown-Ergebnisse. `SetShown` erhält einen eigenen Hook, weil ein nativer Aufruf
+nicht durch die Lua-Methoden Show/Hide gehen muss. Neue öffentliche Fade-Alpha multipliziert
+die eigene Regel-Alpha; Client-Hide und Regel-Hide bleiben gemeinsam maßgeblich. Geheime
+Alpha/Sichtbarkeit wird weiterhin nicht ausgewertet; die eigene Darstellung fällt zurück.
+
+Jeder Visual-Hook überprüft, dass Token, öffentliche Basis und aktueller UnitFrame noch
+zur eigenen View gehören. Beim Poolwechsel wird eine gerade von Blizzard gesetzte neue
+öffentliche Alpha vor dem Ablösen der alten View erhalten. Fehlgeschlagene Teilinstallation
+wird bei späterer Anwendung vervollständigt, ohne erfolgreiche Hooks zu duplizieren.
+
+Vor Combat-Deferral werden alte Bindungen gelöst, Health-Events prüfen die aktuelle Basis.
+Refresh verwendet einen Snapshot bekannter, pending und retry Tokens, zusätzlich öffentliche
+API-Discovery und den begrenzten 200er-Pass. Keine Unit erhält doppelte Layout-Anwendung pro
+Refresh. Verschwundene Tokens werden auch ohne REMOVED-Event bereinigt. Fehlende Healthbar
+und fehlender UnitFrame erhalten maximal drei 50-ms-Retries; verbotene/geschützte Frames
+werden nicht über Timer umgangen. Retrys/Combat-Pool- und Fade-Verhalten müssen im echten
+Forever-Client erneut geprüft werden. Der Mock simuliert Posthooks, keine Client-Taint-Mechanik.
 
 ## Live-Anwendung ab 0.6.0
 

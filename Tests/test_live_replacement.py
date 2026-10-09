@@ -237,3 +237,198 @@ def test_failed_restore_does_not_recapture_suppressed_zero(runtime):
         assert(view.replaced and not next(NS.Engine.restores))
         assert(NS.Engine.SetEnabled(false)); assert(visual:GetAlpha()==1)
     ''')
+
+
+def test_token_moves_to_cold_base_in_combat_detaches_old_plate(runtime):
+    runtime.execute('''
+        local first=Mock.AddUnit("nameplate1"); NS.Engine.Add("nameplate1")
+        local old=NS.Engine.units.nameplate1
+        local second=Mock.AddUnit("nameplate1"); Mock.combat=true
+        NS.Engine.Add("nameplate1")
+        assert(not old.root:IsShown() and first.UnitFrame:GetAlpha()==1)
+        assert(not NS.Engine.units.nameplate1 and NS.Engine.pending.nameplate1)
+        assert(second.UnitFrame:GetAlpha()==1)
+        Mock.combat=false; Mock.Fire(NS.events,"PLAYER_REGEN_ENABLED")
+        assert(NS.Engine.units.nameplate1.base==second and second.UnitFrame:GetAlpha()==0)
+    ''')
+
+
+def test_reassigned_base_defers_new_layout_without_old_unit_visuals(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1"); NS.Engine.Add("nameplate1")
+        local view=NS.Engine.units.nameplate1
+        local layout=NS.Copy(NS.DB.Current()); NS.DB.data.profiles.Default=layout
+        Mock.AddUnit("nameplate2"); Mock.plates.nameplate2=base
+        Mock.plates.nameplate1=nil; base.unitToken="nameplate2"; Mock.combat=true
+        NS.Engine.Add("nameplate2")
+        assert(not view.root:IsShown() and base.UnitFrame:GetAlpha()==1)
+        assert(not NS.Engine.units.nameplate1 and NS.Engine.pending.nameplate2)
+    ''')
+
+
+def test_health_event_rebinds_moved_token_to_warm_base(runtime):
+    runtime.execute('''
+        local first=Mock.AddUnit("nameplate1"); NS.Engine.Add("nameplate1")
+        local second=Mock.AddUnit("nameplate2"); NS.Engine.Add("nameplate2"); NS.Engine.Remove("nameplate2")
+        Mock.plates.nameplate1=second; Mock.plates.nameplate2=nil; second.unitToken="nameplate1"
+        Mock.combat=true; Mock.Fire(NS.events,"UNIT_HEALTH","nameplate1")
+        assert(NS.Engine.units.nameplate1.base==second and first.UnitFrame:GetAlpha()==1)
+        assert(second.UnitFrame:GetAlpha()==0)
+    ''')
+
+
+def test_removed_token_cannot_receive_stale_health_updates(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1"); NS.Engine.Add("nameplate1")
+        local view=NS.Engine.units.nameplate1; Mock.plates.nameplate1=nil
+        Mock.Fire(NS.events,"UNIT_HEALTH","nameplate1")
+        assert(not NS.Engine.units.nameplate1 and not view.root:IsShown())
+        assert(base.UnitFrame:GetAlpha()==1)
+    ''')
+
+
+def test_pending_high_token_recovers_without_public_frame_unit_fields(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate301"); base.unitToken=nil; base.UnitFrame.unit=nil
+        Mock.combat=true; NS.Engine.Add("nameplate301")
+        assert(NS.Engine.pending.nameplate301)
+        Mock.combat=false; Mock.Fire(NS.events,"PLAYER_REGEN_ENABLED")
+        assert(NS.Engine.units.nameplate301 and NS.Engine.units.nameplate301.replaced)
+        assert(not NS.Engine.pending.nameplate301 and base.UnitFrame:GetAlpha()==0)
+    ''')
+
+
+def test_late_healthbar_construction_retries_and_cancel_does_not_reattach(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1"); local bar=base.UnitFrame.healthBar
+        base.UnitFrame.healthBar=nil; NS.Engine.Add("nameplate1")
+        assert(#Mock.timers==1 and base.UnitFrame:GetAlpha()==1)
+        base.UnitFrame.healthBar=bar; Mock.RunTimers()
+        assert(NS.Engine.units.nameplate1.replaced)
+        NS.Engine.Remove("nameplate1"); base.UnitFrame.healthBar=nil
+        NS.Engine.Add("nameplate1"); NS.Engine.SetEnabled(false)
+        base.UnitFrame.healthBar=bar; Mock.RunTimers()
+        assert(not NS.Engine.units.nameplate1 and base.UnitFrame:GetAlpha()==1)
+    ''')
+
+
+def test_blizzard_hide_show_setshown_control_custom_plate(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1"); NS.Engine.Add("nameplate1")
+        local view=NS.Engine.units.nameplate1
+        base.UnitFrame:Hide(); assert(not view.root:IsShown())
+        Mock.Fire(NS.events,"UNIT_HEALTH","nameplate1"); assert(not view.root:IsShown())
+        base.UnitFrame:Show(); assert(view.root:IsShown() and base.UnitFrame:GetAlpha()==0)
+        base.UnitFrame:SetShown(false); assert(not view.root:IsShown())
+        base.UnitFrame:SetShown(true); assert(view.root:IsShown())
+        NS.DB.Current().rules.overrides.unknown.enabled=true
+        NS.DB.Current().rules.overrides.unknown.visible=false
+        NS.Engine.Refresh(); base.UnitFrame:Show(); assert(not view.root:IsShown())
+        NS.Engine.SetEnabled(false); base.UnitFrame:Show(); assert(not view.root:IsShown())
+    ''')
+
+
+def test_hidden_blizzard_frame_is_not_resurrected_by_addon(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1"); base.UnitFrame:Hide()
+        NS.Engine.Add("nameplate1"); local view=NS.Engine.units.nameplate1
+        assert(view.replaced and not view.root:IsShown() and not base.UnitFrame:IsShown())
+        base.UnitFrame:Show(); assert(view.root:IsShown())
+    ''')
+
+
+def test_public_blizzard_fade_multiplies_rule_alpha(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1"); base.UnitFrame:SetAlpha(.4)
+        NS.DB.Current().rules.overrides.unknown.enabled=true
+        NS.DB.Current().rules.overrides.unknown.alpha=.5
+        NS.Engine.Add("nameplate1"); local view=NS.Engine.units.nameplate1
+        assert(view.root:GetAlpha()==.2 and base.UnitFrame:GetAlpha()==0)
+        base.UnitFrame:SetAlpha(.8); assert(view.root:GetAlpha()==.4 and base.UnitFrame:GetAlpha()==0)
+        Mock.Fire(NS.events,"UNIT_HEALTH","nameplate1"); assert(view.root:GetAlpha()==.4)
+        NS.Engine.SetEnabled(false); assert(base.UnitFrame:GetAlpha()==.8)
+    ''')
+
+
+def test_pooled_visual_hook_does_not_suppress_next_units_alpha(runtime):
+    runtime.execute('''
+        local first=Mock.AddUnit("nameplate1"); local visual=first.UnitFrame
+        visual:SetAlpha(.35); NS.Engine.Add("nameplate1"); local old=NS.Engine.units.nameplate1
+        local nextBase=Mock.AddUnit("nameplate2"); nextBase.UnitFrame=visual; first.UnitFrame=nil
+        visual:SetAlpha(.9)
+        assert(visual:GetAlpha()==.9 and not old.root:IsShown() and not NS.Engine.units.nameplate1)
+        NS.Engine.Add("nameplate2"); assert(visual:GetAlpha()==0 and NS.Engine.units.nameplate2.root:GetAlpha()==.9)
+        NS.Engine.Remove("nameplate2"); assert(visual:GetAlpha()==.9)
+    ''')
+
+
+def test_stale_visual_secret_alpha_is_not_replaced_by_public_restore(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1"); local visual=base.UnitFrame
+        NS.Engine.Add("nameplate1"); local view=NS.Engine.units.nameplate1
+        base.UnitFrame=nil; local secret=Mock.Secret(); visual:SetAlpha(secret)
+        assert(visual.alpha==secret and not view.root:IsShown())
+        NS.Engine.Remove("nameplate1"); assert(visual.alpha==secret)
+    ''')
+
+
+def test_visibility_hook_checks_result_without_evaluating_secret(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1"); NS.Engine.Add("nameplate1")
+        local view=NS.Engine.units.nameplate1
+        local shown=base.UnitFrame.IsShown
+        base.UnitFrame.IsShown=function() return Mock.Secret() end
+        base.UnitFrame:Show()
+        assert(not view.root:IsShown() and not view.replaced and base.UnitFrame:GetAlpha()==1)
+        assert(NS.Engine.Status():find("visibility unavailable"))
+        base.UnitFrame.IsShown=shown; NS.Engine.Update("nameplate1"); assert(view.replaced)
+    ''')
+
+
+def test_partial_hook_install_is_retried_without_duplicate_hooks(runtime):
+    runtime.execute('''
+        local installed={}; local hook=hooksecurefunc
+        hooksecurefunc=function(object,method,callback)
+            if method=="Hide" and not Mock.allowHideHook then error("Hook denied") end
+            installed[method]=(installed[method] or 0)+1
+            return hook(object,method,callback)
+        end
+        local base=Mock.AddUnit("nameplate1"); NS.Engine.Add("nameplate1")
+        local view=NS.Engine.units.nameplate1
+        assert(not view.replaced and base.UnitFrame:GetAlpha()==1)
+        assert(installed.SetAlpha==1 and installed.Show==1 and not installed.Hide)
+        Mock.allowHideHook=true; NS.Engine.Add("nameplate1")
+        assert(view.replaced and installed.SetAlpha==1 and installed.Show==1 and installed.Hide==1 and installed.SetShown==1)
+        NS.Engine.Remove("nameplate1"); NS.Engine.Add("nameplate1")
+        assert(installed.SetAlpha==1 and installed.Show==1 and installed.Hide==1 and installed.SetShown==1)
+    ''')
+
+
+def test_native_setshown_does_not_need_to_call_lua_show_hide(runtime):
+    runtime.execute('''
+        local base=Mock.AddUnit("nameplate1")
+        base.UnitFrame.SetShown=function(self,shown) self.shown=shown end
+        NS.Engine.Add("nameplate1"); local view=NS.Engine.units.nameplate1
+        base.UnitFrame:SetShown(false); assert(not view.root:IsShown())
+        base.UnitFrame:SetShown(true); assert(view.root:IsShown())
+    ''')
+
+
+def test_refresh_applies_each_discovered_or_known_unit_once(runtime):
+    runtime.execute('''
+        for i=1,4 do Mock.AddUnit("nameplate"..i); NS.Engine.Add("nameplate"..i) end
+        local apply=NS.Renderer.Apply; local count=0
+        NS.Renderer.Apply=function(...) count=count+1; return apply(...) end
+        NS.Engine.Refresh(); assert(count==4)
+        NS.Renderer.Apply=apply
+    ''')
+
+
+def test_gone_pending_unit_is_cleared_when_removed_event_was_missed(runtime):
+    runtime.execute('''
+        Mock.AddUnit("nameplate301"); Mock.combat=true; NS.Engine.Add("nameplate301")
+        assert(NS.Engine.pending.nameplate301)
+        Mock.plates.nameplate301=nil; Mock.combat=false; NS.Engine.Refresh()
+        assert(not NS.Engine.pending.nameplate301 and not NS.Engine.reasons.nameplate301)
+        assert(not NS.Engine.retries.nameplate301 and NS.Engine.Status():find("Pending: 0"))
+    ''')

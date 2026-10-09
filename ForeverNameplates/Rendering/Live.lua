@@ -32,6 +32,34 @@ end
 local function fallback(view,message)
     hide(view); restore(view); reason(view.unit,message)
 end
+local function bound(view,record)
+    return view.unit and Engine.units[view.unit]==view and view.visual==record and
+        C.nameplates and C_NamePlate and C.Public(C_NamePlate.GetNamePlateForUnit,view.unit)==view.base and
+        C.Field(view.base,"UnitFrame")==record.frame
+end
+local function present(view,record)
+    if not C.SafeFrame(view.root) or not C.SafeFrame(record.frame) then return nil,"Custom presentation restricted" end
+    local shown=C.Public(record.frame.IsShown,record.frame)
+    if type(shown)~="boolean" then return nil,"Blizzard visibility unavailable" end
+    local effect=view.effect or {visible=true,alpha=1}
+    local ok=pcall(function()
+        -- Public client fade and profile alpha both affect the sibling root.
+        view.root:SetAlpha(effect.alpha*record.originalAlpha)
+        view.root:SetShown(effect.visible and shown)
+    end)
+    if not ok then return nil,"Custom presentation refused" end
+    return true
+end
+local function hookOwner(record)
+    local owner=record.owner
+    if not owner then return end
+    if not bound(owner,record) then
+        if Engine.units[owner.unit]==owner then Engine.Remove(owner.unit)
+        else hide(owner); restore(owner); owner.unit=nil end
+        return
+    end
+    return owner
+end
 function Engine.Remove(unit)
     if C.Secret(unit) or type(unit)~="string" then return end
     local view=Engine.units[unit]
@@ -47,6 +75,7 @@ local function getVisual(base)
     safe,message=C.SafeFrame(visual)
     if not safe then return nil,nil,"Blizzard UnitFrame: "..message end
     local bar=C.Field(visual,"healthBar") or C.Field(C.Field(visual,"HealthBarsContainer"),"healthBar")
+    if not bar then return nil,nil,"Blizzard healthBar not ready" end
     safe,message=C.SafeFrame(bar)
     if not safe then return nil,nil,"Blizzard healthBar: "..message end
     return visual,bar
@@ -67,9 +96,9 @@ local function getRecord(visual,view)
     end
     local original=C.Public(visual.GetAlpha,visual)
     if type(original)~="number" or original~=original or original<0 or original>1 then return nil,"Blizzard alpha is unavailable" end
-    if not record then
-        if type(hooksecurefunc)~="function" then return nil,"Secure alpha hook unavailable" end
-        record={frame=visual}
+    if type(hooksecurefunc)~="function" then return nil,"Secure visual hooks unavailable" end
+    if not record then record={frame=visual,hooks={}}; Engine.visuals[visual]=record end
+    if not record.hooks.SetAlpha then
         local ok=pcall(hooksecurefunc,visual,"SetAlpha",function(_,requested)
             if record.writing or not record.owner then return end
             local owner=record.owner
@@ -80,11 +109,29 @@ local function getRecord(visual,view)
                 hide(owner); reason(owner.unit,"Blizzard alpha became restricted")
                 return
             end
+            -- A pooled frame may already belong to the next Blizzard unit.
+            -- Its new public alpha must survive removal of the stale owner.
             record.originalAlpha=requested
-            if not alpha(record,0) then fallback(owner,"Blizzard alpha update refused") end
+            owner=hookOwner(record)
+            if not owner then return end
+            local visible,message=present(owner,record)
+            if not visible then fallback(owner,message)
+            elseif not alpha(record,0) then fallback(owner,"Blizzard alpha update refused") end
         end)
         if not ok then return nil,"Secure alpha hook refused" end
-        Engine.visuals[visual]=record
+        record.hooks.SetAlpha=true
+    end
+    for _,method in ipairs({"Show","Hide","SetShown"}) do
+        if not record.hooks[method] then
+            local ok=pcall(hooksecurefunc,visual,method,function()
+                local owner=hookOwner(record)
+                if not owner then return end
+                local visible,message=present(owner,record)
+                if not visible then fallback(owner,message) end
+            end)
+            if not ok then return nil,"Secure visibility hook refused" end
+            record.hooks[method]=true
+        end
     end
     record.originalAlpha=original
     return record
@@ -107,9 +154,19 @@ function Engine.Add(unit,attempt)
     if not NS.DB.data or not NS.DB.data.live then return end
     if not C.expected or not C.nameplates then reason(unit,"Expected Interface 16001 and C_NamePlate"); return end
     local base=C.Public(C_NamePlate.GetNamePlateForUnit,unit)
+    local previous=Engine.units[unit]
+    if previous and previous.base~=base then Engine.Remove(unit) end
+    if not base then Engine.Remove(unit); return end
     local safe,message=C.SafeFrame(base)
-    if not safe then reason(unit,message); return end
+    if not safe then
+        if Engine.units[unit] then Engine.Remove(unit) end
+        Engine.pending[unit]=nil; Engine.retries[unit]=nil
+        reason(unit,message)
+        return
+    end
     local view=Engine.views[base]
+    -- Clear obsolete ownership before a combat deferral, not after it.
+    if view and view.unit and view.unit~=unit then Engine.Remove(view.unit) end
     -- Existing pooled widgets may be reused in combat; creation/layout changes wait.
     if NS.InCombat() and (not view or view.applied~=NS.DB.Current()) then
         Engine.pending[unit]=true; reason(unit,"First attachment deferred until combat ends"); return
@@ -118,11 +175,9 @@ function Engine.Add(unit,attempt)
     if not visual then
         if Engine.units[unit] then Engine.Remove(unit) end
         reason(unit,err)
-        if err=="Blizzard UnitFrame not ready" then retry(unit,attempt or 0) end
+        if err=="Blizzard UnitFrame not ready" or err=="Blizzard healthBar not ready" then retry(unit,attempt or 0) end
         return
     end
-    if Engine.units[unit] and Engine.units[unit]~=view then Engine.Remove(unit) end
-    if view and view.unit and view.unit~=unit then Engine.Remove(view.unit) end
     if not view then
         local ok,result=pcall(R.Create,base)
         if not ok then reason(unit,"Custom frame creation refused"); return end
@@ -153,6 +208,8 @@ function Engine.Update(unit)
     local view=Engine.units[unit]
     if not view then return end
     if not NS.DB.data.live then Engine.Remove(unit); return end
+    local current=C.nameplates and C.Public(C_NamePlate.GetNamePlateForUnit,unit)
+    if not current or current~=view.base then Engine.Remove(unit); if current then Engine.Add(unit) end; return end
     if not C.SafeFrame(view.root) then fallback(view,"Custom root restricted"); return end
     local visual,anchor=getVisual(view.base)
     if not visual or not view.visual or visual~=view.visual.frame or anchor~=view.anchor then
@@ -164,6 +221,8 @@ function Engine.Update(unit)
     -- Suppression starts only after a successful custom render. Hidden-by-rule is
     -- an intentional hidden plate, not a reason to resurrect Blizzard visuals.
     local record=view.visual
+    local visible,message=present(view,record)
+    if not visible then fallback(view,message); return end
     record.owner=view
     if not alpha(record,0) then fallback(view,"Blizzard visual suppression refused"); return end
     view.replaced=true; Engine.reasons[unit]=nil
@@ -176,22 +235,26 @@ function Engine.Refresh()
     for record in pairs(Engine.restores) do
         if not record.owner and alpha(record,record.originalAlpha) then Engine.restores[record]=nil end
     end
-    for unit in pairs(Engine.units) do
-        if NS.DB.data.live and C.expected and C.nameplates then Engine.Add(unit) else Engine.Remove(unit) end
+    -- Snapshot known bindings and pending tokens before Add/Remove mutate them.
+    local known={}; for unit in pairs(Engine.units) do known[unit]=true end
+    for unit in pairs(Engine.pending) do known[unit]=true end
+    for unit in pairs(Engine.retries) do known[unit]=true end
+    local seen={}
+    for unit in pairs(known) do
+        if NS.DB.data.live and C.expected and C.nameplates then Engine.Add(unit); seen[unit]=true else Engine.Remove(unit) end
     end
     if not NS.DB.data.live then Engine.pending={}; Engine.retries={}; Engine.reasons={}; return end
     if not C.expected or not C.nameplates then return end
     -- Public API discovery first, with a bounded token pass for clients lacking
     -- public unitToken fields. Never request includeForbidden or change hit tests.
     local plates=C_NamePlate and C.Public(C_NamePlate.GetNamePlates)
-    local seen={}
     if type(plates)=="table" then
         for _,base in ipairs(plates) do
             if C.SafeFrame(base) then
                 local token=C.Field(base,"unitToken")
                 local visual=C.Field(base,"UnitFrame")
                 if not token and C.SafeFrame(visual) then token=C.Field(visual,"unit") end
-                if type(token)=="string" then Engine.Add(token); seen[token]=true end
+                if type(token)=="string" and not seen[token] then Engine.Add(token); seen[token]=true end
             end
         end
     end

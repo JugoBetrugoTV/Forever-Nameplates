@@ -18,7 +18,7 @@ required = {
     "UI-Widgets-Frames/SimpleFrameScriptObjectAPI.md": ["SimpleFrameScriptObjectAPI.IsForbidden"],
     "UI-Widgets-Frames/SimpleStatusBarAPI.md": ["SimpleStatusBarAPI.SetValue", "SimpleStatusBarAPI.SetMinMaxValues", "SimpleStatusBarAPI.SetTimerDuration", "SimpleStatusBarAPI.SetOrientation", "SimpleStatusBarAPI.SetReverseFill", "SimpleStatusBarAPI.SetStatusBarTexture"],
     "UI-Widgets-Frames/SimpleTextureBaseAPI.md": ["SimpleTextureBaseAPI.SetRotation", "SimpleTextureBaseAPI.SetTexture", "SimpleTextureBaseAPI.SetTexCoord", "SimpleTextureBaseAPI.SetBlendMode", "SimpleTextureBaseAPI.SetAtlas"],
-    "UI-Widgets-Frames/SimpleFrameAPI.md": ["SimpleFrameAPI.CreateMaskTexture", "SimpleFrameAPI.RegisterEvent", "SimpleFrameAPI.SetClipsChildren", "SimpleFrameAPI.GetAlpha", "SimpleFrameAPI.SetAlpha"],
+    "UI-Widgets-Frames/SimpleFrameAPI.md": ["SimpleFrameAPI.CreateMaskTexture", "SimpleFrameAPI.RegisterEvent", "SimpleFrameAPI.SetClipsChildren", "SimpleFrameAPI.GetAlpha", "SimpleFrameAPI.SetAlpha", "SimpleFrameAPI.IsShown", "SimpleFrameAPI.Show", "SimpleFrameAPI.Hide", "SimpleFrameAPI.SetShown"],
     "UI-Widgets-Frames/SimpleButtonAPI.md": ["SimpleButtonAPI.IsEnabled", "SimpleButtonAPI.RegisterForClicks", "SimpleButtonAPI.SetHighlightTexture"],
     "UI-Widgets-Frames/SimpleEditBoxAPI.md": ["SimpleEditBoxAPI.SetFont"],
     "UI-Widgets-Frames/SimpleScriptRegionAPI.md": ["SimpleScriptRegionAPI.GetCenter", "SimpleScriptRegionAPI.GetWidth", "SimpleScriptRegionAPI.IsProtected"],

@@ -1,10 +1,21 @@
-# Forever Nameplates — Entwicklungsstand 0.6.0
+# Forever Nameplates — Entwicklungsstand 0.6.1
 
-Stand: 2026-10-08. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
+Stand: 2026-10-09. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
 **Forever Nameplates** ersetzt; technisch lautet der Addon-Ordner `ForeverNameplates`.
 
 ## Implementiert
+
+- 0.6.1: Token-/Basiswechsel lösen alte Anbindungen vor jeder Combat-Zurückstellung; Health-Events
+  prüfen die aktuelle öffentliche Basis. Entfernte Units ohne REMOVED-Event verlieren ihre alten Views.
+- 0.6.1: Eigene Plates übernehmen öffentliche Blizzard-Fades multipliziert mit Regel-Alpha sowie
+  Show/Hide/SetShown des UnitFrame. Clientseitig versteckte Plates bleiben versteckt; geheime
+  Sichtbarkeit beendet die eigene Anwendung mit Wiederherstellung statt geheimer Auswertung.
+- 0.6.1: Visual-Hooks prüfen aktuelle Ownership vor jedem Eingriff, bewahren neue öffentliche
+  Alpha beim unabhängigen Blizzard-Poolwechsel und installieren nach Teilfehlern keine doppelten Hooks.
+- 0.6.1: Refresh erfasst bekannte, zurückgestellte und noch im Retry befindliche Tokens als Snapshot,
+  auch oberhalb von 200 ohne öffentliche Frame-Unit-Felder; jede Unit wird pro Refresh nur einmal angewandt.
+  Verspäteter Healthbar-Aufbau wird begrenzt erneut versucht; verschwundene Pending-Units werden bereinigt.
 
 - Live-Anwendung ersetzt das vorherige zusätzliche Overlay: eigener Root als UnitFrame-Geschwister
   direkt an der Healthbar, öffentliche Blizzard-Alpha erst nach erfolgreichem Rendern auf 0 setzen.
@@ -70,7 +81,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **159 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **175 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -97,8 +108,12 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
   Upgrade-/Opt-out-Persistenz, Wiederherstellung nach Alpha-Updates, unabhängiger UnitFrame-Pool,
   verweigerte Health-/Alpha-Aufrufe, geheime Alpha, begrenzte/cancelbare Retries, API-Discovery,
   Combat-Pool-Reuse, Sichtbarkeitsregeln, zurückgestellte Cleanup-Operationen, fehlende Nameplate-API und bewahrte Originalalpha nach verweigerter Wiederherstellung.
-- Version 0.6.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
-- 43 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- Zusätzlich 16 Regressionstests reproduzieren die 0.6.1-Fehlerfälle vor der Korrektur bzw. prüfen
+  Combat-Rebinding, verlorene REMOVED-Events, hohe Pending-Tokens ohne Unit-Felder, späte Healthbars,
+  Show/Hide und native SetShown-Varianten, Alpha-Multiplikation, Poolwechsel vor dem nächsten ADDED,
+  Secret-Alpha/Sichtbarkeit, fehlgeschlagene Hook-Installation und einzelne Anwendung pro Refresh.
+- Version 0.6.1 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 47 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.
