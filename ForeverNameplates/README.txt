@@ -1,4 +1,4 @@
-Forever Nameplates 0.6.2 - development build
+Forever Nameplates 0.6.3 - development build
 
 Install this folder into _classic_beta_/Interface/AddOns/ForeverNameplates.
 Use /fnp or /forevernameplates to open the studio.
@@ -11,6 +11,8 @@ Forever Beta 1.60.1, Interface 16001 is the intended target. Protected/forbidden
 are skipped and first widget creation during combat is deferred until combat ends.
 Successful live application suppresses the permitted Blizzard UnitFrame; removal, off and
 rendering failure restore its last public alpha. Client visibility and public fades are respected.
+Classic levels use public client difficulty colors and a native skull for unknown high levels.
+Missing skull textures fall back to ??; secret levels are omitted.
 Classic/Dragonflight source drafts use client resources; the old presets are placeholders.
 FFXIV requires three imported assets. The other four games still lack verified nameplate references.
 No layout has a confirmed 1:1 comparison in the Forever client.

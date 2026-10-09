@@ -1,6 +1,6 @@
-# Offene Punkte — 2026-10-09, Version 0.6.2
+# Offene Punkte — 2026-10-09, Version 0.6.3
 
-177 lokale Tests bestehen. Hier läuft kein WoW-Client: Das belegt lokale Logik,
+188 lokale Tests bestehen. Hier läuft kein WoW-Client: Das belegt lokale Logik,
 keine realen Combat-Freigaben, Texturpixel, FPS oder fehlerfreie Ingame-Nutzung.
 Die jüngsten Korrekturen sind im Client noch nicht nachgetestet.
 
@@ -39,12 +39,12 @@ noch nicht gemeldet. Die offenen Punkte unten sind keine pauschale Liste bestät
 
 | Spiel | Was tatsächlich vorhanden ist | Was fehlt |
 | --- | --- | --- |
-| WoW Classic 1.15.8 | Quellenlayout, native Clientressourcen | Originalbild-/Forever-Pixelvergleich, Font-/UI-/CVar-Scale-Abgleich |
+| WoW Classic 1.15.8 | Quellenlayout, native Clientressourcen, Level-Schwierigkeitsfarben/Schädel | Originalbild-/Forever-Pixelvergleich, Font-/UI-/CVar-Scale-Abgleich |
 | WoW Dragonflight 10.2.7 | Quellenlayout, native Clientressourcen | Derselbe visuelle Abgleich einschließlich Cast- und Target-Zuständen |
 | FFXIV | Vier geprüfte Originalbilder, vermessener roter Gegner-Entwurf | Rahmen, HP-Fill, Gegnericon; Originalschrift und Patch/UI-Scale offen. Menü bleibt bis zu den drei Assets gesperrt |
 | Guild Wars 2 | Referenzauftrag | Geeignete geprüfte Original-Nameplate, Maße, Assets und Layout; Auswahl deaktiviert |
 | SWTOR | Referenzauftrag | Dasselbe; Auswahl deaktiviert |
-| ESO | Referenzauftrag | Dasselbe; Auswahl deaktiviert |
+| ESO | Referenzauftrag; gepinnter UI-Community-Mirror belegt Anzeigeoptionen | Originalbild, Geometrie, Assets und Layout; Auswahl deaktiviert |
 | Diablo IV | Referenzauftrag | Dasselbe; Auswahl deaktiviert |
 
 **Noch kein Design ist als 1:1 im Forever-Client abgenommen.** Die zwölf Legacy-Presets sind
@@ -53,6 +53,11 @@ bis dahin vorhandene Clientressourcen nutzen. Bilder und ihre vorläufigen Maße
 [INTERNET_IMAGE_REFERENCES.md](INTERNET_IMAGE_REFERENCES.md) und
 [NAMEPLATE_REFERENCES.md](NAMEPLATE_REFERENCES.md) dokumentiert.
 [Konkrete Bildprompts](../ART_ASSET_REQUESTS.md) sind für die separate Asset-Lieferung vorbereitet.
+
+Der Recherche-Entwurf ergänzt unter anderem den nachgewiesenen Blizzard-Bildhost
+`bnetcmsus-a.akamaihd.net`. Er ist gespeichert, noch nicht veröffentlicht; diese Bilder
+konnten hier weiterhin nicht heruntergeladen oder geprüft werden.
+[Neue Abrufbefunde und ESO-Quelle](INTERNET_IMAGE_REFERENCES.md#aktualisierung-2026-10-09).
 
 ## Noch nicht implementiert
 

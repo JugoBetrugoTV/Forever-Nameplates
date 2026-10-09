@@ -43,6 +43,8 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 
 - [ ] Game nameplates: Classic 1.15.8 / DF 10.2.7 übernehmen, Undo/Redo und Share-Export prüfen.
 - [ ] Client besitzt Nameplate-Border/BarFill; tatsächliche Pixel gegen die Originalversion vergleichen.
+- [ ] Classic-Level: niedriges/gleiches/hohes öffentliches Level verwendet die clientseitige Schwierigkeitsfarbe; nach eigenem Level-up aktualisiert sie sich ohne Layoutwechsel.
+- [ ] Unbekannt hohes Level zeigt das native Schädelicon rechts; fehlende Textur zeigt „??“. Geheimes/fehlendes Level zeigt weder Zahl noch Schädel; Wechsel zum normalen Level und zu anderen Layouts hinterlässt kein Icon. Größe/Crop des Schädels mit Original vergleichen.
 - [ ] Classic-Border-Crop 0..1/0.5..1, Level rechts und Raidmarker links stimmen bei Scale=1.
 - [ ] DF: 86×4 Health, 86×8 Cast, Kontur, Target-Highlight und Raidmarker links vergleichen.
 - [ ] Cast-Hintergrundatlas verfügbar oder unsichtbar; kein Atlas-Sheet statt des gewünschten Ausschnitts.
@@ -74,13 +76,13 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Fehlender Healthbar-Aufbau erhält begrenzte Retries; Entfernung/Off verhindert spätes Wiederanheften.
 - [ ] Geheime IsShown-/Alpha-Ergebnisse und verweigerte Hooks erzeugen sauberen Fallback ohne Lua-/Taint-Fehler.
 
-- [ ] Update von ≤0.5.0 auf 0.6.2 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
+- [ ] Update von ≤0.5.0 auf 0.6.3 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
 - [ ] Update von 0.6.0: ein gespeichertes Off bleibt abgeschaltet.
 - [ ] `/fnp apply` und Studio-Anwenden-Button ändern die sichtbare Plate direkt; Healthbar-Breite/X ändern und vergleichen.
 - [ ] `/fnp off` und erneutes `/reload` bleiben abgeschaltet; Apply aktiviert wieder.
 - [ ] Diagnose aktiviert nur auf der erwarteten Forever-Schnittstelle die Anwendung.
 - [ ] Eigene Plate sitzt an der Blizzard-Healthbar; nur eine Darstellung sichtbar, Klickfläche/Stacking weiter bedienbar.
-- [ ] `/fnp status`: Version 0.6.2, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
+- [ ] `/fnp status`: Version 0.6.3, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
 - [ ] Blizzard-Alpha-Updates bei Zielwechsel/Entfernung/Fading erzeugen keine doppelte Plate.
 - [ ] UnitFrame wird vor/nach eigenem ADDED-Handler erstellt: begrenzter Retry hängt korrekt an.
 - [ ] UnitFrame unabhängig von Basis recycelt: keine unsichtbare Folge-Unit oder alte eigene Plate.

@@ -1,5 +1,34 @@
 # Forever API-Audit — 2026-10-09
 
+## Classic-Level ab 0.6.3
+
+Die Look-Referenz ist `CompactUnitFrame_UpdateLevel` aus Classic 1.15.8,
+Commit `e0099491e5ce94ef87c791b053f1e1509b5fd7ac`, Datei
+`Interface/AddOns/Blizzard_UnitFrame/Classic/CompactUnitFrame.lua`:
+positive Level verwenden `GetCreatureDifficultyColor`, unbekannt hohe Level ein Schädelicon.
+Die zugehörige Vanilla-Nameplate-XML enthält einen 15×15-LevelFrame und
+`Interface\TargetingFrame\UI-TargetingFrame-Skull`. Die Textur selbst hat dort keine explizite
+Größe/Anker; unser Ausfüllen des 15×15-Frames ist eine Implementierungsentscheidung,
+kein gemessener Original-Pixelcrop. Keine Spielgrafik wurde ins Addon kopiert.
+
+`UnitLevel` und `PLAYER_LEVEL_UP` sind in der Forever-Dokumentation vorhanden.
+`GetCreatureDifficultyColor` steht im Forever-Kit-Funktionsexport, hat aber keine eigenständige
+generierte Signatur. `Tools/audit_api.py` prüft 48 recherchierte Signaturen sowie die
+Export-Präsenz des optionalen Helpers. Seine tatsächliche Verfügbarkeit, Farbrückgaben und
+Combat-Freigaben müssen im Forever-Client geprüft werden.
+
+Der Adapter prüft Helper-Aufruf, Tabelle und jeden RGB-Kanal auf öffentliche Zahlen 0..1;
+fehlende/abgelehnte/ungültige Farben behalten die Elementfarbe. Geheime Level werden vor
+Vergleich/Arithmetik ausgeschlossen, nicht als unbekannt hohe Level interpretiert. Nur öffentliche
+`??`/−1/0 verwenden das Icon. `SetTexture` muss öffentlich `true` liefern, sonst erscheint „??“.
+`UNIT_LEVEL` und `PLAYER_LEVEL_UP` aktualisieren die Darstellung ereignisbasiert, ohne
+Identitätscache oder eigene Schwierigkeitsberechnung. Jeder gepoolte Textteil reserviert einmalig
+eine versteckte optionale Texture, damit Layoutwechsel/Live-Updates keine neuen Skull-Widgets
+anlegen. Reale Speicher-/FPS-Kosten bleiben ungeprüft.
+
+Elf zusätzliche Mock-Testfälle prüfen Farben, Levelwechsel, geheime/ungültige Werte, Fehler,
+fehlende Texturen, Pool-Reuse und Level-up; insgesamt 188 Tests. Das belegt keine Ingame-Freigabe.
+
 ## Cast-Dekorationen ab 0.6.2
 
 Codeprüfung und zwei zunächst scheiternde lokale Tests belegten, dass der native Dragonflight-

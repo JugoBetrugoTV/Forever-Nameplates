@@ -60,6 +60,16 @@ function Compat.Health(bar,unit)
     if not ok then Compat.failures=Compat.failures+1 end
     return ok
 end
+function Compat.LevelColor(level)
+    if Compat.Secret(level) or type(level)~="number" or level~=level or level<=0 or level%1~=0 then return nil end
+    local color=Compat.Public(GetCreatureDifficultyColor,level)
+    local result={Compat.Field(color,"r"),Compat.Field(color,"g"),Compat.Field(color,"b")}
+    for i=1,3 do
+        local value=result[i]
+        if type(value)~="number" or value~=value or value<0 or value>1 then return nil end
+    end
+    return result
+end
 function Compat.State(unit)
     local restricted=C_Secrets and Compat.Public(C_Secrets.ShouldUnitIdentityBeSecret,unit)==true
     local state={name="",level="",healthText="—",castName="",casting=false}

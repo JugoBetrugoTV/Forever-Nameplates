@@ -23,7 +23,7 @@ required = {
     "UI-Widgets-Frames/SimpleEditBoxAPI.md": ["SimpleEditBoxAPI.SetFont"],
     "UI-Widgets-Frames/SimpleScriptRegionAPI.md": ["SimpleScriptRegionAPI.GetCenter", "SimpleScriptRegionAPI.GetWidth", "SimpleScriptRegionAPI.IsProtected"],
     "UI-Widgets-Frames/SimpleFontStringAPI.md": ["SimpleFontStringAPI.SetText", "SimpleFontStringAPI.SetFont", "SimpleFontStringAPI.SetShadowColor", "SimpleFontStringAPI.SetShadowOffset"],
-    "Units-Combat-PvP/Unit.md": ["Unit.UnitHealth", "Unit.UnitHealthMax", "Unit.UnitCastingDuration", "Unit.UnitChannelDuration", "Unit.UnitClassBase", "Unit.UnitClassification", "Unit.UnitReaction", "Unit.UnitIsPlayer", "Unit.UnitPlayerControlled"],
+    "Units-Combat-PvP/Unit.md": ["Unit.UnitHealth", "Unit.UnitHealthMax", "Unit.UnitLevel", "Unit.UnitCastingDuration", "Unit.UnitChannelDuration", "Unit.UnitClassBase", "Unit.UnitClassification", "Unit.UnitReaction", "Unit.UnitIsPlayer", "Unit.UnitPlayerControlled"],
 }
 count = 0
 for filename, names in required.items():
@@ -33,13 +33,15 @@ for filename, names in required.items():
             raise SystemExit(f"Missing API signature: {name}")
         count += 1
 print(f"{count} required/researched signatures present; runtime permissions and in-game behavior remain unverified")
+if "### PLAYER_LEVEL_UP\n" not in (docs / "Units-Combat-PvP/Unit.md").read_text():
+    raise SystemExit("Missing documented event: PLAYER_LEVEL_UP")
 
 export = args.kit / "data/forever_api.json"
 if export.is_file():
     functions=json.loads(export.read_text())["functions"]
-    for helper in ("SetRaidTargetIconTexture", "hooksecurefunc"):
+    for helper in ("SetRaidTargetIconTexture", "hooksecurefunc", "GetCreatureDifficultyColor"):
         if helper not in functions:
             raise SystemExit(f"Client UI helper missing from Forever export: {helper}")
-    print("Raid helper and hooksecurefunc present in Forever kit's client export; runtime behavior remains unverified")
+    print("Raid, difficulty-color and hook helpers present in Forever kit's client export; runtime behavior remains unverified")
 else:
-    print("Forever kit export unavailable: native raid helper presence not checked")
+    print("Forever kit export unavailable: optional client UI helper presence not checked")

@@ -15,7 +15,10 @@ end
 Renderer.Register("health",bar); Renderer.Register("cast",bar)
 local function textPart(parent)
     local f=frame(parent); local text=f:CreateFontString(nil,"OVERLAY")
-    text:SetAllPoints(f); return {frame=f,text=text}
+    -- Allocate the optional native level marker once so text-pool reorderings
+    -- never create textures during later layout switches or live updates.
+    local skull=f:CreateTexture(nil,"OVERLAY"); skull:Hide()
+    text:SetAllPoints(f); return {frame=f,text=text,skull=skull}
 end
 Renderer.Register("text",textPart); Renderer.Register("class",textPart)
 Renderer.Register("raid",function(parent)
@@ -92,6 +95,13 @@ function Renderer.Apply(view,layout)
         end
         if part.text then
             local native=NS.NativeMedia[e.asset]
+            if part.skull then part.skull:Hide() end
+            part.skullReady=false
+            if native and native.skullPath and e.source=="level" then
+                part.skull:SetAllPoints(f); part.skull:SetVertexColor(1,1,1,1)
+                local ok,success=pcall(part.skull.SetTexture,part.skull,native.skullPath)
+                part.skullReady=ok and not NS.Compat.Secret(success) and success==true
+            end
             part.text:SetFont(native and native.font or STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",e.fontSize,native and native.flags or "OUTLINE")
             part.text:SetShadowColor(0,0,0,1)
             part.text:SetShadowOffset(native and native.shadow and native.shadow[1] or 0,native and native.shadow and native.shadow[2] or 0)
@@ -192,6 +202,18 @@ function Renderer.Update(view,state,unit)
             if native and native.prefix then
                 if not NS.Compat.Secret(value) and (type(value)=="string" or type(value)=="number") and tostring(value)~="" then value=native.prefix..value
                 else value="" end
+            end
+            if part.skull then part.skull:Hide() end
+            if native and native.difficulty and e.source=="level" then
+                local public=not NS.Compat.Secret(value)
+                local normal=public and type(value)=="number" and value>0 and value%1==0
+                local high=public and (value=="??" or value==-1 or value==0)
+                if normal then
+                    local color=NS.Compat.LevelColor(value) or e.color
+                    part.text:SetTextColor(color[1],color[2],color[3],e.color[4])
+                elseif high then
+                    if part.skullReady then part.skull:SetShown(show==true); value="" else value="??" end
+                else value=""; show=false end
             end
             part.text:SetText(value or "")
             for _,outline in ipairs(part.outlines or {}) do outline:SetText(value or "") end

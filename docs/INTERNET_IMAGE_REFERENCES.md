@@ -83,3 +83,48 @@ Die benutzerdefinierten Regeln wurden vor Änderungen gelesen und erhalten; vore
 Die Spielquellen, `warcraft.wiki.gg`, Google/Bing und der belegte Bildhost `lds-img.finalfantasyxiv.com` sind als Entwurf gespeichert.
 **FFXIV-CDN-Zugriff ist nun durch vier erfolgreiche JPEG-Abrufe bestätigt; eine weitere Freigabe für diese Bilder ist nicht nötig.**
 Der Agent hat die Umgebung nicht selbst publiziert. Die übrigen 403-Antworten sind getrennte Abrufprobleme.
+
+
+## Aktualisierung 2026-10-09
+
+**Keine weiteren Originalbilder heruntergeladen oder angesehen.** Die vier FFXIV-Bilder oben
+bleiben die einzigen geprüften Fremdspiel-Originale. Keine neuen Maße oder 1:1-Designs abgeleitet.
+
+### ESO: technische Quelle, keine Bildreferenz
+
+[ESOUI-Community-Mirror](https://github.com/esoui/esoui/tree/6639eb2adecc0480557d9068579319919a0c3fe6),
+Commit `6639eb2adecc0480557d9068579319919a0c3fe6`, Stand 12.1.5 / API 101051, 2026-09-28.
+Die README bezeichnet den Inhalt als unveränderten UI-Quellcode zur Referenz; das Repository
+ist ein Community-Mirror, kein offizielles Zenimax-Repository. Gelesen wurden
+`esoui/ingame/optionspanels/optionspanel_nameplates_shared.lua` und `ESOUIDocumentation.txt`.
+
+Belegt sind getrennte Nameplate-/Healthbar-Sichtbarkeit für Unitkategorien,
+`NAMEPLATE_TYPE_HEALTHBAR_ALIGNMENT` (links/zentriert),
+`NAMEPLATE_TYPE_HEALTHBAR_CHASE_BAR` und `NAMEPLATE_TYPE_HEALTHBAR_FRAME_BORDER`
+sowie Tastatur-/Gamepad-Nameplate-Fontsetter. Die geprüften Dateien liefern keine belastbaren
+Pixelmaße/Texturdateien der Overhead-Bar. Das gefundene Optionsmenü-Icon ist keine Nameplate-Art.
+ESO bleibt im Layoutmenü deaktiviert; die vorläufigen Assetmaße wurden nicht geändert.
+
+### Erreichbare Seiten und Zugriffssperren
+
+- GW2-Wiki Health/API-Abfrage: HTTP 403, keine verwertbare Vorlage.
+- SWTOR-Forum und verlinkte [Guide-Liste](https://forums.swtor.com/topic/933570-the-ultimate-guide-of-guides-for-newreturning-swtor-players-in-2024/): HTTP 200, keine geeignete Original-Plate bestätigt.
+  Geratene Tag-URL `/tags/nameplates/` lieferte 404 und wurde verworfen.
+- ESO-Support-Suche erreichbar; der geratene Artikel 33307 landete auf einer Fehlerseite,
+  keine bestätigte Quelle. Google lieferte erneut eine JS-Seite ohne verwertbare Bild-URLs.
+  Bing-RSS lieferte sachfremde Kirchen-/Wahltreffer; nicht als Spielreferenzen verwendet.
+- Offizieller Blizzard-Artikel [Make Sanctuary Yours—Play Your Way in Diablo IV](https://news.blizzard.com/en-us/article/23938756/make-sanctuary-yoursplay-your-way-in-diablo-iv): HTTP 200.
+  Beschreibt Charaktererstellung/Skills/Paragon, kein belegter Nameplate-Guide.
+  Drei daraus extrahierte tatsächliche Bild-URLs auf `bnetcmsus-a.akamaihd.net`
+  scheiterten am HTTP-403-Tunnel. Auch der tatsächlich verlinkte
+  [Server-Slam-Artikel](https://news.blizzard.com/en-us/article/23938755/help-us-gear-up-for-launch-during-the-diablo-iv-server-slam)
+  war erreichbar; seine Bild-URLs haben denselben derzeit gesperrten Host.
+  **Bildinhalte wurden nicht geprüft**, ihre Eignung ist offen.
+- Swtorista, GW2-Galerie, Blizzard Gamespress, Steam-Store und DuckDuckGo scheiterten am
+  HTTP-403-Tunnel. Das bestätigt weder den Inhalt noch die Existenz einzelner Zielseiten.
+
+Die vollständigen Abruflogs/HTML und ESO-Checkout liegen außerhalb des Addons unter
+`/workspace/research/nameplate-references/2026-10-09` beziehungsweise `/workspace/research/esoui`.
+Zusätzliche Recherchehosts sind als Cloud-Konfigurationsentwurf gespeichert, noch nicht
+veröffentlicht. Vor weiteren Bildabrufen den Entwurf in den Umgebungseinstellungen
+speichern/veröffentlichen. Bestehende Regeln/Git-/Paketdomains bleiben erhalten.

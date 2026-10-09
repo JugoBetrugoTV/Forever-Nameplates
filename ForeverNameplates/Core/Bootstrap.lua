@@ -13,7 +13,7 @@ local function initialize()
     local name=NS.Compat.Public(UnitName,"player")
     local realm=NS.Compat.Public(GetRealmName)
     if type(name)=="string" and type(realm)=="string" then NS.DB.character=name.."-"..realm end
-    for _,event in ipairs({"NAME_PLATE_UNIT_ADDED","NAME_PLATE_UNIT_REMOVED","PLAYER_ENTERING_WORLD","PLAYER_TARGET_CHANGED","RAID_TARGET_UPDATE","PLAYER_REGEN_ENABLED","PLAYER_REGEN_DISABLED"}) do NS.Compat.Register(events,event) end
+    for _,event in ipairs({"NAME_PLATE_UNIT_ADDED","NAME_PLATE_UNIT_REMOVED","PLAYER_ENTERING_WORLD","PLAYER_LEVEL_UP","PLAYER_TARGET_CHANGED","RAID_TARGET_UPDATE","PLAYER_REGEN_ENABLED","PLAYER_REGEN_DISABLED"}) do NS.Compat.Register(events,event) end
     for _,event in ipairs(unitEvents) do NS.Compat.Register(events,event) end
     for _,other in ipairs({"Plater","Kui_Nameplates","TidyPlates_ThreatPlates","NeatPlates"}) do
         local loaded=C_AddOns and C_AddOns.IsAddOnLoaded and NS.Compat.Public(C_AddOns.IsAddOnLoaded,other)
@@ -34,7 +34,7 @@ events:SetScript("OnEvent",function(_,event,unit)
         if NS.Studio.root then NS.Studio.EndDrag(false); NS.Studio.root:Hide() end
         if ColorPickerFrame and ColorPickerFrame:IsShown() then ColorPickerFrame:Hide() end
     elseif event=="PLAYER_REGEN_ENABLED" or event=="PLAYER_ENTERING_WORLD" then NS.Minimap.Init(); NS.Engine.Refresh()
-    elseif event=="PLAYER_TARGET_CHANGED" or event=="RAID_TARGET_UPDATE" then for token in pairs(NS.Engine.units) do NS.Engine.Update(token) end
+    elseif event=="PLAYER_TARGET_CHANGED" or event=="RAID_TARGET_UPDATE" or event=="PLAYER_LEVEL_UP" then for token in pairs(NS.Engine.units) do NS.Engine.Update(token) end
     else NS.Engine.Update(unit) end
 end)
 SLASH_FOREVERNAMEPLATES1="/fnp"

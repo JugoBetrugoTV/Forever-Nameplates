@@ -1,10 +1,18 @@
-# Forever Nameplates — Entwicklungsstand 0.6.2
+# Forever Nameplates — Entwicklungsstand 0.6.3
 
 Stand: 2026-10-09. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
 **Forever Nameplates** ersetzt; technisch lautet der Addon-Ordner `ForeverNameplates`.
 
 ## Implementiert
+
+- 0.6.3: Classic-Level folgen öffentlichen `GetCreatureDifficultyColor`-Farben und wechseln
+  bei öffentlich unbekannt hohem Level zum nativen Schädelicon. Fehlende/abgelehnte Textur
+  fällt auf „??“ zurück; geheime/ungültige Level bleiben leer. `PLAYER_LEVEL_UP` aktualisiert
+  alle gebundenen Plates. Gepoolte Textteile reservieren die optionale Textur einmalig.
+- 0.6.3: ESO-UI-Community-Mirror 12.1.5 / API 101051 geprüft und gepinnt; Nameplate-Optionen
+  belegt, keine Pixelgeometrie oder Originalbilder. Zusätzliche Recherchehosts und aktuelle
+  Cloud-Startanweisungen als Entwurf gespeichert; Veröffentlichung noch nötig.
 
 - 0.6.2: Dragonflight-Cast-Hintergrund und castgebundener Text folgen der sichtbaren Castbar,
   auch bei verweigerter Timer-Weitergabe, deaktivierter Bar und beliebiger Elementreihenfolge.
@@ -89,7 +97,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **177 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **188 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -123,8 +131,8 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Zusätzlich zwei zunächst scheiternde Cast-Dekorations-Regressionsfälle: Reihenfolge,
   aktive/inaktive Vorschau, Live-Duration vorhanden/fehlend, verweigerte Weitergabe,
   deaktivierte Castbar und eigenständiger Casttext ohne Bar.
-- Version 0.6.2 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
-- 47 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- Version 0.6.3 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 48 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.
@@ -143,7 +151,9 @@ Vier FFXIV-Originalbilder sind jetzt tatsächlich heruntergeladen und angesehen.
 Gegner-Plate ist als vermessener Entwurf vorbereitet; ihre Menüauswahl bleibt bis zum Import
 von Rahmen, Fill und Icon gesperrt. Keine Originalschrift vorhanden, keine automatische
 FFXIV-Claim-Erkennung oder Spawn-Letter-Nachbildung. [Originalbilder, Messungen und Abrufbefunde](docs/INTERNET_IMAGE_REFERENCES.md).
-Die anderen vier Fremdspiele bleiben ohne geprüfte Vorlage deaktiviert. GW2/WoW-Wikis und
+Die anderen vier Fremdspiele bleiben ohne geprüfte Vorlage deaktiviert. Die ESO-UI-Quelle
+belegt Optionen, keine Originalgeometrie. Blizzard-Artikel sind erreichbar, ihr Bildhost ist
+noch gesperrt; neue Recherchehosts wurden als unveröffentlichter Entwurf ergänzt. GW2/WoW-Wikis und
 SWTOR-Suche liefern weiterhin HTTP 403; weitere Web-/RSS-Suchen ergaben keine geeignete Vorlage.
 Die ergänzten Netzwerkregeln bleiben erhalten; FFXIV-CDN-Zugriff ist durch HTTP 200 bestätigt.
 

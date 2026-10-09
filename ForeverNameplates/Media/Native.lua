@@ -7,7 +7,7 @@ NS.NativeMedia={
     wow_df_cast_background={atlas="ui-castingbar-background"},
     wow_nameplate_name={font="Fonts\\FRIZQT__.TTF",flags="",shadow={1,-1}},
     wow_classic_name={font="Fonts\\FRIZQT__.TTF",flags="",shadow={1,-1},reactionText=true},
-    wow_nameplate_level={font="Fonts\\FRIZQT__.TTF",flags="",shadow={.64,-.64}},
+    wow_nameplate_level={font="Fonts\\FRIZQT__.TTF",flags="",shadow={.64,-.64},difficulty=true,skullPath="Interface\\TargetingFrame\\UI-TargetingFrame-Skull"},
     -- Arial Narrow is a local fallback, not the original FFXIV font.
     ffxiv_name_label={font="Fonts\\ARIALN.TTF",flags="",shadow={2,-2},outline={1,.84,.68,1}},
     ffxiv_level_label={font="Fonts\\ARIALN.TTF",flags="",shadow={2,-2},outline={1,.84,.68,1},prefix="Lv"},

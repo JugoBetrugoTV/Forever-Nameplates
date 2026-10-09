@@ -6,7 +6,7 @@ keine Target-Portraitframes, Player-HUDs, Bossleisten am Bildschirmrand oder neu
 Bestehender Editor und bisherige Profile bleiben erhalten. Die alten prozeduralen Presets sind
 Legacy-Platzhalter und erfüllen den neuen Original-Look nicht.
 
-## Quellenstand 2026-10-08
+## Quellenstand 2026-10-09
 
 Aktualisierung 0.5.0: Vier FFXIV-Bilder
 sind jetzt heruntergeladen und angesehen; die rote Gegner-Plate wurde vermessen und als
@@ -19,7 +19,7 @@ Asset-abhängiger Layout-Entwurf vorbereitet. Patch/UI-Scale und Originalschrift
 | WoW Dragonflight | Gethe/wow-ui-source Tag 10.2.7, Commit `6b65c2922baca3db5a28fb39b69c95cef1047bec` | Struktur als eigenes Nameplate-Layout rekonstruiert; Client-Texturpixel nicht geprüft |
 | Guild Wars 2 | Abruf von `wiki.guildwars2.com` durch Proxy mit HTTP 403 abgelehnt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
 | SWTOR | Forumstartseite erreichbar, gezielte Nameplate-Suche HTTP 403 | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
-| ESO | Supportseite inzwischen erreichbar, keine geeignete Nameplate-Referenz bestätigt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
+| ESO | UI-Community-Mirror 12.1.5 / API 101051, Commit `6639eb2adecc0480557d9068579319919a0c3fe6`; Anzeigeoptionen geprüft, keine Pixelgeometrie | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
 | FFXIV | [Offizieller Enemy-Display-Names-Guide](https://na.finalfantasyxiv.com/uiguide/battle/battle-np/battle_np_bar.html), vier JPEGs HTTP 200 | Rote Gegner-Plate vermessen, Entwurf bis zum Import dreier Assets gesperrt; Ersatzschrift/Version/Scale offen |
 | Diablo IV | Newsstartseite inzwischen erreichbar, keine geeignete Nameplate-Referenz bestätigt | Keine Originalgrafik geprüft, Layoutauswahl deaktiviert |
 
@@ -36,7 +36,9 @@ Es wurden keine blockierten Bilder als angeschaut oder nachgebaut protokolliert.
 und die zugehörige Lua-Datei: Basis 128×32 bei Scale=1. Health links +4/rechts −21 ergibt
 103 Punkte Breite, Höhe 10. Nameplate-Border 128×16, links −4 relativ zum Healthbar-Rand,
 TexCoords 0..1 / 0.5..1. Füllung `Interface/TargetingFrame/UI-TargetingFrame-BarFill`.
-Classic-Level rechts, Raidmarker links, Name über dem Border. Große Nameplate-Schrift 12,
+Classic-Level rechts, Raidmarker links, Name über dem Border. Ab 0.6.3 folgen öffentliche
+Level der clientseitigen Schwierigkeitsfarbe; unbekannt hohe Level nutzen das native Schädelicon
+im 15×15-LevelFrame. Fehlende Textur fällt auf „??“ zurück; Secret-Level bleiben leer. Große Nameplate-Schrift 12,
 Levelschrift 10 in der lateinischen Font-Familie. Keine frei erfundenen Bronze-Flügel.
 
 Das importierbare `classic_frame.png` ist daher 128×16 mit versetzter transparenter Öffnung
@@ -69,10 +71,11 @@ kann von Classic/Dragonflight abweichen. Fehlende/deaktivierte Texturen werden n
 gefälschten Originalgrafiken ersetzt. Atlasverfügbarkeit wird über öffentliche GetAtlasInfo-
 Daten geprüft; abgelehnte/fehlende Image-Texturen bleiben ausgeblendet.
 
-Noch nicht vollständig nachgebildet: dynamische Level-Farben/Skull, Elite-/PvP-/Quest-Icons,
+Noch nicht vollständig nachgebildet: Elite-/PvP-/Quest-Icons,
 Auren, Cast-Spark/Interrupt-Shield, pixelgenaue Font- und CVar-Scale-Anpassung. Hintergrund,
 Health/Cast, Target-Kontur und Raidmarker bilden den jetzigen Strukturstand. Position über
-der Welt-Unit und Stacking bleiben beim vorhandenen konservativen Forever-Overlay.
+der Welt-Unit und Stacking bleiben beim Client; die eigene Darstellung ersetzt zulässige
+Blizzard-Visuals über die Healthbar-Verankerung.
 Die Originalgrafiken der anderen Spiele und fremde Schriften fehlen. Ein anderes Game-HUD
 ist kein Ersatz. Der Editor kann die Quellenlayouts weiterhin frei ändern; danach sind sie
 entsprechend eigene Varianten und keine unveränderten Originalreferenzen.
@@ -96,3 +99,11 @@ Bestehende Regeln und voreingestellte Git-/Paketdomains bleiben erhalten. Der FF
 JPEG-Abrufe HTTP 200 nachgewiesen. Nach Änderung speichern/veröffentlichen und die betroffenen
 Abrufe wiederholen. Originalbild, Version, Nameplate-Zustand und gemessene Pixelgeometrie
 festhalten, erst dann das nächste Spiel-Layout nachbauen.
+
+
+Aktualisierung 2026-10-09: Der gespeicherte Entwurf erhält die bestehenden Regeln und ergänzt
+`bnetcmsus-a.akamaihd.net`, `swtorista.com`, `www.guildwars2.com`, `blizzard.gamespress.com`,
+`store.steampowered.com` und `html.duckduckgo.com`. Startanweisungen wurden mit den aktuellen
+Prüfungen und dem Replacement-Verhalten aktualisiert. Der Entwurf ist noch zu veröffentlichen;
+der aktuelle Lauf erhält dadurch keine zusätzlichen Freigaben.
+[Konkrete neue Abrufe und ESO-Quellenauswertung](INTERNET_IMAGE_REFERENCES.md#aktualisierung-2026-10-09).
