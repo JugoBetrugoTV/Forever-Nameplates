@@ -37,7 +37,17 @@ function A.Read(unit,config)
     C.auraReason=nil
     return result
 end
-NS.Renderer.Register("auras",function(parent)
+
+local Renderer = NS.Renderer or {registry={}}
+NS.Renderer = Renderer
+if type(Renderer.Register)~="function" then
+    Renderer.Register = function(kind, factory)
+        Renderer.registry = Renderer.registry or {}
+        Renderer.registry[kind] = factory
+    end
+end
+
+Renderer.Register("auras",function(parent)
     local root=CreateFrame("Frame",nil,parent); local slots={}
     -- Allocate bounded slots out of combat during layout construction.
     for i=1,12 do
