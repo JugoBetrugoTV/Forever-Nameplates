@@ -70,12 +70,29 @@ function Compat.LevelColor(level)
     end
     return result
 end
-function Compat.State(unit)
+function Compat.CastInfo(unit)
+    -- Only public name/icon metadata is retained. Timing/interrupt fields are
+    -- deliberately not inspected; durations still go straight to the widget.
+    for i=1,2 do
+        local fn
+        if i==1 then fn=UnitCastingInfo else fn=UnitChannelInfo end
+        if type(fn)=="function" then
+            local ok,name,_,icon=pcall(fn,unit)
+            if ok then
+                if Compat.Secret(name) or type(name)~="string" then name="" end
+                if Compat.Secret(icon) or type(icon)~="number" or icon~=icon or icon<=0 or icon%1~=0 then icon=nil end
+                if name~="" or icon then return name,icon end
+            end
+        end
+    end
+    return ""
+end
+function Compat.State(unit,needs)
     local restricted=C_Secrets and Compat.Public(C_Secrets.ShouldUnitIdentityBeSecret,unit)==true
     local state={name="",level="",healthText="—",castName="",casting=false}
     if not restricted then
-        local name=Compat.Public(UnitName,unit)
-        local level=Compat.Public(UnitLevel,unit)
+        local name=(not needs or needs.name) and Compat.Public(UnitName,unit)
+        local level=(not needs or needs.level) and Compat.Public(UnitLevel,unit)
         local target=Compat.Public(UnitIsUnit,unit,"target")
         if type(name)=="string" then state.name=name end
         if type(level)=="number" then state.level=level end
@@ -96,13 +113,17 @@ function Compat.State(unit)
     local raid=Compat.Public(GetRaidTargetIndex,unit)
     if type(raid)=="number" and raid>=1 and raid<=8 and raid%1==0 then state.raidMarker=raid end
     if type(state.level)~="number" then state.level="" elseif state.level==-1 then state.level="??" end
-    local hp=Compat.Public(UnitHealth,unit)
-    local maximum=Compat.Public(UnitHealthMax,unit)
-    if type(hp)=="number" and type(maximum)=="number" and maximum>0 then
-        state.healthText=string.format("%.0f%%",hp/maximum*100)
+    if not needs or needs.health then
+        local hp=Compat.Public(UnitHealth,unit)
+        local maximum=Compat.Public(UnitHealthMax,unit)
+        if type(hp)=="number" and type(maximum)=="number" and maximum>0 then
+            state.healthText=string.format("%.0f%%",hp/maximum*100)
+        end
     end
-    state.castName=Compat.Public(UnitCastingInfo,unit) or Compat.Public(UnitChannelInfo,unit) or ""
-    state.casting=state.castName~=""
+    if not needs or needs.cast then
+        state.castName,state.castIcon=Compat.CastInfo(unit)
+        state.casting=state.castName~="" or state.castIcon~=nil
+    end
     return state
 end
 function Compat.Cast(bar,unit)

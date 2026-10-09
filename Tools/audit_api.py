@@ -23,7 +23,7 @@ required = {
     "UI-Widgets-Frames/SimpleEditBoxAPI.md": ["SimpleEditBoxAPI.SetFont"],
     "UI-Widgets-Frames/SimpleScriptRegionAPI.md": ["SimpleScriptRegionAPI.GetCenter", "SimpleScriptRegionAPI.GetWidth", "SimpleScriptRegionAPI.IsProtected"],
     "UI-Widgets-Frames/SimpleFontStringAPI.md": ["SimpleFontStringAPI.SetText", "SimpleFontStringAPI.SetFont", "SimpleFontStringAPI.SetShadowColor", "SimpleFontStringAPI.SetShadowOffset"],
-    "Units-Combat-PvP/Unit.md": ["Unit.UnitHealth", "Unit.UnitHealthMax", "Unit.UnitLevel", "Unit.UnitCastingDuration", "Unit.UnitChannelDuration", "Unit.UnitClassBase", "Unit.UnitClassification", "Unit.UnitReaction", "Unit.UnitIsPlayer", "Unit.UnitPlayerControlled"],
+    "Units-Combat-PvP/Unit.md": ["Unit.UnitHealth", "Unit.UnitHealthMax", "Unit.UnitLevel", "Unit.UnitCastingInfo", "Unit.UnitChannelInfo", "Unit.UnitCastingDuration", "Unit.UnitChannelDuration", "Unit.UnitClassBase", "Unit.UnitClassification", "Unit.UnitReaction", "Unit.UnitIsPlayer", "Unit.UnitPlayerControlled"],
 }
 count = 0
 for filename, names in required.items():

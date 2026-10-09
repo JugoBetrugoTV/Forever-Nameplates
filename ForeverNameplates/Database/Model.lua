@@ -1,7 +1,7 @@
 local _, NS = ...
 local Model = {version = 2, maxElements = 64}
 NS.Model = Model
-Model.kinds = {health=true, cast=true, text=true, panel=true, target=true, ornament=true, artwork=true,raid=true,class=true}
+Model.kinds = {health=true, cast=true, text=true, panel=true, target=true, ornament=true, artwork=true,raid=true,class=true,classIcon=true,castIcon=true}
 Model.assets = {classic_frame=true,dragonflight_frame=true,guildwars_frame=true,galactic_frame=true,
     medieval_frame=true,fantasy_frame=true,minimal_frame=true,arena_frame=true,neon_frame=true,
     arcane_frame=true,horde_frame=true,celestial_frame=true,studio_header=true,wow_nameplate_fill=true,wow_classic_nameplate_border=true,wow_nameplate_selection=true,wow_df_cast_background=true,wow_nameplate_name=true,wow_classic_name=true,wow_nameplate_level=true,
@@ -55,6 +55,7 @@ function Model.Validate(layout)
             if type(e[key]) ~= "boolean" then return nil, "Invalid " .. key end
         end
         if not Model.sources[e.source] or not Model.shapes[e.shape] then return nil, "Invalid source or shape" end
+        if (e.kind=="classIcon" and e.source~="class") or (e.kind=="castIcon" and e.source~="cast") then return nil,"Invalid icon source" end
         if type(e.asset)~="string" or (e.asset~="" and not Model.assets[e.asset]) then return nil,"Unknown artwork asset" end
         if type(e.text) ~= "string" or #e.text > 80 or e.text:find("[%c|]") then return nil, "Invalid text" end
         if type(e.color) ~= "table" or getmetatable(e.color) then return nil, "Invalid color" end

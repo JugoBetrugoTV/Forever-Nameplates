@@ -63,6 +63,11 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Reaktions-/Klassifikations-/Zielwechsel im Kampf aktualisieren zulässige bestehende Overlays.
 - [ ] Alle acht Raidmarker: tatsächlicher Atlaspfad, Farbe, Ausschnitt, Rotation und Markerentfernung.
 - [ ] Klassenkürzel und Level-/Klassifikationstexte lassen sich positionieren und skalieren.
+- [ ] + Add component → Class icon: öffentlicher Spieler zeigt passenden nativen Klassenatlas; NPC, geheime/fehlende Klasse und fehlender Atlas zeigen kein altes Icon. Position/Größe/Farbe/Alpha prüfen.
+- [ ] + Add component → Cast icon: Cast und Channel zeigen korrektes Icon; Start/Stop/Delay/Interrupt, fehlende/verweigerte Duration, deaktivierte Bar und Elementreihenfolge hinterlassen kein Icon.
+- [ ] Geheimer Castname mit öffentlichem Icon zeigt Icon und keinen Text; geheimes Icon zeigt keine Ersatzgrafik. Öffentliche FileID und echte Texture-Pixel im Forever-Client prüfen.
+- [ ] Iconlayout speichern, FN2 exportieren/importieren, Undo/Redo, Off/Apply und Pool-/Combat-Wechsel prüfen. Alte Profile behalten ihre bisherigen Elemente.
+- [ ] CPU/Speicher bei 40+ Plates vergleichen; bedarfsgerechte Abfragen sind lokal gezählt, noch kein Client-Performancebeleg.
 - [ ] Recycelte Plates behalten keine Klassenfarbe oder Marker der vorherigen Unit.
 
 ## Live-Rendering und Einschränkungen
@@ -76,13 +81,13 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Fehlender Healthbar-Aufbau erhält begrenzte Retries; Entfernung/Off verhindert spätes Wiederanheften.
 - [ ] Geheime IsShown-/Alpha-Ergebnisse und verweigerte Hooks erzeugen sauberen Fallback ohne Lua-/Taint-Fehler.
 
-- [ ] Update von ≤0.5.0 auf 0.6.3 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
+- [ ] Update von ≤0.5.0 auf 0.7.0 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
 - [ ] Update von 0.6.0: ein gespeichertes Off bleibt abgeschaltet.
 - [ ] `/fnp apply` und Studio-Anwenden-Button ändern die sichtbare Plate direkt; Healthbar-Breite/X ändern und vergleichen.
 - [ ] `/fnp off` und erneutes `/reload` bleiben abgeschaltet; Apply aktiviert wieder.
 - [ ] Diagnose aktiviert nur auf der erwarteten Forever-Schnittstelle die Anwendung.
 - [ ] Eigene Plate sitzt an der Blizzard-Healthbar; nur eine Darstellung sichtbar, Klickfläche/Stacking weiter bedienbar.
-- [ ] `/fnp status`: Version 0.6.3, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
+- [ ] `/fnp status`: Version 0.7.0, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
 - [ ] Blizzard-Alpha-Updates bei Zielwechsel/Entfernung/Fading erzeugen keine doppelte Plate.
 - [ ] UnitFrame wird vor/nach eigenem ADDED-Handler erstellt: begrenzter Retry hängt korrekt an.
 - [ ] UnitFrame unabhängig von Basis recycelt: keine unsichtbare Folge-Unit oder alte eigene Plate.

@@ -215,7 +215,7 @@ function Engine.Update(unit)
     if not visual or not view.visual or visual~=view.visual.frame or anchor~=view.anchor then
         Engine.Add(unit); return
     end
-    local ok,ready=pcall(function() return R.Update(view,C.State(unit),unit) end)
+    local ok,ready=pcall(function() return R.Update(view,C.State(unit,view.needs),unit) end)
     Engine.stats.updates=Engine.stats.updates+1
     if not ok or not ready then fallback(view,"Custom rendering unavailable; Blizzard restored"); return end
     -- Suppression starts only after a successful custom render. Hidden-by-rule is

@@ -6,6 +6,7 @@ Catalog.entries = {
     {id="text", label="Text"}, {id="panel", label="Background panel"},
     {id="target", label="Target brackets"}, {id="ornament", label="Decoration"},
     {id="artwork", label="Imported artwork"}, {id="raid",label="Raid marker"}, {id="class",label="Class badge"},
+    {id="classIcon",label="Class icon"}, {id="castIcon",label="Cast icon"},
 }
 function Catalog.Assets(kind)
     local assets={}
@@ -35,6 +36,10 @@ function Catalog.Create(kind,id)
     if not NS.Model.kinds[kind] then return nil,"Unknown component" end
     local width,height,color,extra=160,12,{.75,.58,.3,1},{}
     if kind=="raid" then width=24; height=24; color={1,1,1,1}; extra.layer=8
+    elseif kind=="classIcon" or kind=="castIcon" then
+        width=20; height=20; color={1,1,1,1}; extra.layer=8
+        extra.source=kind=="classIcon" and "class" or "cast"
+        extra.x=-100; extra.y=kind=="castIcon" and -16 or 0
     elseif kind=="class" then width=32; height=18; extra.source="class"; extra.layer=8
     elseif kind=="cast" then height=6; extra.source="cast"
     elseif kind=="text" then height=20; color={.92,.9,.81,1}; extra.text="Custom text"; extra.layer=7

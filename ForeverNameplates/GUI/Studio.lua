@@ -18,6 +18,8 @@ for i,state in ipairs(Studio.scenarios) do
     state.reaction=i==4 and 5 or 3; state.classification=i==2 and "elite" or i==3 and "worldboss" or "normal"
     state.class=state.isPlayer and (i==4 and "PRIEST" or "ROGUE") or nil
     state.raidMarker=i==2 and 8 or nil
+    -- Simulated public spell FileID, not a sampled cast or imported artwork.
+    state.castIcon=state.casting and 136096 or nil
 end
 local extraScenarios={
     {name="Friendly NPC • Keeper",isPlayer=false,controlled=false,reaction=5,classification="normal"},
@@ -393,8 +395,8 @@ function Studio.CreateRules(page)
     ui.result=W.Label(page,"",11,0,-378)
     W.Label(page,"Priority: unit category → elite / rare / boss → target / other.\n"..
         "Each enabled rule replaces visibility, opacity and scale; Inherit keeps the earlier color.\n"..
-        "Rules affect the Forever overlay; the default client plate is separate.\n"..
-        "Add Raid marker or Class badge in Layout Studio. Text can display level / classification.",11,0,-412)
+        "Rules control the applied plate. /fnp off restores Blizzard visuals.\n"..
+        "Add Raid marker, Class badge, Class icon or Cast icon in Layout Studio.",11,0,-412)
     W.Button(page,NS.L.undo,0,-514,100,function() attempt(Studio.session:Undo()); Studio.Refresh() end)
     W.Button(page,NS.L.redo,110,-514,100,function() attempt(Studio.session:Redo()); Studio.Refresh() end)
 end

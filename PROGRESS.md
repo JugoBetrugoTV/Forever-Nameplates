@@ -1,10 +1,19 @@
-# Forever Nameplates — Entwicklungsstand 0.6.3
+# Forever Nameplates — Entwicklungsstand 0.7.0
 
 Stand: 2026-10-09. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
 **Forever Nameplates** ersetzt; technisch lautet der Addon-Ordner `ForeverNameplates`.
 
 ## Implementiert
+
+- 0.7.0: [Plater, KuiNameplates und Threat Plates verglichen](docs/ADDON_COMPARISON.md),
+  Upstreams gepinnt; keine fremden Dateien/Grafiken/Dependencies übernommen.
+- 0.7.0: Optionale Class-icon-/Cast-icon-Komponenten im Editor, frei positionierbar/skalierbar,
+  Undo/Redo/FN2-fähig. Öffentliche native Klassenatlanten und Cast-/Channel-FileIDs;
+  geheime/fehlende/abgelehnte Icons bleiben verborgen. Casticons folgen der sichtbaren Castbar.
+- 0.7.0: Name/Level/Healthtext/Cast-Metadaten nur nach aktivem Layoutbedarf; Regeln bleiben
+  frisch, ohne Identitäts-/Healthcache. Classic fragt Health/MaxHealth einmal statt zweimal
+  pro Update ab und keine Cast-Metadaten. Keine behauptete FPS-Messung.
 
 - 0.6.3: Classic-Level folgen öffentlichen `GetCreatureDifficultyColor`-Farben und wechseln
   bei öffentlich unbekannt hohem Level zum nativen Schädelicon. Fehlende/abgelehnte Textur
@@ -79,7 +88,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Klassen-/Reaktionsfarben, konfigurierbare Friendly/Neutral/Hostile-Palette und 12 Unit-Regeln
   für Sichtbarkeit, Alpha, Skalierung und Farbmodus; Priorität und Unknown-Fallback explizit.
 - Raidmarker (vorhandene Client-Textur, kein kopiertes Asset), farbige Klassenkürzel sowie
-  Level-/Klassifikationstexte; Klassenicons bleiben offen.
+  Level-/Klassifikationstexte; zusätzliche native Class-/Casticons ab 0.7.0.
 - Account-/Charakterprofile, Duplizieren/Umbenennen, bestätigtes Löschen/Factory-Reset,
   Default-Fallback aller betroffenen Charaktere, Datenversion 2 und explizite v0/v1-Migration ohne Änderung der alten Darstellung.
 - Komprimierte, validierte FN2-Share-Codes inklusive Regeln; FN1-Import weiter unterstützt.
@@ -97,7 +106,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **188 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **212 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -131,8 +140,10 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 - Zusätzlich zwei zunächst scheiternde Cast-Dekorations-Regressionsfälle: Reihenfolge,
   aktive/inaktive Vorschau, Live-Duration vorhanden/fehlend, verweigerte Weitergabe,
   deaktivierte Castbar und eigenständiger Casttext ohne Bar.
-- Version 0.6.3 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
-- 48 untersuchte API-Signaturen gegen den Forever-Export geprüft.
+- 24 zusätzliche Fälle für optionale Icons, Cast-/Channel-Metadaten, Secret-Werte,
+  Textur-/Atlas-Fehler, Pool-/Combat-Reuse, Editor/Sharing und bedarfsgerechte API-Abfragen.
+- Version 0.7.0 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- 50 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.
   Diese Messung belegt **keine** realen FPS, CPU- oder Speicherwerte im Spiel.

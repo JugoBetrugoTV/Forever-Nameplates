@@ -1,6 +1,6 @@
-# Offene Punkte — 2026-10-09, Version 0.6.3
+# Offene Punkte — 2026-10-09, Version 0.7.0
 
-188 lokale Tests bestehen. Hier läuft kein WoW-Client: Das belegt lokale Logik,
+212 lokale Tests bestehen. Hier läuft kein WoW-Client: Das belegt lokale Logik,
 keine realen Combat-Freigaben, Texturpixel, FPS oder fehlerfreie Ingame-Nutzung.
 Die jüngsten Korrekturen sind im Client noch nicht nachgetestet.
 
@@ -26,8 +26,12 @@ noch nicht gemeldet. Die offenen Punkte unten sind keine pauschale Liste bestät
   Implementierung, kein Beleg dafür, dass der Client jede neue ungeschützte Erstellung verbietet.
 - **Combat/Taint und Pool-Recycling:** Alpha-/Sichtbarkeits-Posthooks, Entfernung, Fallback,
   Ziel-/Zonenwechsel sowie Wiederherstellung unter echten Client-Beschränkungen prüfen.
+- **Optionale Icons:** Native Klassenatlanten, Cast-/Channel-FileIDs, Stop/Interrupt und
+  Poolwechsel im Forever-Client prüfen. Fehlender Atlas/Secret-Icon blendet die Komponente aus.
+  [Addonvergleich und neue Komponenten](ADDON_COMPARISON.md).
 - **Casts/Channels:** Start, Delay, Stop, Interrupt und Channel-Ende müssen im Client geprüft
-  werden. Die dokumentierten Duration-Rückgaben allein beweisen nicht, wann ein tatsächlicher
+  werden. Channels verwenden bisher die dokumentierte Standard-Timerrichtung; Abgleich
+  von ElapsedTime/RemainingTime steht aus. Die dokumentierten Duration-Rückgaben allein beweisen nicht, wann ein tatsächlicher
   Client kein nutzbares Objekt mehr liefert; es gibt keine eigene geheime Timing-Arithmetik.
 - **Daten und Last:** SavedVariables nach kaltem Neustart prüfen. Das Kit berichtet einen
   Beta-Ladefehler, hier nicht am Client bestätigt. Externen Share-Code behalten. CPU/FPS und
@@ -62,7 +66,8 @@ konnten hier weiterhin nicht heruntergeladen oder geprüft werden.
 ## Noch nicht implementiert
 
 - Maskierte runde/gebogene Health-Füllungen; derzeit sind Health-/Castbars rechteckige StatusBars.
-- Grafische Klassenicons, Casticons und Questmarker; Klassenmarker sind aktuell Textkürzel.
+- Questmarker, Cast-Spark und Interrupt-Shield; Class-/Casticons sind ab 0.7.0 als optionale
+  Komponenten implementiert, noch nicht im Forever-Client abgenommen.
 - Freie Ankergruppen und Animationen; zusätzliche Details sollen konkrete Original-Nameplates abbilden.
 - Vollständige deutsche Übersetzung; Teile des Editors und der Diagnose sind weiterhin Englisch.
 - Eigene exakte Threat-/Aura-Auswertung: nicht implementiert, Client-/Secret-Grenzen müssen berücksichtigt werden.

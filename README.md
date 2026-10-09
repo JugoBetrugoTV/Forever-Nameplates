@@ -1,7 +1,7 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.6.3**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.7.0**, kein fertig poliertes Release.
 
 Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
 den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
@@ -31,6 +31,12 @@ Dragonflight-Layouts. [Belegte Korrekturen, offene Client-Prüfungen und fehlend
 die Schwierigkeitsfarbe des Clients, unbekannt hohe Level das native Schädelicon. Fehlt die
 Textur, erscheint „??“; geheime Level bleiben ausgeblendet. Änderungen des Spielerlevels
 aktualisieren die Farben ereignisbasiert. Der visuelle Client-Abgleich steht noch aus.
+
+**0.7.0** ergänzt frei platzierbare **Casticons und grafische Klassenicons** aus öffentlichen
+Clientressourcen. Unter **+ Add component → Cast icon / Class icon** hinzufügen. Casticons
+folgen der sichtbaren Castbar; geheime oder fehlende Icons bleiben ausgeblendet. Nicht benötigte
+Healthtext-, Cast-, Namens- und Levelabfragen entfallen. Im Classic-Layout halbiert das die
+Health-API-Abfragen pro Update, ohne Werte zu cachen. [Addonvergleich und Messung](docs/ADDON_COMPARISON.md).
 
 ## Designziel: ausschließlich Nameplates aus sieben Spielen
 
@@ -116,7 +122,7 @@ Die Oberfläche schließt im Kampf. Nameplates müssen in den Spieleinstellungen
 **Restore pending / Hide pending** zählen momentan nicht zulässige Wiederherstellungen;
 sie werden außerhalb des Kampfes erneut geprüft. Ohne sichtbare Units ist Applied=0 normal.
 Falls weiterhin nur Blizzard erscheint: Status bei sichtbarer Unit melden, andere Nameplate-Addons
-zum Vergleich deaktivieren und prüfen, ob Version **0.6.3** tatsächlich geladen wurde.
+zum Vergleich deaktivieren und prüfen, ob Version **0.7.0** tatsächlich geladen wurde.
 
 Im Studio öffnet **+ Add component** den Elementkatalog. Versteckte/gesperrte Elemente
 lassen sich im Element-Dropdown auswählen. Der goldene Eckgriff verändert die Größe bei
@@ -133,11 +139,14 @@ die zuvor gewählte Farbe. Regeln sind zunächst deaktiviert, damit alte Layouts
 Bei geheimer oder fehlender Identität wird **Unknown** verwendet; unbekannter Zielstatus zählt
 nicht als „Other units“. Die Vorschau simuliert diese Fälle. Bei erfolgreich angewandter Live-Plate versteckt eine
 Sichtbarkeitsregel auch die Blizzard-Darstellung; `/fnp off` stellt sie wieder her.
-Im Komponenten-Katalog stehen **Raid marker** und **Class badge** zur Verfügung;
-Klassenmarker sind farbige Kürzel, eigene Klassenicons sind noch nicht enthalten.
+Im Komponenten-Katalog stehen **Raid marker**, **Class badge**, **Class icon** und **Cast icon**
+zur Verfügung. Klassenkürzel und grafische Klassenicons sind getrennte Komponenten. Icons
+verwenden Ressourcen des Clients, benötigen keine importierten PNGs und ändern Originalvorlagen
+nicht automatisch. Bei fehlendem Klassenatlas bleibt das Icon verborgen.
 Neue Share-Codes beginnen mit `FN2:` und benötigen mindestens Version 0.3.0 für den Import.
 Alte `FN1:`-Codes bleiben importierbar. Neue native WoW-Layouts mit ihren Asset-IDs
-und Outline benötigen mindestens 0.4.0 zum Import. Profile und Layouts werden auf Datenversion 2 migriert.
+und Outline benötigen mindestens 0.4.0 zum Import. Layouts mit `classIcon`/`castIcon`
+benötigen mindestens 0.7.0; ältere Layouts bleiben lesbar. Profile und Layouts werden auf Datenversion 2 migriert.
 
 Auf der Profilseite schützt eine Rückfrage vor Löschen und vollständigem Zurücksetzen.
 `Default` ist nicht löschbar. Charaktere eines gelöschten Profils werden auf `Default` umgestellt.

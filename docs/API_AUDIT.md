@@ -1,5 +1,45 @@
 # Forever API-Audit — 2026-10-09
 
+## Bedarfsgerechte Abfragen und optionale Icons ab 0.7.0
+
+[Verglichene Addons, Pins und Umsetzung](ADDON_COMPARISON.md). Keine fremden Dateien oder
+Spielgrafiken wurden übernommen. `UnitCastingInfo` und `UnitChannelInfo` werden nun zusätzlich
+von `Tools/audit_api.py` gegen die Forever-Referenz geprüft: insgesamt 50 Signaturen.
+Beide liefern `textureID` als dritten Wert (`fileID`). Der Adapter verwendet nur öffentliche
+positive ganzzahlige FileIDs und öffentliche Namen. Start-/Endzeiten, Spell-ID, Interruptstatus
+und CastGUID werden nicht ausgewertet. Fehlende/abgelehnte APIs sind optional; kein Lookup
+oder Cache zur Wiederherstellung geheimer Metadaten. Ein öffentlicher Iconwert kann bei
+geheimem Namen angezeigt werden, der Text bleibt leer. Timer-Forwarding bleibt unverändert.
+
+**Dokumentationsabweichung, im Client ungeklärt:** Die generierte `SetTexture`-Signatur nennt
+für `textureAsset` ausschließlich `cstring`, während Cast-/Channel-Metadaten `fileID` liefern
+und die untersuchten modernen Addons diese numerischen IDs direkt an Texturen geben.
+Unser optionaler Aufruf verwendet die öffentliche numerische FileID unter `pcall` und
+prüft den booleschen Erfolg. Der Mock akzeptiert FileIDs; das beweist keine Annahme im
+Forever-Client. Bei Ablehnung bleibt das Icon verborgen, ohne einen geheimen Wert über
+einen alternativen Lookup zu rekonstruieren.
+
+`classIcon` benutzt bei öffentlicher Spielerklasse den Atlas `classicon-<kleingeschriebener Token>`.
+Der Name stammt aus `Blizzard_SharedXML/SharedConstants.lua` der allgemeinen Mainline-Referenz
+`09b9db7948abc9b9648dedaab51eb0cf3ee67b31`, nicht aus einem tatsächlichen Forever-Atlasexport.
+Öffentliche `C_Texture.GetAtlasInfo`-Verfügbarkeit und erlaubter `SetAtlas`-Aufruf werden geprüft;
+sonst bleibt das Icon verborgen. `castIcon` prüft den booleschen `SetTexture`-Erfolg ebenfalls
+auf öffentlich `true`. Gepoolte Icon-Texturen werden bei Apply zurückgesetzt; beim Update
+werden alte Icons vor möglichem Fehler verborgen. Casticons folgen im zweiten Pass der
+sichtbaren Castbar, unabhängig von Elementreihenfolge; ohne Bar dem öffentlichen Castzustand.
+Ein fehlendes optionales Icon führt nicht zum Fallback der gesamten Health-Darstellung.
+
+`Renderer.Apply` erfasst aktive Textquellen/Castattachments als Layoutbedarf, `Compat.State`
+überspringt unbenötigte Name-/Level-/Healthtext-/Cast-Metadatenabfragen. Regeln prüfen Identität
+weiter bei jedem Update; kein Identitäts- oder Secret-Cache. Direkte Health-Weitergabe bleibt
+bestehen. Classic ohne Healthtext braucht einmal Health/MaxHealth statt zweimal pro Update
+und keine Cast-Metadaten. Ein eigenständiger Cast-Hintergrund behält seine Metadatenabfrage.
+24 neue Mockfälle, insgesamt 212 Tests; reale CPU/FPS/Combat/Taint bleiben offen.
+
+SavedVariables/FN2 bleiben Schema 2, FN1 bleibt importierbar. Neue Komponenten erweitern die
+Kind-Whitelist, verwenden bestehende Felder und benötigen beim Import mindestens 0.7.0;
+ältere Clients lehnen diese unbekannten Komponenten ab. Bestehende Layouts werden nicht geändert.
+
 ## Classic-Level ab 0.6.3
 
 Die Look-Referenz ist `CompactUnitFrame_UpdateLevel` aus Classic 1.15.8,
@@ -13,7 +53,7 @@ kein gemessener Original-Pixelcrop. Keine Spielgrafik wurde ins Addon kopiert.
 
 `UnitLevel` und `PLAYER_LEVEL_UP` sind in der Forever-Dokumentation vorhanden.
 `GetCreatureDifficultyColor` steht im Forever-Kit-Funktionsexport, hat aber keine eigenständige
-generierte Signatur. `Tools/audit_api.py` prüft 48 recherchierte Signaturen sowie die
+generierte Signatur. `Tools/audit_api.py` prüft inzwischen 50 recherchierte Signaturen sowie die
 Export-Präsenz des optionalen Helpers. Seine tatsächliche Verfügbarkeit, Farbrückgaben und
 Combat-Freigaben müssen im Forever-Client geprüft werden.
 
@@ -215,7 +255,7 @@ Drag-Skalierung und vier parallel angezeigte simulierte Units. `SimpleFrameAPI.S
 begrenzt Canvas und Sandbox-Karten; `SimpleButtonAPI.IsEnabled` sichert deaktivierte Menüeinträge.
 Beide Methoden sind in der Forever-Referenz dokumentiert und im Widget-Mock abgebildet.
 Freie Ankergruppen,
-Maskenformen, grafische Klassenicons, Questmarker, Casticons, Threat,
+Maskenformen, Questmarker, Cast-Spark/Interrupt-Shield, Threat,
 vollständige Localization, Animationen und die restlichen Spezialseiten folgen separat.
 
 ## Regeln und Marker ab 0.3.0
@@ -240,9 +280,9 @@ aber keine eigenständige Signatur. Der Renderer delegiert den Ausschnitt an die
 fehlt er oder wird der Aufruf abgelehnt, bleibt der Marker ausgeblendet. Die allgemeine Mainline-
 FrameXML-Referenz benutzt ein 4×4-Sprite-Raster, keinen 4×2-Atlas; dieses Raster wird ausschließlich
 im Mock simuliert, nicht im Addon festgeschrieben. Der Dateipfad, tatsächliche Helper-Implementierung,
-Orientierung und alle acht Ausschnitte gehören zur Ingame-Prüfung. Klassenmarker sind
-derzeit prozedurale, farbige Textkürzel; eigenständige Klassenicon-Artwork-Aufträge folgen erst mit
-einer festgelegten grafischen Komponente. Die vorhandenen 13 Grafikaufträge bleiben unverändert.
+Orientierung und alle acht Ausschnitte gehören zur Ingame-Prüfung. Class badge bleibt ein
+farbiges Textkürzel; Class icon ist ab 0.7.0 eine separate native Atlas-Komponente. Die aktuellen
+neun Nameplate-PNG-Aufträge bleiben unverändert; keine zusätzlichen Icon-PNGs nötig.
 
 ## Ingame noch zu klären
 
