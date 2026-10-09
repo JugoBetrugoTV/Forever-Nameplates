@@ -144,6 +144,7 @@ function Renderer.Update(view,state,unit)
     view.root:SetShown(effect.visible)
     if not effect.visible then return true end
     local ready=true
+    local hasCast,castShown=false,false
     for _,part in ipairs(view.parts) do
         local e=part.element
         local show=e.enabled
@@ -195,7 +196,18 @@ function Renderer.Update(view,state,unit)
             part.text:SetText(value or "")
             for _,outline in ipairs(part.outlines or {}) do outline:SetText(value or "") end
         end
-        part.frame:SetShown(show==true)
+        part.shown=show==true
+        part.frame:SetShown(part.shown)
+        if part.kind=="cast" then hasCast=true; castShown=castShown or part.shown end
+    end
+    -- Resolve attachments after all bars, independent of element order. Native
+    -- cast backgrounds in existing saved layouts still have source="static".
+    local showCast=castShown or (not hasCast and state.casting==true)
+    for _,part in ipairs(view.parts) do
+        local e=part.element
+        if e.kind~="cast" and (e.source=="cast" or e.asset=="wow_df_cast_background") then
+            part.frame:SetShown(part.shown and showCast)
+        end
     end
     return ready
 end

@@ -1,13 +1,19 @@
-Forever Nameplates 0.2.0 - development build
+Forever Nameplates 0.6.2 - development build
 
 Install this folder into _classic_beta_/Interface/AddOns/ForeverNameplates.
 Use /fnp or /forevernameplates to open the studio.
-Enable experimental live overlays under Diagnostics; default nameplates remain visible.
+After updating, use /reload, then /fnp apply outside combat to apply your current layout.
+Live application is enabled on first upgrade from the old preview mode; later opt-outs persist.
+Use /fnp off to restore Blizzard visuals, or /fnp status to inspect application/fallback reasons.
 
 This build has been checked in a Lua 5.1 widget simulator, NOT in a running game client.
 Forever Beta 1.60.1, Interface 16001 is the intended target. Protected/forbidden nameplates
-are skipped and new overlays during combat are deferred until combat ends.
-Original artwork is pending; current layouts use procedural placeholders.
+are skipped and first widget creation during combat is deferred until combat ends.
+Successful live application suppresses the permitted Blizzard UnitFrame; removal, off and
+rendering failure restore its last public alpha. Client visibility and public fades are respected.
+Classic/Dragonflight source drafts use client resources; the old presets are placeholders.
+FFXIV requires three imported assets. The other four games still lack verified nameplate references.
+No layout has a confirmed 1:1 comparison in the Forever client.
 
 Beta SavedVariables loading may be broken on your client build. Export your profile and
 keep the share code in an external text file before restarting the client.

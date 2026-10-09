@@ -1,5 +1,17 @@
 # Forever API-Audit — 2026-10-09
 
+## Cast-Dekorationen ab 0.6.2
+
+Codeprüfung und zwei zunächst scheiternde lokale Tests belegten, dass der native Dragonflight-
+Cast-Hintergrund in inaktiven Zuständen sichtbar blieb und castgebundener Text unabhängig
+von der Timer-Weitergabe angezeigt wurde. Ein zweiter Durchlauf bindet Casttext und native
+Cast-Hintergründe an mindestens eine tatsächlich angezeigte Castbar, unabhängig von Reihenfolge.
+Bereits gespeicherte Hintergründe mit `source="static"` werden über ihre vorhandene native
+Asset-ID erkannt; kein neues Datenfeld oder Share-Schema. Gibt es überhaupt keine Castbar,
+kann eigenständiger Casttext weiter den öffentlichen simulierten/normalisierten Castzustand nutzen.
+Geheime Spellnamen werden nicht für zusätzliche Cast-Erkennung ausgewertet. Start/Stop/Interrupt
+und die tatsächliche Lebensdauer von Duration-Objekten bleiben im Client zu prüfen.
+
 ## Live-Wechsel ab 0.6.1
 
 Codeprüfung und neun zunächst scheiternde lokale Regressionstests belegten zusätzliche Probleme

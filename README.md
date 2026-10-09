@@ -1,7 +1,7 @@
 # Forever Nameplates
 
 Ein visueller Nameplate-Designer für **WoW Forever Beta 1.60.1 / Interface 16001**.
-Dies ist der erweiterte Entwicklungsstand **0.6.1**, kein fertig poliertes Release.
+Dies ist der erweiterte Entwicklungsstand **0.6.2**, kein fertig poliertes Release.
 
 Die gemeldeten `SetFont`-/Inspector-Fehler sind korrigiert. Der Minimap-Button öffnet/schließt
 den Designer per Linksklick; Rechtsklick öffnet die Diagnose. Den Button am Minimap-Rand ziehen,
@@ -22,6 +22,10 @@ Profil-Deckkraft; Show/Hide/SetShown des UnitFrame werden auf die eigene Plate �
 ohne vom Client ausgeblendete Plates wieder einzublenden. Zurückgestellte Units werden nach
 Kampfende unabhängig von öffentlichen Frame-Unit-Feldern erneut geprüft. Eine verspätet
 angelegte Healthbar erhält dieselben maximal drei Aufbau-Retries wie ein verspäteter UnitFrame.
+
+**0.6.2** korrigiert stehen bleibende Cast-Hintergründe und Casttexte: Sie folgen dem
+sichtbaren Castbalken, unabhängig von Elementreihenfolge und auch in alten gespeicherten
+Dragonflight-Layouts. [Belegte Korrekturen, offene Client-Prüfungen und fehlende Designs](docs/KNOWN_ISSUES.md).
 
 ## Designziel: ausschließlich Nameplates aus sieben Spielen
 
@@ -107,7 +111,7 @@ Die Oberfläche schließt im Kampf. Nameplates müssen in den Spieleinstellungen
 **Restore pending / Hide pending** zählen momentan nicht zulässige Wiederherstellungen;
 sie werden außerhalb des Kampfes erneut geprüft. Ohne sichtbare Units ist Applied=0 normal.
 Falls weiterhin nur Blizzard erscheint: Status bei sichtbarer Unit melden, andere Nameplate-Addons
-zum Vergleich deaktivieren und prüfen, ob Version **0.6.1** tatsächlich geladen wurde.
+zum Vergleich deaktivieren und prüfen, ob Version **0.6.2** tatsächlich geladen wurde.
 
 Im Studio öffnet **+ Add component** den Elementkatalog. Versteckte/gesperrte Elemente
 lassen sich im Element-Dropdown auswählen. Der goldene Eckgriff verändert die Größe bei

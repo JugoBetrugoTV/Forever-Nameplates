@@ -115,15 +115,66 @@ def test_game_nameplate_picker_applies_undo_and_disables_missing_references(runt
 def test_native_cast_atlas_requires_public_availability_and_preserves_atlas_crop(runtime):
     runtime.execute('''
         local view=NS.Renderer.Create(UIParent); local layout=NS.GameNameplates[2].layout
-        NS.Renderer.Apply(view,layout); NS.Renderer.Update(view,{})
+        NS.Renderer.Apply(view,layout); NS.Renderer.Update(view,{casting=true})
         local part=view.parts[#view.parts]; assert(not part.frame:IsShown())
         Mock.atlases={["ui-castingbar-background"]={width=64,height=64}}
-        NS.Renderer.Apply(view,layout); NS.Renderer.Update(view,{})
+        NS.Renderer.Apply(view,layout); NS.Renderer.Update(view,{casting=true})
         part=view.parts[#view.parts]
         assert(part.frame:IsShown() and part.image.atlas=="ui-castingbar-background" and part.image.atlasReset)
         C_Texture.GetAtlasInfo=function() return Mock.Secret() end
-        NS.Renderer.Apply(view,layout); NS.Renderer.Update(view,{})
+        NS.Renderer.Apply(view,layout); NS.Renderer.Update(view,{casting=true})
         assert(not view.parts[#view.parts].frame:IsShown())
+    ''')
+
+
+def test_cast_background_and_text_follow_castbar_in_any_element_order(runtime):
+    runtime.execute('''
+        Mock.atlases={["ui-castingbar-background"]={width=84,height=8}}
+        local layout=NS.Copy(NS.GameNameplates[2].layout)
+        local background=table.remove(layout.elements); table.insert(layout.elements,1,background)
+        assert(background.source=="static") -- Also support already saved 0.6.1 profiles.
+        local view=NS.Renderer.Create(UIParent); NS.Renderer.Apply(view,layout)
+        local function parts()
+            local cast,text,back
+            for _,p in ipairs(view.parts) do
+                if p.kind=="cast" then cast=p end
+                if p.element.id=="castText" then text=p end
+                if p.element.id=="castBack" then back=p end
+            end
+            return cast,text,back
+        end
+        local cast,text,back=parts()
+        NS.Renderer.Update(view,{casting=false,castName=""})
+        assert(not cast.frame:IsShown() and not text.frame:IsShown() and not back.frame:IsShown())
+        NS.Renderer.Update(view,{casting=true,castName="Fireball"})
+        assert(cast.frame:IsShown() and text.frame:IsShown() and back.frame:IsShown())
+        Mock.AddUnit("nameplate1"); Mock.units.nameplate1.castName="Fireball"
+        NS.Renderer.Update(view,NS.Compat.State("nameplate1"),"nameplate1")
+        assert(not cast.frame:IsShown() and not text.frame:IsShown() and not back.frame:IsShown())
+        Mock.units.nameplate1.duration={timer=true}
+        NS.Renderer.Update(view,NS.Compat.State("nameplate1"),"nameplate1")
+        assert(cast.frame:IsShown() and text.frame:IsShown() and back.frame:IsShown())
+        cast.bar.SetTimerDuration=function() error("Timer forwarding denied") end
+        NS.Renderer.Update(view,NS.Compat.State("nameplate1"),"nameplate1")
+        assert(not cast.frame:IsShown() and not text.frame:IsShown() and not back.frame:IsShown())
+    ''')
+
+
+def test_cast_decorations_hide_with_disabled_castbar_but_standalone_cast_text_works(runtime):
+    runtime.execute('''
+        Mock.atlases={["ui-castingbar-background"]={width=84,height=8}}
+        local layout=NS.Copy(NS.GameNameplates[2].layout)
+        for _,e in ipairs(layout.elements) do if e.kind=="cast" then e.enabled=false end end
+        local view=NS.Renderer.Create(UIParent); NS.Renderer.Apply(view,layout)
+        NS.Renderer.Update(view,{casting=true,castName="Fireball"})
+        for _,p in ipairs(view.parts) do
+            if p.element.source=="cast" or p.element.id=="castBack" then assert(not p.frame:IsShown()) end
+        end
+        for i=#layout.elements,1,-1 do
+            if layout.elements[i].kind=="cast" or layout.elements[i].id=="castBack" then table.remove(layout.elements,i) end
+        end
+        NS.Renderer.Apply(view,layout); NS.Renderer.Update(view,{casting=true,castName="Fireball"})
+        for _,p in ipairs(view.parts) do if p.element.id=="castText" then assert(p.frame:IsShown()) end end
     ''')
 
 

@@ -1,10 +1,18 @@
-# Forever Nameplates — Entwicklungsstand 0.6.1
+# Forever Nameplates — Entwicklungsstand 0.6.2
 
 Stand: 2026-10-09. **Erweiterter lokal geprüfter Kern, kein abgeschlossenes Premium-Release.**
 Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durch
 **Forever Nameplates** ersetzt; technisch lautet der Addon-Ordner `ForeverNameplates`.
 
 ## Implementiert
+
+- 0.6.2: Dragonflight-Cast-Hintergrund und castgebundener Text folgen der sichtbaren Castbar,
+  auch bei verweigerter Timer-Weitergabe, deaktivierter Bar und beliebiger Elementreihenfolge.
+  Gespeicherte statische Native-Cast-Hintergründe werden ohne Datenmigration berücksichtigt.
+  Eigenständiger Casttext ohne Castbar bleibt anhand öffentlichen Castzustands nutzbar.
+- 0.6.2: Installierte README auf tatsächliches Replacement-Verhalten aktualisiert;
+  [Offene Punkte](docs/KNOWN_ISSUES.md) unterscheidet belegte Korrekturen, Laufzeitgrenzen,
+  ungeprüftes Clientverhalten und ausstehende Originaldesigns/Features.
 
 - 0.6.1: Token-/Basiswechsel lösen alte Anbindungen vor jeder Combat-Zurückstellung; Health-Events
   prüfen die aktuelle öffentliche Basis. Entfernte Units ohne REMOVED-Event verlieren ihre alten Views.
@@ -81,7 +89,7 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
 
 ## Geprüft und Grenzen der Evidenz
 
-- **175 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
+- **177 automatisierte Tests**, Lua 5.1 via Lupa sowie Python/Pillow.
 - TOCs/Lua-Syntax, voller Addon- und GUI-Ladeablauf, gültige/ungültige Presets,
   Share-Roundtrips/Malformation/Größenlimits, Profile/Migration, atomare Editoränderungen,
   Undo/Redo, Drag, Secret-Health-Forwarding, verweigerte Widgets, geschützte/verbotene Basen,
@@ -112,7 +120,10 @@ Der Name „Jugo Nameplate Studio“ aus dem ursprünglichen Briefing wurde durc
   Combat-Rebinding, verlorene REMOVED-Events, hohe Pending-Tokens ohne Unit-Felder, späte Healthbars,
   Show/Hide und native SetShown-Varianten, Alpha-Multiplikation, Poolwechsel vor dem nächsten ADDED,
   Secret-Alpha/Sichtbarkeit, fehlgeschlagene Hook-Installation und einzelne Anwendung pro Refresh.
-- Version 0.6.1 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
+- Zusätzlich zwei zunächst scheiternde Cast-Dekorations-Regressionsfälle: Reihenfolge,
+  aktive/inaktive Vorschau, Live-Duration vorhanden/fehlend, verweigerte Weitergabe,
+  deaktivierte Castbar und eigenständiger Casttext ohne Bar.
+- Version 0.6.2 paketiert und ZIP-Inhalte gegen aktuelle Quellen und TOC-Ladefolge geprüft.
 - 47 untersuchte API-Signaturen gegen den Forever-Export geprüft.
 - Library-Dateien aus gepinnten Quellen erneut heruntergeladen und per SHA-256 verifiziert.
 - Benchmark in Widget-Simulation: 40 Plates, 4.000 Ereignis-Updates, keine neuen Widgetobjekte.

@@ -74,13 +74,13 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Fehlender Healthbar-Aufbau erhält begrenzte Retries; Entfernung/Off verhindert spätes Wiederanheften.
 - [ ] Geheime IsShown-/Alpha-Ergebnisse und verweigerte Hooks erzeugen sauberen Fallback ohne Lua-/Taint-Fehler.
 
-- [ ] Update von ≤0.5.0 auf 0.6.1 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
+- [ ] Update von ≤0.5.0 auf 0.6.2 + `/reload`: Bestandsprofile unverändert, Live einmalig automatisch aktiviert.
 - [ ] Update von 0.6.0: ein gespeichertes Off bleibt abgeschaltet.
 - [ ] `/fnp apply` und Studio-Anwenden-Button ändern die sichtbare Plate direkt; Healthbar-Breite/X ändern und vergleichen.
 - [ ] `/fnp off` und erneutes `/reload` bleiben abgeschaltet; Apply aktiviert wieder.
 - [ ] Diagnose aktiviert nur auf der erwarteten Forever-Schnittstelle die Anwendung.
 - [ ] Eigene Plate sitzt an der Blizzard-Healthbar; nur eine Darstellung sichtbar, Klickfläche/Stacking weiter bedienbar.
-- [ ] `/fnp status`: Version 0.6.1, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
+- [ ] `/fnp status`: Version 0.6.2, Applied/Pending/Fallback und konkrete Ablehnungsgründe stimmen.
 - [ ] Blizzard-Alpha-Updates bei Zielwechsel/Entfernung/Fading erzeugen keine doppelte Plate.
 - [ ] UnitFrame wird vor/nach eigenem ADDED-Handler erstellt: begrenzter Retry hängt korrekt an.
 - [ ] UnitFrame unabhängig von Basis recycelt: keine unsichtbare Folge-Unit oder alte eigene Plate.
@@ -93,6 +93,8 @@ Die lokalen Widget-Tests begründen keinen Haken in dieser Liste.
 - [ ] Gesundheitsprozente erscheinen nur bei öffentlichen Zahlen; geheime Texte fehlen.
 - [ ] Zielmarkierungen wechseln korrekt, auch während Kampf und Zielverlust.
 - [ ] Casting- und Channel-Duration-Widgets starten/stoppen/unterbrechen korrekt.
+- [ ] Dragonflight-Cast-Hintergrund/Text fehlen ohne sichtbaren Castbalken; bei verweigerter Timer-Weitergabe keine dekorative Restanzeige.
+- [ ] Castbar deaktivieren, Elemente umordnen und altes gespeichertes DF-Layout laden: gleiche gekoppelte Sichtbarkeit.
 - [ ] Erste Widget-Erstellung im Kampf wartet bis Kampfende; vorbereitete zulässige Views recyceln ohne neue Widgets.
 - [ ] Toggle aus blendet eigene Plates aus und stellt die letzte öffentliche Blizzard-Alpha wieder her.
 - [ ] Solo, Dungeon, Raid, Arena, freundliche Spieler und Namensbeschränkungen prüfen.
